@@ -15,7 +15,7 @@ function token(selector: string, name: string): string {
 
 describe.each([
   ['light', ':root {\n  /* Three surfaces'],
-  ['dark', 'html.dark,'],
+  ['dark', 'html.dark {'],
 ])('%s tokens', (_mode, selector) => {
   const page = token(selector, 'surface-page');
   const section = token(selector, 'surface-section');
@@ -35,8 +35,3 @@ describe.each([
   });
 });
 
-describe('dark mode', () => {
-  it('keys off the theme switch and the platform switch', () => {
-    expect(css).toMatch(/html\.dark,\s*body\.color-mode-dark \{/);
-  });
-});

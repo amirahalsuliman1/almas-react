@@ -21,8 +21,8 @@ module.exports = {
   ],
   // `<Image objectFit>` builds these at runtime, out of the scanner's sight.
   safelist: ['object-contain', 'object-cover'],
-  // The theme's own switch (`html.dark`) or the platform's (`body.color-mode-dark`).
-  darkMode: ['variant', '&:is(.dark *, .color-mode-dark *)'],
+  // `html.dark`, the one switch app/lib/colorMode.ts sets (DARK_SELECTOR).
+  darkMode: 'class',
   theme: {
     container: {
       center: true,

@@ -629,3 +629,18 @@ main > .s-block:nth-of-type(n + 4)[style*='min-height'] {
     display: none #{!important};
   }
 }
+
+
+/* The page itself (tokens in 01-settings/global.scss): its surface, its ink, and the merchant's background image. */
+body {
+  background-color: var(--surface-page);
+  background-image: var(--store-bg-image);
+  background-attachment: fixed;
+  background-position: center;
+  background-size: cover;
+  color: var(--main-text-color);
+}
+
+.container {
+  padding-inline: var(--page-gutter);
+}

@@ -90,6 +90,18 @@ $main-text-color: var(--main-text-color);
   /* White drawn on a photograph; stays white in dark mode. */
   --on-media: #ffffff;
 
+  /* Merchant panel (ThemeTokens writes the settings over these defaults). */
+  --color-brand-secondary: #f9e6e7;
+  --surface-header: var(--surface-section);
+  --text-header: var(--main-text-color);
+  --surface-footer: var(--surface-section);
+  --text-footer: var(--main-text-color);
+  /* currentColor keeps icons inheriting until the merchant sets a colour. */
+  --color-icon: currentColor;
+  --page-gutter: 16px;
+  --button-radius: 0.75rem;
+  --store-bg-image: none;
+
   /* Tailwind's shipped durations; near zero under reduced motion. */
   --motion-fast: 150ms;
   --motion-base: 300ms;
@@ -106,14 +118,15 @@ $main-text-color: var(--main-text-color);
 }
 
 /*
- * Dark mode: the same tokens, re-pointed. `html.dark` is the theme's own switch;
- * `body.color-mode-dark` is the platform's (the store's `color.is_dark`).
+ * Dark mode: the same tokens, re-pointed, under the one switch the theme reads:
+ * `html.dark`, which app/lib/colorMode.ts sets from the `color_mode` setting
+ * (and, in `store` mode, from the store's own dark flag). Keep this selector
+ * equal to DARK_SELECTOR there.
  * Three surfaces three visible steps apart, so a card never sits black on black
  * — the defect Salla's reviewer reported on 2026-11-04. Ink on page 16.6:1,
  * secondary on card 8.0:1, error on card 6.2:1.
  */
-html.dark,
-body.color-mode-dark {
+html.dark {
   color-scheme: dark;
 
   --surface-page: #141210;
@@ -129,6 +142,11 @@ body.color-mode-dark {
   --accent-success-soft: #1c3320;
   --accent-soft: #3b2427;
   --color-accent-text: color-mix(in srgb, var(--color-accent) 55%, #ffffff);
+  --color-brand-secondary: #3b2427;
+  --surface-header: var(--surface-section);
+  --text-header: var(--main-text-color);
+  --surface-footer: var(--surface-section);
+  --text-footer: var(--main-text-color);
   --focus-ring-color: var(--main-text-color);
 }
 

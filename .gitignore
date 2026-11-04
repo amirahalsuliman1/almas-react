@@ -10,3 +10,6 @@ coverage/
 tsconfig.tsbuildinfo
 .tanstack/
 app/routeTree.gen.ts
+
+# Local theme-editor state (salla theme dev); never published.
+twilight.preview.json

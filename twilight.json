@@ -50,6 +50,245 @@
       "value": ""
     },
     {
+      "type": "static",
+      "format": "title",
+      "id": "static-am-1",
+      "value": "<div class='rounded-lg' style='background-color: #21636d; display: flex; justify-content: center; align-items: center;padding: 15px;margin-bottom: 20px !important; flex-direction: column;gap: 15px;'><h6 style='color: #ffffff;font-size: 15px; font-weight: bold;'> الهوية والألوان</h6></div>",
+      "variant": "h6"
+    },
+    {
+      "type": "string",
+      "format": "color",
+      "id": "secondary_color",
+      "icon": "sicon-format-fill",
+      "label": "اللون الثانوي",
+      "description": "لون خلفيات التمييز الهادئة. بصيغة ‎#RRGGBB‎.",
+      "required": false,
+      "value": "#F9E6E7"
+    },
+    {
+      "type": "string",
+      "format": "color",
+      "id": "color_page_background",
+      "icon": "sicon-format-fill",
+      "label": "لون خلفية الصفحة",
+      "description": "في الوضع الفاتح.",
+      "required": false,
+      "value": "#FDFDFD"
+    },
+    {
+      "type": "string",
+      "format": "color",
+      "id": "color_text_primary",
+      "icon": "sicon-format-fill",
+      "label": "لون النصّ الأساسي",
+      "description": "في الوضع الفاتح. التباين مسؤوليتك.",
+      "required": false,
+      "value": "#1B1B1B"
+    },
+    {
+      "type": "string",
+      "format": "color",
+      "id": "color_header_background",
+      "icon": "sicon-format-fill",
+      "label": "لون خلفية الرأس",
+      "description": "",
+      "required": false,
+      "value": "#F7F6F4"
+    },
+    {
+      "type": "string",
+      "format": "color",
+      "id": "color_header_text",
+      "icon": "sicon-format-fill",
+      "label": "لون نصّ الرأس",
+      "description": "",
+      "required": false,
+      "value": "#1B1B1B"
+    },
+    {
+      "type": "string",
+      "format": "color",
+      "id": "color_footer_background",
+      "icon": "sicon-format-fill",
+      "label": "لون خلفية التذييل",
+      "description": "",
+      "required": false,
+      "value": "#F7F6F4"
+    },
+    {
+      "type": "string",
+      "format": "color",
+      "id": "color_footer_text",
+      "icon": "sicon-format-fill",
+      "label": "لون نصّ التذييل",
+      "description": "",
+      "required": false,
+      "value": "#1B1B1B"
+    },
+    {
+      "type": "string",
+      "format": "color",
+      "id": "color_icons",
+      "icon": "sicon-format-fill",
+      "label": "لون الأيقونات",
+      "description": "اتركه فارغًا لتأخذ الأيقونات لون النص المحيط بها.",
+      "required": false,
+      "value": ""
+    },
+    {
+      "id": "button_style",
+      "type": "items",
+      "format": "dropdown-list",
+      "icon": "sicon-list",
+      "label": "شكل حواف الأزرار",
+      "description": "يُطبَّق على كل أزرار المتجر.",
+      "source": "Manual",
+      "required": true,
+      "selected": [
+        {
+          "label": "حواف مستديرة",
+          "value": "rounded",
+          "key": "btn-style-rounded"
+        }
+      ],
+      "options": [
+        {
+          "label": "حواف مستديرة",
+          "value": "rounded",
+          "key": "btn-style-rounded"
+        },
+        {
+          "label": "حواف دائرية كاملة",
+          "value": "pill",
+          "key": "btn-style-pill"
+        },
+        {
+          "label": "حواف حادّة",
+          "value": "square",
+          "key": "btn-style-square"
+        }
+      ]
+    },
+    {
+      "type": "number",
+      "format": "integer",
+      "icon": "sicon-align-justify",
+      "id": "page_gutter",
+      "label": "المسافة الجانبية للصفحات (بكسل)",
+      "description": "الهامش يمين ويسار كل الصفحات، من 0 إلى 48.",
+      "required": false,
+      "value": 16,
+      "minValue": 0,
+      "maxValue": 48
+    },
+    {
+      "type": "string",
+      "format": "image",
+      "icon": "sicon-image",
+      "id": "store_background_image",
+      "label": "صورة خلفية المتجر (الوضع الفاتح)",
+      "description": "اختيارية. تظهر خلف الأقسام.",
+      "required": false,
+      "value": null
+    },
+    {
+      "type": "static",
+      "format": "title",
+      "id": "static-am-2",
+      "value": "<div class='rounded-lg' style='background-color: #21636d; display: flex; justify-content: center; align-items: center;padding: 15px;margin-bottom: 20px !important; flex-direction: column;gap: 15px;'><h6 style='color: #ffffff;font-size: 15px; font-weight: bold;'> الوضع اللوني</h6></div>",
+      "variant": "h6"
+    },
+    {
+      "id": "color_mode",
+      "type": "items",
+      "format": "dropdown-list",
+      "icon": "sicon-list",
+      "label": "الوضع اللوني",
+      "description": "«حسب إعداد المتجر» يتبع اختيار الوضع الداكن في إعدادات المتجر. «فاتح» و«داكن» ثابتان لكل الزوار. «حسب جهاز العميل» يتبع إعداد جهاز كل زائر.",
+      "source": "Manual",
+      "required": true,
+      "selected": [
+        {
+          "label": "حسب إعداد المتجر",
+          "value": "store",
+          "key": "color-mode-store"
+        }
+      ],
+      "options": [
+        {
+          "label": "حسب إعداد المتجر",
+          "value": "store",
+          "key": "color-mode-store"
+        },
+        {
+          "label": "فاتح",
+          "value": "light",
+          "key": "color-mode-light"
+        },
+        {
+          "label": "داكن",
+          "value": "dark",
+          "key": "color-mode-dark"
+        },
+        {
+          "label": "حسب جهاز العميل",
+          "value": "auto",
+          "key": "color-mode-auto"
+        }
+      ]
+    },
+    {
+      "type": "string",
+      "format": "color",
+      "id": "dark_color_page",
+      "icon": "sicon-format-fill",
+      "label": "لون خلفية الصفحة في الوضع الداكن",
+      "description": "اتركه فارغًا لاستخدام لون الثيم.",
+      "required": false,
+      "value": ""
+    },
+    {
+      "type": "string",
+      "format": "color",
+      "id": "dark_color_section",
+      "icon": "sicon-format-fill",
+      "label": "لون الأقسام في الوضع الداكن",
+      "description": "اتركه فارغًا لاستخدام لون الثيم.",
+      "required": false,
+      "value": ""
+    },
+    {
+      "type": "string",
+      "format": "color",
+      "id": "dark_color_card",
+      "icon": "sicon-format-fill",
+      "label": "لون البطاقات في الوضع الداكن",
+      "description": "اجعله أفتح من لون الأقسام لتبقى البطاقات واضحة.",
+      "required": false,
+      "value": ""
+    },
+    {
+      "type": "string",
+      "format": "color",
+      "id": "dark_color_text",
+      "icon": "sicon-format-fill",
+      "label": "لون النص في الوضع الداكن",
+      "description": "اتركه فارغًا لاستخدام لون الثيم.",
+      "required": false,
+      "value": ""
+    },
+    {
+      "type": "string",
+      "format": "image",
+      "icon": "sicon-image",
+      "id": "dark_background_image",
+      "label": "صورة خلفية المتجر (الوضع الداكن)",
+      "description": "اختيارية.",
+      "required": false,
+      "value": null
+    },
+    {
       "id": "product_card_layout",
       "type": "items",
       "format": "dropdown-list",
