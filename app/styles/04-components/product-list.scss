@@ -93,7 +93,13 @@
   (`home-blocks.scss`): 4 columns >= 768px, 2 below.
 */
 .s-products-list-wrapper.s-products-list-vertical-cards.s-products-list-cols-5 {
+  /* Four from 1024px, as every product grid (home-blocks.scss); five from
+     1536px, where a five-up card is still as wide as a four-up one at 1280. */
   @media (min-width: 1024px) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  @media (min-width: 1536px) {
     grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 }

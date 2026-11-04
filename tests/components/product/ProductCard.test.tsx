@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, waitFor, cleanup } from '@testing-library/react';
-import { ProductCard } from '../../../app/components/product/ProductCard';
+import { ProductCard, savingPercent } from '../../../app/components/product/ProductCard';
 import { PRODUCT_IMAGE_PLACEHOLDER } from '../../../app/lib/productImage';
 
 const wishlistState = { ids: [] as number[] };
@@ -159,4 +159,37 @@ describe('ProductCard', () => {
 
     expect(() => rerender(<ProductCard product={product} layout="horizontal" />)).not.toThrow();
   });
+
+  it('puts a saving badge on the image of a product on sale', async () => {
+    const { container } = render(
+      <ProductCard
+        product={{ id: 42, name: "Sale", is_on_sale: true, regular_price: 450, sale_price: 360, price: 360 } as never}
+      />
+    );
+    await waitFor(() =>
+      expect(container.querySelector('.s-product-card-image .product-card__saving')).toBeTruthy()
+    );
+    expect(container.querySelector('.product-card__saving')?.textContent).toMatch(/20|٢٠/);
+  });
+
+  it('shows no badge for a product at full price', async () => {
+    const { container } = render(<ProductCard product={{ id: 42, name: "Sale", is_on_sale: false } as never} />);
+    await waitFor(() => expect(container.querySelector('.s-product-card-image')).toBeTruthy());
+    expect(container.querySelector('.product-card__saving')).toBeNull();
+  });
 });
+
+describe('savingPercent', () => {
+  it('is the whole-percent saving off the regular price', () => {
+    expect(savingPercent({ is_on_sale: true, regular_price: 450, sale_price: 360 })).toBe(20);
+    expect(savingPercent({ is_on_sale: true, regular_price: 600, price: 480 })).toBe(20);
+  });
+
+  it('is null off sale, without a regular price, or when nothing is saved', () => {
+    expect(savingPercent({ is_on_sale: false, regular_price: 450, sale_price: 360 })).toBeNull();
+    expect(savingPercent({ is_on_sale: true, regular_price: 0, sale_price: 10 })).toBeNull();
+    expect(savingPercent({ is_on_sale: true, regular_price: 100, sale_price: 100 })).toBeNull();
+    expect(savingPercent({ is_on_sale: true, regular_price: 1000, sale_price: 999 })).toBeNull();
+  });
+});
+

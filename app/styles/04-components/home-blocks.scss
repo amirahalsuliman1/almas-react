@@ -363,7 +363,7 @@
 
   /* Tabs only: five in a row on desktop, three on tablets. */
   .s-products-list-wrapper.s-products-list-vertical-cards {
-    @apply md:grid-cols-3 lg:grid-cols-5 lg:gap-6;
+    @apply md:grid-cols-3 lg:grid-cols-4 lg:gap-6;
   }
 
   /* Special offer: the title at the start and compact tabs at the end of one
@@ -988,11 +988,21 @@
   Fixed Products Grid
 */
 .s-products-list-wrapper.s-products-list-vertical-cards {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  /* Four wider cards on desktop with 24px between them (REDESIGN-2026-11.md;
+     Salla's review found five narrow cards cramped). */
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1rem;
+
+  @media (min-width: 1024px) {
+    gap: 1.5rem;
+  }
 
   @media (max-width: 767px) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (min-width: 768px) and (max-width: 1023px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   &.s-products-list-with-filters {

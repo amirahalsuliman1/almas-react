@@ -298,5 +298,7 @@
   "theme.listing.grid_large": "Larger products",
   "theme.listing.grid_small": "More products",
   "theme.testimonials.rating": "Rated :stars out of 5",
-  "theme.footer.follow_us": "Follow us"
+  "theme.footer.follow_us": "Follow us",
+  "theme.product.save": "Save",
+  "pages.wishlist.toggle": "Add or remove from wishlist"
 }

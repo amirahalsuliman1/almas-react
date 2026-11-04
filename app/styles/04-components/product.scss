@@ -164,27 +164,56 @@
       @apply w-full flex-1 min-w-0;
     }
 
-    /* wishlist stays a fixed 36px circle, however the engine wraps it
-       (bare button on the grid card, `.s-button-wrap` on the list card) */
+    /* wishlist: a fixed 40px circle (REDESIGN-2026-11.md), however the engine
+       wraps it (bare button on the grid card, `.s-button-wrap` on the list card) */
     > .s-product-card-wishlist-btn,
     > .s-button-wrap {
-      @apply w-9 flex-none;
+      @apply w-10 flex-none;
     }
 
     .s-product-card-wishlist-btn {
       position: static;
       inset: auto;
       opacity: 1;
-      @apply w-9 h-9 shrink-0 m-0;
+      @apply w-10 h-10 shrink-0 m-0;
 
       button,
       .s-button-btn,
       .s-button-element {
-        @apply w-9 h-9 min-w-0 m-0 p-0 flex-none inline-flex items-center justify-center rounded-full border border-gray-200 bg-white;
+        @apply w-10 h-10 min-w-0 m-0 p-0 flex-none inline-flex items-center justify-center rounded-full border;
+        background-color: var(--surface-card);
+        border-color: var(--border-interactive);
+        color: var(--main-text-color);
       }
 
-      svg {
-        @apply w-4 h-4;
+      svg,
+      i {
+        @apply w-5 h-5 text-lg leading-none;
+      }
+
+      &.s-product-card-wishlist-added button,
+      &[aria-pressed='true'] button,
+      &[aria-pressed='true'] {
+        border-color: var(--color-error);
+        color: var(--color-error);
+      }
+    }
+
+    /* The theme's own footer heart (ProductCard.tsx → WishlistHeartButton) is
+       the button itself, inside its `.s-button-wrap`. */
+    /* `!important` because the component library's `.s-button-light-outline`
+       sets its border, fill and ink with `!important`; the heart needs a
+       boundary that passes WCAG 1.4.11 (`--border-interactive`, 5.9:1) and a
+       fill that follows dark mode. */
+    button.s-product-card-wishlist-btn {
+      @apply border;
+      background-color: var(--surface-card) !important;
+      border-color: var(--border-interactive) !important;
+      color: var(--main-text-color) !important;
+
+      &.s-product-card-wishlist-added {
+        border-color: var(--color-error) !important;
+        color: var(--color-error) !important;
       }
     }
 
@@ -192,25 +221,39 @@
        child — the add-to-cart's own `.s-button-wrap` is nested, so `>` keeps
        this off it) */
     > .s-button-wrap .s-button-icon {
-      @apply w-9 h-9 min-w-0 m-0 p-0 inline-flex items-center justify-center rounded-full border border-gray-200 bg-white;
+      @apply w-10 h-10 min-w-0 m-0 p-0 inline-flex items-center justify-center rounded-full border;
+      background-color: var(--surface-card);
+      border-color: var(--border-interactive);
 
       svg {
-        @apply w-4 h-4;
+        @apply w-5 h-5;
       }
     }
 
-    /* solid, pill-rounded add-to-cart, matched to the wishlist button height
-       (the engine renders it as fill="outline") */
+    /* Add to cart, always visible: solid accent at 40px (the engine renders it
+       as fill="outline"; ProductCard.tsx sets it solid). */
     .s-button-btn {
-      @apply h-9 bg-primary text-primary-reverse border-primary rounded-full;
+      @apply h-10 text-sm font-bold;
+      background-color: var(--color-accent);
+      border-color: var(--color-accent);
+      border-radius: var(--button-radius);
+      color: var(--color-accent-ink);
 
       &:hover {
-        @apply bg-primary-d text-primary-reverse border-primary-d opacity-100;
+        @apply opacity-100;
+        background-color: color-mix(in srgb, var(--color-accent) 85%, #000000);
+        border-color: color-mix(in srgb, var(--color-accent) 85%, #000000);
+        color: var(--color-accent-ink);
       }
 
       svg {
         @apply fill-current;
       }
+    }
+
+    button:focus-visible {
+      outline: var(--focus-ring-width) solid var(--focus-ring-color);
+      outline-offset: var(--focus-ring-offset);
     }
   }
 
@@ -222,12 +265,59 @@
 
   .s-product-card-content-subtitle {
     // order: -1;
-    @apply text-xs sm:text-sm mb-1;
+    @apply text-sm mb-1;
+    color: var(--text-secondary);
   }
 
+  /* Name: text-base semibold, two lines (Salla's review: names too small). */
   .s-product-card-content-title {
-    @apply mb-1 text-base;
+    @apply mb-1 text-base font-semibold leading-snug line-clamp-2;
+    color: var(--main-text-color);
+
+    a:hover {
+      color: var(--color-accent-text);
+    }
   }
+}
+
+/* The card sits on its own surface, set off from the section it is in. */
+.s-product-card-entry.s-product-card-vertical {
+  @apply overflow-hidden rounded border transition-shadow;
+  background-color: var(--surface-card);
+  border-color: var(--border-subtle);
+
+  &:hover {
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.08);
+  }
+
+  .s-product-card-content {
+    @apply p-3 lg:p-4;
+  }
+}
+
+/* Two cards to a phone row leave the add button about 100px beside the heart:
+   tighter padding keeps «أضف إلى السلة» whole instead of cut to «أضف …». */
+@media (max-width: 767px) {
+  .s-product-card-entry.s-product-card-vertical .s-product-card-content-footer {
+    @apply gap-1.5;
+
+    .s-button-btn {
+      @apply px-1.5;
+
+      .s-button-text {
+        @apply overflow-visible whitespace-nowrap;
+        text-overflow: clip;
+      }
+    }
+  }
+}
+
+/* «وفّر ٢٠٪» — ProductCard.tsx, on the image's end corner. */
+.product-card__saving {
+  @apply pointer-events-none absolute top-3 z-[1] rounded-full px-2.5 py-1 text-xs font-bold leading-none;
+  inset-inline-end: 0.75rem;
+  background-color: var(--color-accent);
+  color: var(--color-accent-ink);
 }
 
 /* The placeholder is shown whole, as in Twig, whatever the store's image fit. */
@@ -402,7 +492,9 @@ salla-gifting {
   padding: 0.375rem 0.75rem;
   border-radius: 9999px;
   max-width: calc(100% - 1.5rem);
-  @apply bg-red-800 text-white text-[11px] font-semibold leading-none shadow-sm;
+  @apply text-xs font-semibold leading-none shadow-sm;
+  background-color: var(--main-text-color);
+  color: var(--surface-card);
 }
 
 /* Add to cart sticky bar */
@@ -598,22 +690,21 @@ salla-gifting {
   @apply rtl:rounded-r ltr:rounded-l;
 }
 
+/* Price: text-lg bold in the accent; the old price smaller, struck through. */
 .s-product-card-sale-price h4,
 .s-product-card-starting-price h4,
 .s-product-card-price {
-  @apply text-lg;
+  @apply text-lg font-bold;
+  color: var(--color-accent-text);
 }
 
 .s-product-card-sale-price span {
-  @apply opacity-70;
+  @apply text-sm line-through;
+  color: var(--text-secondary);
 }
 
 .s-product-card-starting-price {
   @apply justify-start gap-2.5;
-
-  h4 {
-    @apply text-red-800;
-  }
 }
 
 .s-product-card-minimal salla-button.s-product-card-wishlist-btn {
@@ -922,11 +1013,7 @@ salla-gifting {
 
 .s-product-card-sale-price {
   h4 {
-    @apply text-red-800 #{!important};
-  }
-
-  span {
-    @apply text-inherit;
+    color: var(--color-accent-text) #{!important};
   }
 }
 

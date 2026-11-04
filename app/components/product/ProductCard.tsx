@@ -27,6 +27,7 @@ type ProductCardProps = ComponentProps<typeof EngineProductCard>;
  *    throwing `NotFoundError`. A portal keeps this button fully React-managed
  *    at its real DOM location instead.
  *  - sets `loader-position="center"` on the add-to-cart button (grid + list).
+ * Portals a «وفّر ٪» badge onto the image of a product on sale.
  * A product with no photo shows the theme's placeholder, as the Twig card does
  * (the engine `Image` renders nothing without a `src`).
  * Inside the Salla app, a booking product's "Book now" fires `mobile::booking.open`
@@ -36,6 +37,8 @@ type ProductCardProps = ComponentProps<typeof EngineProductCard>;
 export function ProductCard(props: ProductCardProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [footerEl, setFooterEl] = useState<HTMLElement | null>(null);
+  const [imageEl, setImageEl] = useState<HTMLElement | null>(null);
+  const saving = savingPercent(props.product);
   const { product, isPlaceholder } = useMemo(
     () => withImageFallback(props.product),
     [props.product]
@@ -62,6 +65,7 @@ export function ProductCard(props: ProductCardProps) {
       if (originalWishlistBtn) originalWishlistBtn.style.display = 'none';
 
       setFooterEl(vertical.querySelector<HTMLElement>('.s-product-card-content-footer'));
+      setImageEl(vertical.querySelector<HTMLElement>('.s-product-card-image'));
     };
 
     sync();
@@ -77,6 +81,7 @@ export function ProductCard(props: ProductCardProps) {
       data-image-placeholder={isPlaceholder ? 'true' : undefined}
     >
       <EngineProductCard {...props} product={product} />
+      {imageEl && saving !== null && createPortal(<SavingBadge percent={saving} />, imageEl)}
       {footerEl &&
         createPortal(
           // List responses send the id as a numeric string; the wishlist holds numbers.
@@ -84,6 +89,40 @@ export function ProductCard(props: ProductCardProps) {
           footerEl
         )}
     </div>
+  );
+}
+
+/**
+ * The saving on a product on sale, as a whole percentage of its regular price,
+ * or null when it is not on sale. The API never sends `discount_percentage`, so
+ * it is computed (engine types, `Product.discount_percentage`).
+ */
+export function savingPercent(product: {
+  is_on_sale?: boolean;
+  regular_price?: unknown;
+  sale_price?: unknown;
+  price?: unknown;
+}): number | null {
+  if (!product?.is_on_sale) return null;
+  const regular = Number(product.regular_price);
+  const now = Number(product.sale_price ?? product.price);
+  if (!(regular > 0) || !(now > 0) || now >= regular) return null;
+  const percent = Math.round(((regular - now) / regular) * 100);
+  return percent >= 1 ? percent : null;
+}
+
+/** «وفّر ٢٠٪» on the image's end corner (product.scss `.product-card__saving`). */
+function SavingBadge({ percent }: { percent: number }) {
+  const { t, locale } = useTranslation();
+  // Arabic-Indic digits in Arabic, as the store prints its prices.
+  const numberLocale = (locale || 'ar').startsWith('ar') ? 'ar-SA-u-nu-arab' : locale;
+  const formatted = new Intl.NumberFormat(numberLocale, { style: 'percent' }).format(
+    percent / 100
+  );
+  return (
+    <span className="product-card__saving">
+      {t('theme.product.save', 'Save')} {formatted}
+    </span>
   );
 }
 

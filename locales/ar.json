@@ -298,5 +298,7 @@
   "theme.listing.grid_large": "منتجات أكبر",
   "theme.listing.grid_small": "منتجات أكثر",
   "theme.testimonials.rating": "تقييم :stars من 5",
-  "theme.footer.follow_us": "تابعنا"
+  "theme.footer.follow_us": "تابعنا",
+  "theme.product.save": "وفّر",
+  "pages.wishlist.toggle": "إضافة إلى المفضلة أو إزالتها منها"
 }
