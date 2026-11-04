@@ -1,6 +1,6 @@
 import { useTranslation } from '@salla.sa/twilight-theme-engine/i18n';
 import { normaliseHex } from '../../lib/accent';
-import { pickedUrl } from '../../lib/highlights';
+import { pickedUrl } from '../../lib/pickers';
 import { selectedValue, textValue } from '../../lib/settings';
 
 interface MarqueeItem {

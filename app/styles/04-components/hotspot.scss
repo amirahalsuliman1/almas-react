@@ -1,0 +1,214 @@
+/* =========================================================================
+   Shoppable photographs (HotspotImage.tsx, R-11): markers placed by
+   percentage, and a card per product. Used by the lookbook, the stories and
+   the product page; this is its one stylesheet.
+   ========================================================================= */
+
+.hotspot {
+  @apply relative;
+}
+
+.hotspot__figure {
+  @apply relative m-0 overflow-hidden rounded;
+  background-color: var(--surface-placeholder);
+}
+
+.hotspot__image {
+  @apply block w-full;
+  aspect-ratio: var(--hotspot-ratio, 4 / 5);
+  object-fit: cover;
+}
+
+/* The point sits at x% from the inline start, y% from the top: a percentage of
+   the photograph, so it stays on its spot at every width. 44px target. */
+.hotspot__marker {
+  @apply absolute inline-flex h-11 w-11 items-center justify-center rounded-full;
+  inset-inline-start: var(--x);
+  inset-block-start: var(--y);
+  transform: translate(50%, -50%);
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--on-media);
+    outline-offset: 0;
+  }
+}
+
+[dir='ltr'] .hotspot__marker {
+  transform: translate(-50%, -50%);
+}
+
+/* A ring with a dot, on a soft shadow so it reads on light and dark photos. */
+.hotspot__marker-dot {
+  @apply relative block h-6 w-6 rounded-full border-2;
+  border-color: var(--on-media);
+  background-color: rgb(255 255 255 / 0.3);
+  box-shadow: 0 1px 6px rgb(0 0 0 / 0.45);
+
+  &::after {
+    @apply absolute inset-0 m-auto h-2 w-2 rounded-full;
+    content: '';
+    background-color: var(--on-media);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hotspot__marker-dot {
+    animation: hotspot-pulse 2.4s ease-out infinite;
+  }
+}
+
+@keyframes hotspot-pulse {
+  0% {
+    box-shadow: 0 1px 6px rgb(0 0 0 / 0.45), 0 0 0 0 rgb(255 255 255 / 0.55);
+  }
+
+  70% {
+    box-shadow: 0 1px 6px rgb(0 0 0 / 0.45), 0 0 0 10px rgb(255 255 255 / 0);
+  }
+
+  100% {
+    box-shadow: 0 1px 6px rgb(0 0 0 / 0.45), 0 0 0 0 rgb(255 255 255 / 0);
+  }
+}
+
+.hotspot__caption {
+  @apply pointer-events-none absolute m-3 max-w-48 rounded px-3 py-1.5 text-sm font-semibold leading-snug;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  background-color: var(--surface-card);
+  color: var(--main-text-color);
+}
+
+/* The product cards. */
+.hotspot__pills {
+  @apply m-0 flex list-none flex-col gap-2 p-0;
+}
+
+.hotspot--overlay .hotspot__pills {
+  @apply mt-3;
+}
+
+.hotspot__pill {
+  @apply relative flex items-center gap-3 rounded border p-2;
+  background-color: var(--surface-card);
+  border-color: var(--border-subtle);
+
+  &[aria-current='true'] {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 1px var(--color-accent);
+  }
+}
+
+.hotspot__pill-link {
+  @apply flex min-w-0 flex-1 items-center gap-3 no-underline;
+  color: var(--main-text-color);
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+}
+
+.hotspot__pill-thumb {
+  @apply h-[4.5rem] w-[4.5rem] flex-none rounded object-cover;
+  background-color: var(--surface-placeholder);
+}
+
+.hotspot__pill-body {
+  @apply flex min-w-0 flex-1 flex-col gap-1 text-start;
+}
+
+.hotspot__pill-name {
+  @apply line-clamp-2 text-base font-semibold leading-snug;
+}
+
+.hotspot__pill-prices {
+  @apply inline-flex flex-wrap items-baseline gap-2;
+}
+
+.hotspot__pill-price {
+  @apply text-base font-bold;
+  color: var(--color-accent-text);
+}
+
+.hotspot__pill-price-was {
+  @apply text-sm line-through;
+  color: var(--text-secondary);
+}
+
+/* The add button: a 44px accent square with a bag. */
+.hotspot__pill-buy {
+  @apply flex-none;
+
+  .s-button-element {
+    @apply inline-flex h-11 w-11 min-w-0 items-center justify-center p-0;
+    background-color: var(--color-accent) !important;
+    border-color: var(--color-accent) !important;
+    border-radius: var(--button-radius);
+    color: var(--color-accent-ink) !important;
+  }
+
+  svg {
+    @apply h-5 w-5;
+  }
+}
+
+/* From 768px on the overlay layout, the cards sit over the photograph's foot. */
+@media (min-width: 768px) {
+  .hotspot--overlay {
+    .hotspot__pills {
+      @apply absolute inset-x-0 bottom-0 m-0 flex-row overflow-x-auto p-3;
+      scrollbar-width: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+
+    .hotspot__pill {
+      @apply w-72 flex-none;
+      box-shadow: 0 6px 18px rgb(0 0 0 / 0.18);
+    }
+  }
+}
+
+/* ── The lookbook (home.lookbook) ─────────────────────────────────────── */
+
+.lookbook {
+  margin-inline: max(var(--page-gutter), calc((100% - 1280px) / 2 + var(--page-gutter)));
+}
+
+/* From 1024px the photograph and the cards share the row; the cards stack in
+   their own column, on the side the merchant did not pick for the image. */
+@media (min-width: 1024px) {
+  .lookbook .hotspot {
+    @apply grid items-start gap-6;
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  }
+
+  /* `desktop_side` is physical (right / left): the grid runs from the right
+     in Arabic and from the left in English, so the swap depends on both. */
+  [dir='rtl'] .lookbook--image-left .hotspot,
+  [dir='ltr'] .lookbook--image-right .hotspot {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+
+    .hotspot__figure {
+      order: 2;
+    }
+  }
+
+  .lookbook .hotspot__image {
+    aspect-ratio: 4 / 5;
+    max-block-size: 44rem;
+  }
+
+  .lookbook .hotspot--overlay .hotspot__pills,
+  .lookbook .hotspot__pills {
+    @apply static m-0 flex-col overflow-visible p-0;
+  }
+
+  .lookbook .hotspot__pill {
+    @apply w-auto;
+    box-shadow: none;
+  }
+}

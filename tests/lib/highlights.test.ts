@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { highlightId, markSeen, pickedProductId, pickedUrl, readSeen } from '../../app/lib/highlights';
+import { highlightId, markSeen, readSeen } from '../../app/lib/highlights';
+import { pickedProductId, pickedUrl } from '../../app/lib/pickers';
 
 beforeEach(() => localStorage.clear());
 

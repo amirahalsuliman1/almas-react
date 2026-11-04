@@ -18,6 +18,7 @@ import {
   Hero,
   Highlights,
   LatestProducts,
+  Lookbook,
   MainLinks,
   Marquee,
   PhotosSlider,
@@ -49,6 +50,7 @@ registerHomeComponents({
   hero: Hero,
   highlights: Highlights,
   marquee: Marquee,
+  lookbook: Lookbook,
   brands: Brands,
   'enhanced-slider': EnhancedSlider,
   'custom-testimonials': CustomTestimonials,
@@ -95,6 +97,10 @@ registerHomeComponentConfig({
   highlights: { className: 's-block s-block--highlights', height: '7.5rem' },
   // One line of text at text-base with its padding.
   marquee: { className: 's-block s-block--marquee', height: '3.25rem' },
+  // Usually below the fold, so it mounts on scroll: reserve a 4:5 photograph,
+  // its header and about three product cards on a phone, capped at the
+  // desktop row's height. Measured: 829px at 393 wide with three points.
+  lookbook: { className: 's-block s-block--lookbook', height: 'min(calc(125vw + 18rem), 50rem)' },
   'featured-products': featuredProductsConfig,
   'featured-products-special-offer': featuredProductsConfig,
   'featured-products-special-product': featuredProductsConfig,

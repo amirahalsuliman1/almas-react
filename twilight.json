@@ -1522,6 +1522,235 @@
       ]
     },
     {
+      "name": "lookbook",
+      "key": "c4a71e02-9b38-4f6d-8e15-3d907ac2b641",
+      "title": {
+        "en": "Shoppable image",
+        "ar": "صورة تسوّق تفاعلية"
+      },
+      "icon": "sicon-image",
+      "path": "home.lookbook",
+      "image": "https://cdn.salla.network/images/themes/raed/preview-images/square-images.png?v=1.1",
+      "is_default": false,
+      "fields": [
+        {
+          "type": "string",
+          "format": "text",
+          "icon": "sicon-typography",
+          "id": "title",
+          "label": "عنوان القسم",
+          "multilanguage": true,
+          "required": false,
+          "value": "تسوّقي الإطلالة",
+          "description": "يظهر فوق الصورة.",
+          "maxLength": 60
+        },
+        {
+          "type": "string",
+          "format": "text",
+          "icon": "sicon-info",
+          "id": "hint",
+          "label": "سطر يشرح النقاط",
+          "multilanguage": true,
+          "required": false,
+          "value": "اضغطي على النقاط في الصورة لتسوّق كل قطعة",
+          "description": "سطر قصير تحت العنوان يشرح للعميل ما تفعله النقاط.",
+          "maxLength": 90
+        },
+        {
+          "type": "string",
+          "icon": "sicon-image",
+          "format": "image",
+          "id": "image",
+          "label": "صورة القسم",
+          "required": true,
+          "value": null,
+          "description": "* المقاس المناسب للصورة هو 900×1200 بكسل"
+        },
+        {
+          "type": "string",
+          "icon": "sicon-info",
+          "format": "text",
+          "id": "alt",
+          "label": "وصف الصورة لقارئ الشاشة",
+          "multilanguage": true,
+          "required": false,
+          "value": null,
+          "description": "اتركه فارغًا إذا كانت الصورة زخرفية.",
+          "minLength": 0,
+          "maxLength": 125
+        },
+        {
+          "type": "string",
+          "icon": "sicon-format-text-alt",
+          "format": "text",
+          "id": "caption",
+          "label": "ملصق مائل فوق الصورة",
+          "multilanguage": true,
+          "required": false,
+          "value": null,
+          "description": "اختياري. عبارة قصيرة في ملصق مائل أعلى زاوية الصورة، تظهر على الجوال فقط. اتركه فارغًا لإخفائه.",
+          "placeholder": "مثال: The new Stanley 1913 x JENNIE Collection is here.",
+          "minLength": 0,
+          "maxLength": 80
+        },
+        {
+          "id": "layout",
+          "type": "items",
+          "format": "dropdown-list",
+          "label": "موضع بطاقات المنتجات",
+          "icon": "sicon-list",
+          "description": "فوق الصورة أو أسفلها. كلا الشكلين موجود في التصميم.",
+          "selected": [
+            {
+              "label": "فوق الصورة",
+              "value": "overlay",
+              "key": "lookbook-overlay"
+            }
+          ],
+          "options": [
+            {
+              "label": "فوق الصورة",
+              "value": "overlay",
+              "key": "lookbook-overlay"
+            },
+            {
+              "label": "أسفل الصورة",
+              "value": "list",
+              "key": "lookbook-list"
+            }
+          ],
+          "source": "Manual",
+          "required": true
+        },
+        {
+          "id": "desktop_side",
+          "type": "items",
+          "format": "dropdown-list",
+          "label": "جهة الصورة على اللابتوب",
+          "icon": "sicon-list",
+          "description": "على الشاشات الكبيرة تظهر الصورة بجانب بطاقة المنتج. تصميم اللابتوب يبدّل الجهة بين قسم وآخر.",
+          "selected": [
+            {
+              "label": "يمين",
+              "value": "right",
+              "key": "lookbook-side-right"
+            }
+          ],
+          "options": [
+            {
+              "label": "يمين",
+              "value": "right",
+              "key": "lookbook-side-right"
+            },
+            {
+              "label": "يسار",
+              "value": "left",
+              "key": "lookbook-side-left"
+            }
+          ],
+          "source": "Manual",
+          "required": true
+        },
+        {
+          "type": "boolean",
+          "icon": "sicon-toggle-off",
+          "format": "switch",
+          "id": "show_on_products",
+          "label": "اعرضها في صفحات منتجاتها",
+          "description": "تظهر تحت كل منتج عليه نقطة في هذه الصورة، بعنوان «نسّقيه مع».",
+          "required": false,
+          "value": true,
+          "selected": true
+        },
+        {
+          "id": "category",
+          "type": "items",
+          "format": "dropdown-list",
+          "label": "غلاف تفاعلي لتصنيف (اختياري)",
+          "icon": "sicon-keyboard_arrow_down",
+          "description": "اختر تصنيفًا لتظهر هذه الصورة بنقاطها أعلى صفحته.",
+          "selected": [],
+          "options": [],
+          "source": "categories",
+          "multichoice": false,
+          "searchable": true,
+          "required": false
+        },
+        {
+          "type": "boolean",
+          "icon": "sicon-toggle-off",
+          "format": "switch",
+          "id": "hide_on_home",
+          "label": "إخفاؤها من الصفحة الرئيسية",
+          "description": "لصورة تريدها لصفحة المنتجات أو غلافًا لتصنيف فقط.",
+          "required": false,
+          "value": false,
+          "selected": false
+        },
+        {
+          "id": "hotspots",
+          "type": "collection",
+          "format": "collection",
+          "required": true,
+          "minLength": 1,
+          "maxLength": 8,
+          "label": null,
+          "item_label": "نقطة على الصورة",
+          "value": [
+            {
+              "hotspots.x": 50,
+              "hotspots.y": 50,
+              "hotspots.product": []
+            }
+          ],
+          "fields": [
+            {
+              "type": "number",
+              "icon": "sicon-align-center",
+              "format": "integer",
+              "id": "hotspots.x",
+              "label": "الموضع الأفقي (%)",
+              "required": true,
+              "value": 50,
+              "minValue": 0,
+              "maxValue": 100,
+              "description": "نسبة مئوية من عرض الصورة، من 0 إلى 100. تُقاس من يمين الصورة."
+            },
+            {
+              "type": "number",
+              "icon": "sicon-align-justify",
+              "format": "integer",
+              "id": "hotspots.y",
+              "label": "الموضع الرأسي (%)",
+              "required": true,
+              "value": 50,
+              "minValue": 0,
+              "maxValue": 100,
+              "description": "نسبة مئوية من ارتفاع الصورة، من 0 إلى 100. تُقاس من أعلى الصورة."
+            },
+            {
+              "type": "items",
+              "icon": "sicon-keyboard_arrow_down",
+              "format": "dropdown-list",
+              "id": "hotspots.product",
+              "label": "المنتج",
+              "description": "اختر المنتج من متجرك. تُجلب بياناته تلقائيًا، فتغيير الاسم أو السعر لا يحتاج تعديلًا هنا.",
+              "required": true,
+              "multichoice": false,
+              "searchable": true,
+              "source": "products",
+              "selected": [],
+              "options": [],
+              "maxLength": 1,
+              "minLength": 1,
+              "value": []
+            }
+          ]
+        }
+      ]
+    },
+    {
       "key": "186b3f4f-25cf-4d3c-abca-cef7eed6f0ab",
       "title": {
         "en": "Enhances Animated Images",

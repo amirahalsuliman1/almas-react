@@ -6,6 +6,7 @@ export { FixedProducts } from './FixedProducts';
 export { Hero } from './Hero';
 export { Highlights } from './Highlights';
 export { LatestProducts } from './LatestProducts';
+export { Lookbook } from './Lookbook';
 export { MainLinks } from './MainLinks';
 export { Marquee } from './Marquee';
 export { PhotosSlider } from './PhotosSlider';

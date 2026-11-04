@@ -7,7 +7,8 @@ import { getCdnImageUrl } from '@salla.sa/twilight-theme-engine/utils/cdn-image'
 import { SectionHeader } from '../common/SectionHeader';
 import { CloseIcon } from '../icons';
 import { textValue } from '../../lib/settings';
-import { highlightId, markSeen, pickedProductId, pickedUrl, readSeen } from '../../lib/highlights';
+import { highlightId, markSeen, readSeen } from '../../lib/highlights';
+import { pickedProductId, pickedUrl } from '../../lib/pickers';
 
 interface HighlightItem {
   title?: unknown;
@@ -256,8 +257,9 @@ export function Highlights({ data }: HighlightsProps): ReactNode {
     <div className="highlights">
       {title && <SectionHeader title={title} />}
       <ul className="highlights__row">
-        {highlights.map((h) => (
-          <li key={h.id} className="highlights__item">
+        {highlights.map((h, i) => (
+          // Two highlights can share slides, so the id alone is not unique.
+          <li key={`${h.id}-${i}`} className="highlights__item">
             <button
               type="button"
               className={`highlights__bubble${seen.includes(h.id) ? ' highlights__bubble--seen' : ''}`}
