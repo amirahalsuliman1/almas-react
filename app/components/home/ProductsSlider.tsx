@@ -124,6 +124,7 @@ export function ProductsSlider({ data, onResolve }: ProductsSliderProps) {
         </>
       ) : (
         <ScrollCarousel
+          navPlacement="sides"
           heading={heading}
           prevLabel={t('blocks.home.reviews_prev', 'Previous')}
           nextLabel={t('blocks.home.reviews_next', 'Next')}

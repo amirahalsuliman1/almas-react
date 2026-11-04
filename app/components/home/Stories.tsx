@@ -75,7 +75,7 @@ export function Stories({ data }: StoriesProps) {
 
   return (
     <div className={`stories${onStoriesPage ? ' stories--page' : ''}`}>
-      <SectionHeader title={textValue(data.title, locale)} />
+      <SectionHeader title={textValue(data.title, locale)} align="start" />
 
       {onStoriesPage && (tags.length > 0 || brands.length > 0) && (
         <div className="stories__controls">

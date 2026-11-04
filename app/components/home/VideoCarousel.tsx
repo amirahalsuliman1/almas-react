@@ -131,6 +131,7 @@ export function VideoCarousel({ data }: VideoCarouselProps) {
         slides
       ) : (
         <ScrollCarousel
+          navPlacement="sides"
           className="video-carousel__track"
           prevLabel={t('blocks.home.reviews_prev', 'Previous')}
           nextLabel={t('blocks.home.reviews_next', 'Next')}

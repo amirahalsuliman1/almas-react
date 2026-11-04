@@ -82,7 +82,7 @@ describe('CustomTestimonials', () => {
     );
   });
 
-  it('renders prev / next controls on the title line', () => {
+  it('renders prev / next controls on the sides of the row', () => {
     const { container, getByLabelText, getByText } = render(<CustomTestimonials data={{ items }} />);
     expect(getByLabelText('Previous')).toBeTruthy();
     expect(getByLabelText('Next')).toBeTruthy();

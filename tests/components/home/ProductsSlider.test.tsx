@@ -153,7 +153,7 @@ describe('ProductsSlider', () => {
   });
 
   it('renders the title and a display-all link', async () => {
-    const { getByText } = renderWithClient(
+    const { getByText, getByRole } = renderWithClient(
       <ProductsSlider
         data={{
           products: { source: 'related', source_value: 1 },
@@ -162,7 +162,7 @@ describe('ProductsSlider', () => {
         }}
       />
     );
-    expect(getByText('Similar products')).toBeTruthy();
+    expect(getByRole('heading', { name: 'Similar products' })).toBeTruthy();
     await waitFor(() =>
       expect((getByText('View All').closest('a') as HTMLAnchorElement).getAttribute('href')).toBe(
         '/c/all'
@@ -170,7 +170,7 @@ describe('ProductsSlider', () => {
     );
   });
 
-  it('renders prev/next controls beside the title and scrolls on click', async () => {
+  it('renders prev/next controls on the sides of the row and scrolls on click', async () => {
     // A row that overflows: jsdom has no layout, so everything else would "fit".
     Object.defineProperty(HTMLElement.prototype, 'scrollWidth', { configurable: true, value: 800 });
     Object.defineProperty(HTMLElement.prototype, 'clientWidth', { configurable: true, value: 400 });

@@ -1,0 +1,24 @@
+/* =========================================================================
+   The section panel — Twig's (owner, 2026-11-05). A section that gathers
+   content around images sits in a warm rounded panel the container's width;
+   a section that IS one image (the hero, the overlay lookbook, the partner
+   banner) does not. The panel is the section surface, so dark mode keeps the
+   page, the panel and the cards three steps apart.
+   ========================================================================= */
+
+.s-block--products-slider > .s-products-carousel,
+.s-block--video-carousel > .video-carousel,
+.s-block--stories > .stories,
+.s-block--custom-testimonials .s-testimonials > .scroll-carousel,
+.s-block--lookbook > .lookbook:has(.hotspot--list) {
+  @apply rounded px-2 py-4 md:px-6 md:py-6 lg:px-8 lg:py-8;
+  background-color: var(--surface-section);
+}
+
+/* A panelled row clips its own track, so a card cut at the edge ends at the
+   panel's rounded side instead of hanging past it. */
+.s-block--products-slider > .s-products-carousel,
+.s-block--video-carousel > .video-carousel,
+.s-block--custom-testimonials .s-testimonials > .scroll-carousel {
+  @apply overflow-hidden;
+}

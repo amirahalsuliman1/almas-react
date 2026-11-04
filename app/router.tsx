@@ -95,7 +95,7 @@ registerHomeComponents({
 
 // Wrapper `<section>` classes for `featured-products` — the engine only styles
 // the literal `styleN` values; this covers the semantic `view_style`s too.
-// `custom-testimonials` gets `s-block--full-bg` so the gray band runs edge-to-edge.
+// `custom-testimonials` sits in Twig's section panel (section-panel.scss).
 registerHomeComponentConfig({
   // Always the first block: rendered at once, no reservation needed.
   hero: { className: 's-block s-block--hero' },
@@ -125,7 +125,7 @@ registerHomeComponentConfig({
   // The band with its header and a row of cards: measured 394px at 393 wide
   // and 436px at 1440 (R-15); the text is clamped to five lines, so it holds.
   'custom-testimonials': {
-    className: 's-block s-block--custom-testimonials s-block--full-bg',
+    className: 's-block s-block--custom-testimonials',
     height: 'clamp(24.5rem, 30vw, 27.25rem)',
   },
   // Lazy placements (blocks 4+): reserve the loaded blocks' height and show the

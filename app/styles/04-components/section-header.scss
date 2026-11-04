@@ -1,8 +1,9 @@
 /* =========================================================================
-   Section headers (SectionHeader.tsx, R-06). One look for every section:
-   the title at text-2xl, text-3xl from 1024px, bold; «عرض الكل» in the accent
-   with an arrow. Salla's review (2026-11-04) found the titles small, the link
-   weak and the sections alike.
+   Section headers (SectionHeader.tsx) — Twig's (owner, 2026-11-05): the title
+   centred, «عرض الكل» under it, underlined in the text colour; «تجارب عملائنا»
+   aligned to the start. Salla's note on small type sets only the sizes: the
+   title at text-2xl, text-3xl from 1024px (Twig: text-lg), the link at
+   text-base (Twig: text-sm).
 
    The same rules reach the headers Salla's own components draw
    (`<salla-slider>`'s `.s-slider-block__title`) and the Twig-era markup some
@@ -11,11 +12,15 @@
 
 .section-header,
 .s-slider-block__title {
-  @apply mb-5 flex items-end justify-between gap-4 lg:mb-8;
+  @apply mb-5 flex flex-col gap-1 lg:mb-7;
 }
 
-.section-header__text {
-  @apply min-w-0;
+.section-header--center {
+  @apply items-center text-center;
+}
+
+.section-header--start {
+  @apply items-start text-start;
 }
 
 .section-header__title,
@@ -29,31 +34,24 @@ h2.s-block__title,
 
 .section-header__subtitle,
 .s-slider-block__title p {
-  @apply mt-1.5 text-base;
+  @apply m-0 text-base;
   color: var(--text-secondary);
 }
 
+/* A 44px target, as Twig's. */
 .section-header__all,
 .s-block__display-all,
 .s-slider-block__display-all {
-  @apply inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap text-base font-semibold no-underline transition-colors;
-  color: var(--color-accent-text);
+  @apply inline-flex min-h-11 items-center whitespace-nowrap text-base font-semibold underline underline-offset-4 transition-colors;
+  color: var(--main-text-color);
+  text-decoration-thickness: 1px;
 
   &:hover {
-    @apply underline underline-offset-4;
+    color: var(--text-secondary);
   }
 
   &:focus-visible {
     outline: var(--focus-ring-width) solid var(--focus-ring-color);
     outline-offset: var(--focus-ring-offset);
-  }
-}
-
-/* The arrow points forward: left in Arabic, right in English. */
-.section-header__arrow {
-  @apply h-5 w-5 shrink-0;
-
-  [dir='ltr'] & {
-    transform: scaleX(-1);
   }
 }

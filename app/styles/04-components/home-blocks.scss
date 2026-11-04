@@ -1025,12 +1025,13 @@
   Each s-block--{path} extends the original CSS classes it needs.
   RenderWhenVisible applies s-block s-block--${data.path} as className.
 */
+/* The same box as `.container`, so every section's content shares one edge
+   (the starter's 10px left the product rows 6px wider than the rest). */
 %salla-container {
   width: 100%;
   margin-right: auto;
   margin-left: auto;
-  padding-right: 10px;
-  padding-left: 10px;
+  padding-inline: var(--page-gutter);
   max-width: 1280px;
 }
 
@@ -1234,14 +1235,13 @@
 }
 
 /*
-  Custom testimonials (R-15) — a band on the section surface, edge to edge,
+  Custom testimonials (R-15) — Twig's section panel (section-panel.scss)
   around a row of whole cards on the card surface. Tokens throughout, so the
-  three steps (page, section, card) hold in dark mode as well.
+  three steps (page, panel, card) hold in dark mode as well.
   Markup: app/components/home/CustomTestimonials.tsx
 */
 .s-block--custom-testimonials {
-  @apply py-10 lg:py-16 overflow-hidden;
-  background-color: var(--surface-section);
+  @apply overflow-hidden;
 }
 
 /*
@@ -1367,6 +1367,69 @@ salla-reviews:not(:has(.s-reviews-swiper-slide)) {
 
   &__foot {
     @apply mt-4 flex justify-end;
+  }
+
+  /* `navPlacement="sides"`: the row's title alone above it, centred. */
+  &--sides &__head {
+    @apply justify-center;
+  }
+
+  &__stage {
+    @apply relative;
+  }
+
+  /* Twig's frosted arrows on either side of the row (owner, 2026-10-29): a
+     translucent disc that lets the picture read through and stays legible on
+     light or dark. From 1024px; phones swipe and read the dots. An arrow at
+     its end of the row goes rather than greying out. */
+  &__side {
+    display: none;
+
+    @media (min-width: 1024px) {
+      @apply absolute z-[2] inline-flex h-11 w-11 items-center justify-center rounded-full transition-colors;
+      inset-block-start: 40%;
+      transform: translateY(-50%);
+      background-color: color-mix(in srgb, var(--surface-card) 28%, transparent);
+      border: 1px solid color-mix(in srgb, var(--surface-card) 75%, transparent);
+      /* A light shadow so the disc still reads over a white card. */
+      box-shadow: 0 2px 10px rgb(0 0 0 / 0.12);
+      color: var(--main-text-color);
+      backdrop-filter: blur(8px);
+
+      &:hover {
+        background-color: color-mix(in srgb, var(--surface-card) 55%, transparent);
+      }
+
+      &:focus-visible {
+        outline: var(--focus-ring-width) solid var(--focus-ring-color);
+        outline-offset: var(--focus-ring-offset);
+      }
+
+      &:disabled {
+        @apply pointer-events-none opacity-0;
+      }
+
+      svg {
+        @apply h-5 w-5;
+      }
+
+      [dir='ltr'] & svg {
+        transform: scaleX(-1);
+      }
+    }
+  }
+
+  &__side--prev {
+    inset-inline-start: 0.75rem;
+  }
+
+  &__side--next {
+    inset-inline-end: 0.75rem;
+  }
+
+  /* The header carries its own spacing inside the row's head. */
+  &__head .section-header {
+    @apply mb-0;
   }
 
   &__nav {

@@ -17,6 +17,12 @@ export interface ScrollCarouselProps {
   nextLabel: string;
   /** Scroll forward one slide on a timer, back to the start at the end. Off by default. */
   autoPlay?: boolean;
+  /**
+   * `head` (default): arrows and a "1–4 of 8" count beside the title.
+   * `sides`: Twig's frosted arrows on either side of the row from 1024px, the
+   * title alone above it (a centred title leaves no room beside it).
+   */
+  navPlacement?: 'head' | 'sides';
 }
 
 /** One slide and the gap after it. */
@@ -83,6 +89,7 @@ export function ScrollCarousel({
   prevLabel,
   nextLabel,
   autoPlay = false,
+  navPlacement = 'head',
 }: ScrollCarouselProps) {
   const { t } = useTranslation();
   const track = useRef<HTMLDivElement>(null);
@@ -172,9 +179,46 @@ export function ScrollCarousel({
     </div>
   );
 
+  const sides = navPlacement === 'sides';
+  const sideNav = sides && !rail?.fits && rail && (
+    <>
+      <button
+        type="button"
+        className="scroll-carousel__side scroll-carousel__side--prev"
+        aria-label={prevLabel}
+        disabled={rail.atStart}
+        onClick={() => page(-1)}
+      >
+        <ArrowRightIcon aria-hidden="true" />
+      </button>
+      <button
+        type="button"
+        className="scroll-carousel__side scroll-carousel__side--next"
+        aria-label={nextLabel}
+        disabled={rail.atEnd}
+        onClick={() => page(1)}
+      >
+        <ArrowLeftIcon aria-hidden="true" />
+      </button>
+    </>
+  );
+
+  const trackEl = (
+    <div
+      ref={track}
+      className={['scroll-carousel__track hide-scroll', dragging && 'is-dragging', className]
+        .filter(Boolean)
+        .join(' ')}
+      onScroll={sync}
+      {...drag}
+    >
+      {children}
+    </div>
+  );
+
   return (
     <div
-      className="scroll-carousel"
+      className={`scroll-carousel${sides ? ' scroll-carousel--sides' : ''}`}
       {...(autoPlay && {
         onMouseEnter: () => {
           hovered.current = true;
@@ -196,24 +240,22 @@ export function ScrollCarousel({
       {heading && (
         <div className="scroll-carousel__head">
           <div className="scroll-carousel__heading">{heading}</div>
-          {nav}
+          {!sides && nav}
         </div>
       )}
 
-      <div
-        ref={track}
-        className={['scroll-carousel__track hide-scroll', dragging && 'is-dragging', className]
-          .filter(Boolean)
-          .join(' ')}
-        onScroll={sync}
-        {...drag}
-      >
-        {children}
-      </div>
+      {sides ? (
+        <div className="scroll-carousel__stage">
+          {trackEl}
+          {sideNav}
+        </div>
+      ) : (
+        trackEl
+      )}
 
       <CarouselDots track={track} visible={rail?.visible ?? 1} progress={rail?.progress ?? 0} />
 
-      {!heading && nav && <div className="scroll-carousel__foot">{nav}</div>}
+      {!heading && !sides && nav && <div className="scroll-carousel__foot">{nav}</div>}
     </div>
   );
 }

@@ -125,18 +125,33 @@ describe('section headers (R-06)', () => {
     expect(decls(root, sel, /min-width:\s*1024px/)['font-size']).toBe('1.875rem');
   });
 
-  it('puts «عرض الكل» in the accent at text-base', async () => {
+  it("centres the header and underlines «عرض الكل» in the ink at text-base (Twig, owner 2026-11-05)", async () => {
     const root = await compile('section-header.scss');
+    expect(decls(root, '.section-header--center')['text-align']).toBe('center');
     const link = decls(root, '.section-header__all');
-    expect(link.color).toBe('var(--color-accent-text)');
+    expect(link.color).toBe('var(--main-text-color)');
+    expect(link['text-decoration-line']).toBe('underline');
     expect(link['font-size']).toBe('1rem');
+    expect(link['min-height']).toBe('2.75rem');
   });
 
   it("reaches Salla's slider headers and the Twig-era markup too", async () => {
     const root = await compile('section-header.scss');
     expect(decls(root, '.s-slider-block__title h2')['font-size']).toBe('1.5rem');
     expect(decls(root, '.s-block__title h2')['font-size']).toBe('1.5rem');
-    expect(decls(root, '.s-slider-block__display-all').color).toBe('var(--color-accent-text)');
+    expect(decls(root, '.s-slider-block__display-all').color).toBe('var(--main-text-color)');
+  });
+});
+
+describe('the section panel (Twig, owner 2026-11-05)', () => {
+  it('panels the rows Twig panelled, on the section surface, and not the one-image sections', async () => {
+    const { readFileSync } = await import('node:fs');
+    const src = readFileSync(`${themeRoot}app/styles/04-components/section-panel.scss`, 'utf8');
+    for (const sel of ['.s-products-carousel', '.video-carousel', '.stories', '.s-testimonials', '.hotspot--list']) {
+      expect(src).toContain(sel);
+    }
+    expect(src).toMatch(/background-color: var\(--surface-section\)/);
+    expect(src).not.toMatch(/s-block--hero|partner-banner|hotspot--overlay/);
   });
 });
 
