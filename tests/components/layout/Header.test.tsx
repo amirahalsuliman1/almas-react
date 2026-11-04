@@ -218,12 +218,10 @@ describe('Header', () => {
     expect(container.querySelectorAll('.site-header__bar')).toHaveLength(1);
   });
 
-  it('puts the search icon and the colour toggle at the start, with the menu button', () => {
-    state.theme = { settings: { dark_mode_toggle: true } };
+  it('puts the search icon at the start, with the menu button', () => {
     const { container } = render(<Header />);
     const start = container.querySelector('.site-header__nav-toggle')!;
     expect(start.querySelector('.site-header__search')).toBeTruthy();
-    expect(start.querySelector('.site-header__color-mode')).toBeTruthy();
     expect(container.querySelector('.site-header__actions .site-header__search')).toBeNull();
   });
 
@@ -407,13 +405,9 @@ describe('Header', () => {
     expect(container.querySelector('.site-header__bar.is-scrolled')).toBeNull();
   });
 
-  it('shows the colour toggle only when the merchant allows it', () => {
-    state.theme = { settings: {} };
-    const first = render(<Header />);
-    expect(first.container.querySelector('.site-header__color-mode')).toBeNull();
-    first.unmount();
+  it('draws no colour toggle while dark mode is switched off, even if the old setting is on', () => {
     state.theme = { settings: { dark_mode_toggle: true } };
-    expect(render(<Header />).container.querySelector('.site-header__color-mode')).toBeTruthy();
+    expect(render(<Header />).container.querySelector('.site-header__color-mode')).toBeNull();
   });
 
   it('shows the band text on inner pages only', () => {

@@ -205,7 +205,7 @@
       "format": "image",
       "icon": "sicon-image",
       "id": "store_background_image",
-      "label": "صورة خلفية المتجر (الوضع الفاتح)",
+      "label": "صورة خلفية المتجر",
       "description": "اختيارية. تظهر خلف الأقسام.",
       "required": false,
       "value": null
@@ -273,102 +273,6 @@
     {
       "type": "static",
       "format": "title",
-      "id": "static-am-2",
-      "value": "<div class='rounded-lg' style='background-color: #21636d; display: flex; justify-content: center; align-items: center;padding: 15px;margin-bottom: 20px !important; flex-direction: column;gap: 15px;'><h6 style='color: #ffffff;font-size: 15px; font-weight: bold;'> الوضع اللوني</h6></div>",
-      "variant": "h6"
-    },
-    {
-      "id": "color_mode",
-      "type": "items",
-      "format": "dropdown-list",
-      "icon": "sicon-list",
-      "label": "الوضع اللوني",
-      "description": "«حسب إعداد المتجر» يتبع اختيار الوضع الداكن في إعدادات المتجر. «فاتح» و«داكن» ثابتان لكل الزوار. «حسب جهاز العميل» يتبع إعداد جهاز كل زائر.",
-      "source": "Manual",
-      "required": true,
-      "selected": [
-        {
-          "label": "حسب إعداد المتجر",
-          "value": "store",
-          "key": "color-mode-store"
-        }
-      ],
-      "options": [
-        {
-          "label": "حسب إعداد المتجر",
-          "value": "store",
-          "key": "color-mode-store"
-        },
-        {
-          "label": "فاتح",
-          "value": "light",
-          "key": "color-mode-light"
-        },
-        {
-          "label": "داكن",
-          "value": "dark",
-          "key": "color-mode-dark"
-        },
-        {
-          "label": "حسب جهاز العميل",
-          "value": "auto",
-          "key": "color-mode-auto"
-        }
-      ]
-    },
-    {
-      "type": "string",
-      "format": "color",
-      "id": "dark_color_page",
-      "icon": "sicon-format-fill",
-      "label": "لون خلفية الصفحة في الوضع الداكن",
-      "description": "اتركه فارغًا لاستخدام لون الثيم.",
-      "required": false,
-      "value": ""
-    },
-    {
-      "type": "string",
-      "format": "color",
-      "id": "dark_color_section",
-      "icon": "sicon-format-fill",
-      "label": "لون الأقسام في الوضع الداكن",
-      "description": "اتركه فارغًا لاستخدام لون الثيم.",
-      "required": false,
-      "value": ""
-    },
-    {
-      "type": "string",
-      "format": "color",
-      "id": "dark_color_card",
-      "icon": "sicon-format-fill",
-      "label": "لون البطاقات في الوضع الداكن",
-      "description": "اجعله أفتح من لون الأقسام لتبقى البطاقات واضحة.",
-      "required": false,
-      "value": ""
-    },
-    {
-      "type": "string",
-      "format": "color",
-      "id": "dark_color_text",
-      "icon": "sicon-format-fill",
-      "label": "لون النص في الوضع الداكن",
-      "description": "اتركه فارغًا لاستخدام لون الثيم.",
-      "required": false,
-      "value": ""
-    },
-    {
-      "type": "string",
-      "format": "image",
-      "icon": "sicon-image",
-      "id": "dark_background_image",
-      "label": "صورة خلفية المتجر (الوضع الداكن)",
-      "description": "اختيارية.",
-      "required": false,
-      "value": null
-    },
-    {
-      "type": "static",
-      "format": "title",
       "id": "static-am-3",
       "value": "<div class='rounded-lg' style='background-color: #21636d; display: flex; justify-content: center; align-items: center;padding: 15px;margin-bottom: 20px !important; flex-direction: column;gap: 15px;'><h6 style='color: #ffffff;font-size: 15px; font-weight: bold;'> الشعار</h6></div>",
       "variant": "h6"
@@ -389,17 +293,7 @@
       "icon": "sicon-image",
       "id": "logo_light",
       "label": "الشعار الأبيض فوق البنر (اختياري)",
-      "description": "يظهر في الرئيسية فوق صورة البنر، قبل أن يثبت رأس الصفحة. نسخة بيضاء من الشعار بخلفية شفافة. إذا تُرك فارغًا يُستخدم شعار الوضع الداكن.",
-      "required": false,
-      "value": null
-    },
-    {
-      "type": "string",
-      "format": "image",
-      "icon": "sicon-image",
-      "id": "dark_logo",
-      "label": "شعار الوضع الداكن (اختياري)",
-      "description": "يظهر بدل الشعار في الوضع الداكن، مثل نسخة فاتحة اللون من الشعار.",
+      "description": "يظهر في الرئيسية فوق صورة البنر، قبل أن يثبت رأس الصفحة. نسخة بيضاء من الشعار بخلفية شفافة. إذا تُرك فارغًا يبقى شعار المتجر.",
       "required": false,
       "value": null
     },
@@ -414,17 +308,6 @@
       "value": 44,
       "minValue": 24,
       "maxValue": 80
-    },
-    {
-      "type": "boolean",
-      "format": "switch",
-      "icon": "sicon-toggle-off",
-      "id": "dark_mode_toggle",
-      "label": "السماح للعميل بالتبديل بين الوضع الداكن والفاتح",
-      "description": "يظهر زر في رأس الصفحة، ويُحفظ اختيار العميل في متصفحه ويتقدم على «الوضع اللوني».",
-      "required": false,
-      "value": false,
-      "selected": false
     },
     {
       "type": "static",

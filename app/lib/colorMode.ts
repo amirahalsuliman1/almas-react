@@ -10,6 +10,14 @@
  * engine's own `body.color-mode-dark` does not decide the theme's colours.
  */
 export const COLOR_MODES = ['store', 'light', 'dark', 'auto'] as const;
+
+/**
+ * Dark mode is switched off for now (owner, 2026-11-05): the theme is light for
+ * every visitor whatever the setting, the store flag or the device say, the
+ * visitor toggle is not drawn, and the dark settings are out of the editor.
+ * The code stays, so turning it back on is this flag plus the settings.
+ */
+export const DARK_MODE_ENABLED = false;
 export type ColorMode = (typeof COLOR_MODES)[number];
 
 export const DARK_CLASS = 'dark';

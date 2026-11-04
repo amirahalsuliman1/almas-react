@@ -18,6 +18,7 @@ import { HeaderNav } from './HeaderNav';
 import { PageAdvertisements } from './PageAdvertisements';
 import { AnnouncementBar } from './AnnouncementBar';
 import { ColorModeToggle } from './ColorModeToggle';
+import { DARK_MODE_ENABLED } from '../../lib/colorMode';
 
 /** Opens the Salla search modal (the `<SallaSearch />` at the end of the header). */
 const openSearch = () => window.salla?.event?.dispatch('search::open');
@@ -266,7 +267,7 @@ export function Header({ navOpen: navOpenProp, onNavOpenChange }: HeaderProps = 
               )}
               {/* An icon that opens Salla's search bar (owner, 2026-11-05). */}
               <SearchButton label={searchLabel} />
-              {headerSettings?.dark_mode_toggle === true && <ColorModeToggle />}
+              {DARK_MODE_ENABLED && headerSettings?.dark_mode_toggle === true && <ColorModeToggle />}
             </div>
 
             <a className="site-header__brand" href={store?.url || '/'}>

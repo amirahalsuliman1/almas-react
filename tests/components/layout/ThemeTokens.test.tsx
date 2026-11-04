@@ -86,26 +86,13 @@ describe('ThemeTokens — colour panel', () => {
   });
 });
 
-describe('ThemeTokens — colour mode', () => {
-  it('a light store paints light: no script', () => {
-    expect(render()).not.toContain('<script');
-  });
-
-  it('marks <html> dark before paint in dark mode', () => {
-    theme.settings = { color_mode: 'dark' };
-    expect(render()).toContain("document.documentElement.classList.add('dark')");
-  });
-
-  it('follows a dark store before paint, and a fixed light mode ignores it', () => {
-    theme.color = { is_dark: true };
-    expect(render()).toContain("classList.add('dark')");
-    theme.settings = { color_mode: [{ value: 'light' }] };
-    expect(render()).not.toContain('<script');
-  });
-
-  it('auto adds the before-paint device check', () => {
-    theme.settings = { color_mode: 'auto' };
-    expect(render()).toContain('prefers-color-scheme: dark');
+describe('ThemeTokens — colour mode, switched off for now (owner, 2026-11-05)', () => {
+  it('paints light whatever the setting, the store flag, the device or the visitor toggle', () => {
+    for (const settings of [{}, { color_mode: 'dark' }, { color_mode: 'auto' }, { dark_mode_toggle: true }]) {
+      theme.settings = settings;
+      theme.color = { is_dark: true };
+      expect(render(), JSON.stringify(settings)).not.toContain('<script');
+    }
   });
 });
 
@@ -124,14 +111,7 @@ describe('manifest', () => {
       'button_style',
       'page_gutter',
       'store_background_image',
-      'color_mode',
-      'dark_color_page',
-      'dark_color_section',
-      'dark_color_card',
-      'dark_color_text',
-      'dark_background_image',
       'logo_main',
-      'dark_logo',
       'header_logo_height',
     ]) {
       expect(setting(id), id).toBeDefined();
@@ -142,8 +122,10 @@ describe('manifest', () => {
     expect(setting('header_layout')?.selected?.[0]?.value).toBe('default');
   });
 
-  it('defaults the colour mode to the store setting', () => {
-    expect(setting('color_mode')?.selected?.[0]?.value).toBe('store');
+  it('leaves the dark-mode settings out of the editor while dark mode is off', () => {
+    for (const id of ['color_mode', 'dark_color_page', 'dark_color_card', 'dark_logo', 'dark_mode_toggle']) {
+      expect(setting(id), id).toBeUndefined();
+    }
   });
 });
 

@@ -1,6 +1,6 @@
 import { useTwilight } from '@salla.sa/twilight-theme-engine/providers';
 import { inkOn, normaliseHex } from '../../lib/accent';
-import { beforePaintScript, COLOR_MODES, DARK_SELECTOR } from '../../lib/colorMode';
+import { beforePaintScript, COLOR_MODES, DARK_MODE_ENABLED, DARK_SELECTOR } from '../../lib/colorMode';
 import { useColorMode } from '../../hooks/useColorMode';
 import { clampedInteger, safeImageUrl, selectedValue } from '../../lib/settings';
 
@@ -70,10 +70,11 @@ export function gradientRules(settings: Record<string, unknown>): string {
 export function ThemeTokens() {
   const { theme } = useTwilight();
   const settings = (theme?.settings ?? {}) as Record<string, unknown>;
-  const mode = selectedValue(settings.color_mode, COLOR_MODES, 'store');
+  // With dark mode switched off (colorMode.ts) the page is light, full stop.
+  const mode = DARK_MODE_ENABLED ? selectedValue(settings.color_mode, COLOR_MODES, 'store') : 'light';
 
-  const storeIsDark = theme?.color?.is_dark === true;
-  const visitorToggle = settings.dark_mode_toggle === true;
+  const storeIsDark = DARK_MODE_ENABLED && theme?.color?.is_dark === true;
+  const visitorToggle = DARK_MODE_ENABLED && settings.dark_mode_toggle === true;
   useColorMode(mode, storeIsDark, visitorToggle);
 
   const light = colorDeclarations(settings, LIGHT_COLORS);
