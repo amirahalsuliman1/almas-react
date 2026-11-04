@@ -156,17 +156,18 @@ describe('the hero (R-07)', () => {
     expect(cta['min-height']).toBe('3rem');
   });
 
-  it('reserves the photograph shape on phones and a fixed height on desktop (no CLS)', async () => {
+  it("reserves Twig's shapes: 5:7 on a phone, 4:3 on a tablet, 31:20 from 1024px (no CLS)", async () => {
     const root = await compile('hero.scss');
     expect(decls(root, '.hero__image')['aspect-ratio']).toMatch(/^900\s*\/\s*1260$/);
-    expect(decls(root, '.hero__slide', /min-width:\s*1024px/)['block-size']).toMatch(/^clamp\(/);
+    expect(decls(root, '.hero__image', /min-width:\s*768px/)['aspect-ratio']).toMatch(/^4\s*\/\s*3$/);
+    expect(decls(root, '.hero__image', /min-width:\s*1024px/)['aspect-ratio']).toMatch(/^31\s*\/\s*20$/);
   });
 
-  it('copy and photograph share the desktop row', async () => {
+  it('lays the copy over the photograph at every width, never beside it (Twig, owner 2026-11-05)', async () => {
     const root = await compile('hero.scss');
-    expect(decls(root, '.hero__slide', /min-width:\s*1024px/)['grid-template-columns']).toBe(
-      'minmax(0, 5fr) minmax(0, 7fr)'
-    );
+    expect(decls(root, '.hero__content')['grid-area'].replace(/\s/g, '')).toBe('1/1');
+    expect(decls(root, '.hero__slide', /min-width:\s*1024px/)['grid-template-columns']).toBeUndefined();
+    expect(decls(root, '.hero__content', /min-width:\s*1024px/)['grid-area']).toBeUndefined();
   });
 });
 

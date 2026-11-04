@@ -1,7 +1,8 @@
 /* =========================================================================
-   Site header — rebuilt: centered, two rows.
-   Row 1: actions (account · cart · search) — logo — menu button
-   Row 2: store name, description, social links
+   Site header — Twig's one bar (owner, 2026-11-05).
+   Row 1: menu · search · colour mode — logo — branch · cart · account
+   Row 2 (from 1024px, `default`): the category row; (`lite`): the store info
+   On Home, over the hero when it is the first section: see the end of file.
    Markup: app/components/layout/Header.tsx + HeaderNav.tsx
    (mounted via <TwilightProvider layout={ThemeLayout}>).
    ========================================================================= */
@@ -769,10 +770,9 @@ html.dark .site-header__brand .brand-logo--dark {
 
 /* =========================================================================
    "Default" header layout (`header_layout: default`) — desktop (`lg+`) only.
-   Adds a top bar (footer menu + language / branch / currency switchers) and a
-   row of logo · horizontal `<salla-menu>` mega-menu · action icons. Below `lg`
-   everything here is hidden and the shared mobile bar (the unprefixed rules
-   above) takes over unchanged. Markup: Header.tsx + HeaderTopnav.tsx.
+   Twig's bar plus a second row of category links (the horizontal
+   `<salla-menu>`). Below `lg` the shared bar above takes over unchanged.
+   Markup: Header.tsx + HeaderMainMenu.tsx.
    ========================================================================= */
 
 /* Zero-height flow marker at the main bar's resting position. `Header.tsx`
@@ -783,163 +783,10 @@ html.dark .site-header__brand .brand-logo--dark {
   @apply h-0;
 }
 
-/* --- top bar ----------------------------------------------------------- */
-.site-header__topnav {
-  @apply hidden border-b text-sm lg:block;
-  background-color: var(--surface-header);
-  border-color: var(--border-subtle);
-  color: var(--text-secondary);
-}
-
-.site-header__topnav-inner {
-  @apply flex min-h-[40px] items-center justify-between gap-6;
-}
-
-/* `<salla-menu topnav>` renders `.s-menu-topnav-list` — a plain row of links. */
-.site-header__topnav-menu {
-  @apply min-w-0;
-
-  .s-menu-topnav-list {
-    @apply flex flex-wrap items-center gap-y-1;
-  }
-
-  a {
-    @apply whitespace-nowrap transition-colors;
-    color: var(--text-secondary);
-
-    &:hover {
-      color: var(--color-accent-text);
-    }
-  }
-
-  /* The divider is each item's inline-end border. Equal padding on both of its
-     sides, and no column gap after it, keeps it centred between two links in
-     either direction. */
-  .s-menu-topnav-item {
-    @apply px-3;
-
-    &:first-child {
-      @apply ps-0;
-    }
-
-    &:last-child {
-      @apply pe-0;
-    }
-  }
-}
-
-/* While `<salla-menu>` hydrates, the components library shows its menu
-   skeleton (`MenuColumnSkeleton`: three full-width 18px bars, stacked), which
-   made the top bar three rows tall. The bar is one row of links, so the
-   placeholder is one short line. The library sets each bar's size inline. */
-.site-header__topnav-inner .s-skeleton-menu-columns {
-  @apply flex items-center;
-
-  .s-skeleton-wrapper {
-    width: 16rem !important;
-    height: 0.75rem !important;
-
-    &:not(:first-child) {
-      @apply hidden;
-    }
-  }
-}
-
-/* `ms-auto` keeps the switchers on the end side when `important_links` is off
-   and they are the bar's only child. */
-.site-header__topnav-actions {
-  @apply ms-auto flex shrink-0 items-center gap-1;
-}
-
-.site-header__topnav-action {
-  @apply inline-flex items-center gap-1.5 rounded-full px-2 py-1 transition-colors;
-  color: var(--text-header);
-
-  &:hover {
-    background-color: color-mix(in srgb, var(--text-header) 8%, transparent);
-    color: var(--color-accent-text);
-  }
-}
-
-.site-header__topnav-action + .site-header__topnav-action {
-  @apply relative;
-
-  &::before {
-    content: '';
-    @apply absolute inset-y-1.5 w-px;
-    background-color: var(--border-subtle);
-    inset-inline-start: -2px;
-  }
-}
-
-/* Phone and email (`TopnavContacts`): set off from the switchers by the same
-   divider line the switchers use between themselves. */
-.site-header__topnav-contacts {
-  @apply relative flex items-center gap-1 ps-1;
-
-  .site-header__topnav-action + &::before {
-    content: '';
-    @apply absolute inset-y-1.5 w-px;
-    background-color: var(--border-subtle);
-    inset-inline-start: -2px;
-  }
-}
-
-.site-header__topnav-contact {
-  @apply inline-flex items-center gap-1.5 rounded-full px-2 py-1 transition-colors;
-  color: var(--text-header);
-
-  &:hover {
-    background-color: color-mix(in srgb, var(--text-header) 8%, transparent);
-    color: var(--color-accent-text);
-  }
-}
-
-.site-header__topnav-action-label {
-  @apply max-w-[10rem] truncate font-medium;
-}
-
-.site-header__topnav-icon {
-  @apply h-4 w-4 shrink-0;
-  color: var(--text-secondary);
-}
-
-.site-header__topnav-caret {
-  @apply h-3 w-3 shrink-0;
-  color: var(--text-secondary);
-}
-
-/* `topnav_is_dark` setting: the engine adds `topnav-is-dark` to <body>. */
-body.topnav-is-dark .site-header__topnav {
-  @apply border-gray-300/10 bg-dark text-gray-300;
-
-  .site-header__topnav-menu a,
-  .site-header__topnav-action,
-  .site-header__topnav-contact,
-  .site-header__topnav-icon,
-  .site-header__topnav-caret {
-    @apply text-gray-300;
-  }
-
-  .site-header__topnav-menu a,
-  .site-header__topnav-action,
-  .site-header__topnav-contact {
-    @apply hover:opacity-80;
-  }
-
-  .site-header__topnav-action,
-  .site-header__topnav-contact {
-    @apply hover:bg-gray-100/[0.15];
-  }
-
-  .site-header__topnav-action + .site-header__topnav-action::before,
-  .site-header__topnav-action + .site-header__topnav-contacts::before {
-    @apply bg-gray-300/10;
-  }
-}
-
-/* The lite layout has no top bar, so the setting darkens its only bar. */
-body.topnav-is-dark .site-header--lite .site-header__bar {
+/* `topnav_is_dark` (the engine adds `topnav-is-dark` to <body>): with no top
+   bar any more (Twig's one bar), the setting darkens the header's only bar.
+   The bar over the hero on Home keeps its own transparent state. */
+body.topnav-is-dark .site-header__bar {
   @apply bg-dark;
 
   &.is-scrolled {
@@ -967,19 +814,24 @@ body.topnav-is-dark .site-header--lite .site-header__bar {
 
 /* --- main row (logo · menu · actions) --------------------------------- */
 @media (min-width: 1024px) {
-  /* burger → out, logo pins to the start, the mega-menu fills the middle. */
-  .site-header--default .site-header__nav-toggle {
-    @apply hidden;
-  }
-
+  /* Twig's bar stays as it is — menu and search at the start, the logo
+     centred, the actions at the end — and the category row takes a second
+     line under it, the whole width (owner, 2026-11-05). */
   .site-header--default .site-header__bar-inner {
     @apply relative;
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    gap: 2rem;
+    row-gap: 0;
   }
 
-  .site-header--default .site-header__brand {
-    @apply justify-self-start;
+  .site-header--default .site-header__actions {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .site-header--default .site-header__mainmenu {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    @apply justify-center;
+    min-height: 3rem;
   }
 
   /* The store-name / description / social row isn't part of this layout. */
@@ -1249,4 +1101,79 @@ body.topnav-is-dark .site-header--lite .site-header__bar {
 
 .site-header__mainmenu {
   @apply hidden;
+}
+
+/* =========================================================================
+   Home — the bar over the hero (Twig's overlay header, owner 2026-11-05).
+   Only when the hero is the page's first section, so no other block is ever
+   covered. The bar leaves the flow (its outer box reserves nothing) and sits
+   on the hero card, transparent, in white; as it pins (`is-scrolled`) it
+   turns back into the solid bar. Every colour inside follows `--text-header`
+   and `--color-icon`, so redefining them here repaints the whole row.
+   ========================================================================= */
+.app-inner:has(> main > .s-block--hero:first-of-type) .site-header--home {
+  .site-header__bar-outer {
+    @apply relative z-40;
+    min-height: 0;
+    height: 0;
+  }
+
+  .site-header__bar:not(.is-scrolled) {
+    @apply absolute inset-x-0 top-0;
+    /* The hero's own top margin, so the bar starts on the card. */
+    padding-block-start: 1.25rem;
+    /* The hero's veil darkens the card's top under the bar (hero.scss). */
+    background-color: transparent;
+    border-color: transparent;
+    box-shadow: none;
+    text-shadow: 0 1px 3px rgb(0 0 0 / 0.35);
+    --text-header: var(--on-media);
+    --color-icon: var(--on-media);
+    color: var(--on-media);
+
+    /* Inside the card's rounded corners rather than on its edge: the card
+       spans the container's content box, so the gutter plus an inset. */
+    .site-header__bar-inner {
+      padding-inline: calc(var(--page-gutter) + 0.75rem);
+
+      @media (min-width: 1024px) {
+        padding-inline: calc(var(--page-gutter) + 1.5rem);
+      }
+    }
+
+    .header-action:focus-visible,
+    .s-menu-root-level > a:focus-visible {
+      outline-color: var(--on-media);
+    }
+
+    .s-cart-summary-total,
+    .s-cart-summary-count {
+      color: inherit;
+    }
+  }
+
+  /* The white mark over the photograph; the brand logo once the bar is solid. */
+  &.has-overlay-logo .site-header__bar:not(.is-scrolled) .site-header__brand {
+    .brand-logo--main,
+    .brand-logo--dark {
+      display: none;
+    }
+  }
+}
+
+.site-header__brand .brand-logo--overlay {
+  display: none;
+}
+
+.app-inner:has(> main > .s-block--hero:first-of-type)
+  .site-header--home.has-overlay-logo
+  .site-header__bar:not(.is-scrolled)
+  .brand-logo--overlay {
+  display: block;
+}
+
+@media (min-width: 1024px) {
+  .app-inner:has(> main > .s-block--hero:first-of-type) .site-header--home .site-header__bar:not(.is-scrolled) {
+    padding-block-start: 1.5rem;
+  }
 }

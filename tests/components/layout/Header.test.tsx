@@ -82,7 +82,26 @@ vi.mock('@salla.sa/twilight-components-react/cart-summary', () => ({
   ),
 }));
 
+// The pin observer: tests flip the sentinel out of view through `observers`.
+const observers: { cb: (entries: { isIntersecting: boolean }[]) => void }[] = [];
+class FakeIntersectionObserver {
+  cb: (entries: { isIntersecting: boolean }[]) => void;
+  constructor(cb: (entries: { isIntersecting: boolean }[]) => void) {
+    this.cb = cb;
+    observers.push(this);
+  }
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+const scrollPastSentinel = () =>
+  act(() => {
+    observers.forEach((o) => o.cb([{ isIntersecting: false }]));
+  });
+
 beforeEach(() => {
+  observers.length = 0;
+  vi.stubGlobal('IntersectionObserver', FakeIntersectionObserver);
   state.store = {
     url: '/',
     name: 'Acme',
@@ -192,39 +211,55 @@ describe('Header', () => {
     expect(intro?.querySelector('a[href^="tel:"], a[href^="mailto:"]')).toBeNull();
   });
 
-  it("server-renders the store's phone and email in the default layout's top bar", () => {
-    vi.stubGlobal(
-      'IntersectionObserver',
-      class {
-        observe() {}
-        unobserve() {}
-        disconnect() {}
-      }
-    );
+  it('draws one bar, with no top bar above it (Twig), in either layout', () => {
     state.theme = { settings: { header_layout: 'default' } };
-    state.store = { ...state.store, contacts: { phone: '8001111210', email: 'hi@acme.test' } };
     const { container } = render(<Header />);
-    const contacts = container.querySelector('[data-testid="store-header-contacts"]')!;
-    // Plain links, not a web component that fills in after the SDK loads.
-    expect(contacts.tagName).toBe('DIV');
-    expect(contacts.querySelector('a[href="tel:8001111210"]')?.textContent).toBe('8001111210');
-    expect(contacts.querySelector('a[href="mailto:hi@acme.test"]')?.textContent).toBe('hi@acme.test');
+    expect(container.querySelector('.site-header__topnav')).toBeNull();
+    expect(container.querySelectorAll('.site-header__bar')).toHaveLength(1);
   });
 
-  it('leaves the contacts out of the top bar when the store has neither phone nor email', () => {
-    vi.stubGlobal(
-      'IntersectionObserver',
-      class {
-        observe() {}
-        unobserve() {}
-        disconnect() {}
-      }
-    );
-    state.theme = { settings: { header_layout: 'default' } };
-    state.store = { ...state.store, contacts: { whatsapp: '966500000000' } };
+  it('puts the search icon and the colour toggle at the start, with the menu button', () => {
+    state.theme = { settings: { dark_mode_toggle: true } };
     const { container } = render(<Header />);
-    expect(container.querySelector('.site-header__topnav')).toBeTruthy();
-    expect(container.querySelector('[data-testid="store-header-contacts"]')).toBeNull();
+    const start = container.querySelector('.site-header__nav-toggle')!;
+    expect(start.querySelector('.site-header__search')).toBeTruthy();
+    expect(start.querySelector('.site-header__color-mode')).toBeTruthy();
+    expect(container.querySelector('.site-header__actions .site-header__search')).toBeNull();
+  });
+
+  it('keeps the account at the outer edge, after the cart, as Twig does', () => {
+    const { container } = render(<Header />);
+    const tags = [...container.querySelector('.site-header__actions')!.children].map((el) => el.tagName.toLowerCase());
+    expect(tags.indexOf('salla-cart-summary')).toBeLessThan(tags.indexOf('salla-user-menu'));
+  });
+
+  it('puts the category row after the actions in the default layout, and none in lite', () => {
+    state.theme = { settings: { header_layout: 'default' } };
+    const { container, unmount } = render(<Header />);
+    const inner = container.querySelector('.site-header__bar-inner')!;
+    const order = [...inner.children].map((el) => el.className);
+    expect(order.indexOf('site-header__mainmenu')).toBeGreaterThan(order.indexOf('site-header__actions'));
+    unmount();
+    state.theme = { settings: { header_layout: 'lite' } };
+    expect(render(<Header />).container.querySelector('.site-header__mainmenu')).toBeNull();
+  });
+
+  it('adds the white logo over the hero on Home: logo_light, else the dark logo', () => {
+    state.routeIds = [HOME_ROUTE_ID];
+    state.theme = { settings: { logo_light: 'white.png', dark_logo: 'dark.png' } };
+    const first = render(<Header />);
+    expect(first.container.querySelector('.brand-logo--overlay')?.getAttribute('src')).toBe('white.png');
+    expect(first.container.querySelector('.site-header')?.className).toContain('has-overlay-logo');
+    first.unmount();
+
+    state.theme = { settings: { dark_logo: 'dark.png' } };
+    const second = render(<Header />);
+    expect(second.container.querySelector('.brand-logo--overlay')?.getAttribute('src')).toBe('dark.png');
+    second.unmount();
+
+    state.routeIds = [];
+    state.theme = { settings: { logo_light: 'white.png' } };
+    expect(render(<Header />).container.querySelector('.brand-logo--overlay')).toBeNull();
   });
 
   it('omits the description block when the store has none', () => {
@@ -318,11 +353,15 @@ describe('Header', () => {
     expect(dispatch).toHaveBeenCalledWith('search::open');
   });
 
-  it('pins the bar on scroll by default (header_is_sticky unset)', () => {
-    const { container } = render(<Header />);
-    Object.defineProperty(window, 'scrollY', { value: 10, configurable: true });
-    fireEvent.scroll(window);
-    expect(container.querySelector('.site-header__bar.is-scrolled')).toBeTruthy();
+  it('pins the bar once its sentinel leaves the screen, in either layout (header_is_sticky unset)', () => {
+    for (const layout of ['lite', 'default']) {
+      state.theme = { settings: { header_layout: layout } };
+      const { container, unmount } = render(<Header />);
+      expect(container.querySelector('.site-header__bar.is-scrolled')).toBeNull();
+      scrollPastSentinel();
+      expect(container.querySelector('.site-header__bar.is-scrolled')).toBeTruthy();
+      unmount();
+    }
   });
 
   it("pins the default layout at the Salla app's status bar line, and follows the inset", async () => {
@@ -364,8 +403,7 @@ describe('Header', () => {
       settings: { announcement_sticky: true, announcement_text: 'خصم' },
     };
     const { container } = render(<Header />);
-    Object.defineProperty(window, 'scrollY', { value: 200, configurable: true });
-    fireEvent.scroll(window);
+    scrollPastSentinel();
     expect(container.querySelector('.site-header__bar.is-scrolled')).toBeNull();
   });
 
@@ -388,8 +426,7 @@ describe('Header', () => {
   it('never pins the bar when header_is_sticky is disabled', () => {
     state.theme = { settings: { header_is_sticky: false } };
     const { container } = render(<Header />);
-    Object.defineProperty(window, 'scrollY', { value: 10, configurable: true });
-    fireEvent.scroll(window);
+    scrollPastSentinel();
     expect(container.querySelector('.site-header__bar.is-scrolled')).toBeNull();
   });
 

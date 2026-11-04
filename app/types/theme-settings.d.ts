@@ -24,6 +24,8 @@ declare module '@salla.sa/twilight-theme-engine/types' {
     dark_background_image?: string;
     logo_main?: string;
     dark_logo?: string;
+    /** The white logo over the hero on Home. */
+    logo_light?: string;
     header_logo_height?: number | string;
     dark_mode_toggle?: boolean;
     announcement_enabled?: boolean;

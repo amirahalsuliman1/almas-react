@@ -15,7 +15,6 @@ import { HOME_ROUTE_ID, PRODUCT_ROUTE_ID } from '../../lib/routeIds';
 import { textValue } from '../../lib/settings';
 import { HeaderMainMenu } from './HeaderMainMenu';
 import { HeaderNav } from './HeaderNav';
-import { HeaderTopnav } from './HeaderTopnav';
 import { PageAdvertisements } from './PageAdvertisements';
 import { AnnouncementBar } from './AnnouncementBar';
 import { ColorModeToggle } from './ColorModeToggle';
@@ -94,13 +93,15 @@ function HeaderIntro({ isHomePage }: { isHomePage: boolean }) {
 /**
  * Rebuilt storefront header — swapped in via `<TwilightProvider layout={ThemeLayout}>`.
  *
- * Two layouts, chosen by the `header_layout` theme setting:
- *  - **lite** (default): centered logo, a menu button that opens the slide-in
- *    drawer, action icons, then a store-name / description / social row.
- *  - **default**: a `lg+` top bar ({@link HeaderTopnav}) with the footer menu +
- *    language / branch / currency switchers, then a row of logo · horizontal
- *    mega-menu (`HeaderMainMenu`) · action icons. Below `lg` it collapses to the
- *    same mobile bar as lite (burger + drawer + icons).
+ * The Twig header (owner, 2026-11-05): one bar — the menu button, the search
+ * icon and the colour-mode toggle at the start, the logo centred, branch, cart
+ * and account at the end. On Home, when the hero is the first section, the bar
+ * sits over it, transparent with the white logo, and turns solid as it pins.
+ * The `header_layout` setting chooses what sits under the bar from 1024px:
+ *  - **default**: a row of category links (`HeaderMainMenu`), the one addition
+ *    to the Twig header, so categories are in the first screen;
+ *  - **lite**: nothing, or the store-name / description / social row when
+ *    `header_show_store_info` is on.
  *
  * The menu opens a slide-in drawer at every breakpoint ({@link HeaderNav}); the
  * search icon opens the Salla search modal through the `search::open` event
@@ -177,27 +178,16 @@ export function Header({ navOpen: navOpenProp, onNavOpenChange }: HeaderProps = 
   // pin when the sentinel reaches that line, not the screen's top edge.
   const safeTop = useAppSafeAreaTop();
 
-  // Pin the main bar on scroll.
-  //  - lite: near-immediately, once the page moves off the top;
-  //  - default: only once the whole stack above the bar (ad + top bar) has
-  //    scrolled away and the bar itself reaches the viewport edge. An
-  //    IntersectionObserver on a zero-height sentinel does this without the
-  //    boundary flicker a scrollY threshold would have (the sentinel keeps its
-  //    place when the bar goes `position: fixed`, since `__bar-outer` reserves
-  //    the height).
+  // Pin the main bar once the rows above it (announcement, ad) have scrolled
+  // away and the bar reaches the viewport edge. An IntersectionObserver on a
+  // zero-height sentinel does this without the flicker a scrollY threshold
+  // would have. On Home the bar starts over the hero (Twig's overlay header)
+  // and turns solid at the same moment it pins.
   useEffect(() => {
     if (!stickyEnabled) {
       setScrolled(false);
       return;
     }
-
-    if (!isDefaultLayout) {
-      const onScroll = () => setScrolled(window.scrollY > 4);
-      onScroll();
-      window.addEventListener('scroll', onScroll, { passive: true });
-      return () => window.removeEventListener('scroll', onScroll);
-    }
-
     const sentinel = stickySentinelRef.current;
     if (!sentinel) return;
     const observer = new IntersectionObserver(([entry]) => setScrolled(!entry.isIntersecting), {
@@ -206,21 +196,24 @@ export function Header({ navOpen: navOpenProp, onNavOpenChange }: HeaderProps = 
     });
     observer.observe(sentinel);
     return () => observer.disconnect();
-  }, [isDefaultLayout, stickyEnabled, safeTop]);
+  }, [stickyEnabled, safeTop]);
 
   const searchLabel = t('blocks.header.search', 'Search');
   // The theme's own logo (`logo_main`) stands in for the store logo, which on
   // a store whose identity sits behind an SMS code cannot be changed; empty, the
   // store logo is used. `dark_logo` replaces it in dark mode (header.scss).
-  const settings = theme?.settings as { logo_main?: string; dark_logo?: string } | undefined;
+  const settings = theme?.settings as { logo_main?: string; dark_logo?: string; logo_light?: string } | undefined;
   const brandLogo = settings?.logo_main || store?.logo;
   const darkLogo = settings?.dark_logo || undefined;
+  // Over the hero on Home the white mark: `logo_light`, else the dark-mode logo
+  // (light by nature); with neither, the brand logo stays (header.scss).
+  const overlayLogo = isHomePage ? settings?.logo_light || darkLogo : undefined;
 
   return (
     <header
       className={`site-header site-header--${isDefaultLayout ? 'default' : 'lite'}${
         isProductPage ? ' site-header--product' : ''
-      }${isHomePage ? ' site-header--home' : ''}`}
+      }${isHomePage ? ' site-header--home' : ''}${overlayLogo ? ' has-overlay-logo' : ''}`}
       suppressHydrationWarning
     >
       {/* The status bar's height inside the Salla app; nothing in a browser (header.scss). */}
@@ -239,19 +232,15 @@ export function Header({ navOpen: navOpenProp, onNavOpenChange }: HeaderProps = 
       <div className="site-header__bullet lg:hidden">
         <salla-bullet-delivery-tag data-testid="store-header-bullet-delivery-mobile" />
       </div>
-      {isDefaultLayout ? (
-        <HeaderTopnav />
-      ) : (
-        <div className="site-header__bullet site-header__bullet--desktop hidden lg:block">
-          <div className="container">
-            <salla-bullet-delivery-tag data-testid="store-header-bullet-delivery-desktop" />
-          </div>
+      {/* One bar, not two (Twig): the old top bar's language, currency and
+          branch switchers live in the menu drawer's foot. */}
+      <div className="site-header__bullet site-header__bullet--desktop hidden lg:block">
+        <div className="container">
+          <salla-bullet-delivery-tag data-testid="store-header-bullet-delivery-desktop" />
         </div>
-      )}
+      </div>
 
-      {isDefaultLayout && (
-        <div ref={stickySentinelRef} className="site-header__sticky-sentinel" aria-hidden="true" />
-      )}
+      <div ref={stickySentinelRef} className="site-header__sticky-sentinel" aria-hidden="true" />
 
       <div className="site-header__bar-outer">
         <div className={`site-header__bar${scrolled ? ' is-scrolled' : ''}`}>
@@ -275,9 +264,15 @@ export function Header({ navOpen: navOpenProp, onNavOpenChange }: HeaderProps = 
                   </span>
                 </button>
               )}
+              {/* An icon that opens Salla's search bar (owner, 2026-11-05). */}
+              <SearchButton label={searchLabel} />
+              {headerSettings?.dark_mode_toggle === true && <ColorModeToggle />}
             </div>
 
             <a className="site-header__brand" href={store?.url || '/'}>
+              {overlayLogo && (
+                <Image className="brand-logo--overlay" src={overlayLogo} alt="" priority width={140} height={48} />
+              )}
               <Image
                 className="brand-logo--main"
                 src={brandLogo}
@@ -300,6 +295,19 @@ export function Header({ navOpen: navOpenProp, onNavOpenChange }: HeaderProps = 
               <BrandName className="sr-only">{store?.name || 'Store'}</BrandName>
             </a>
 
+            {/* Twig's order: branch, cart, then the account at the outer edge. */}
+            <div className="site-header__actions">
+              {store?.scope && (
+                <ScopeButton label={store.scope.name || t('blocks.header.branches', 'Branches')} />
+              )}
+              <SallaCartSummary className="header-action">
+                <ShoppingBagIcon slot="icon" aria-hidden="true" />
+              </SallaCartSummary>
+              <SallaUserMenu avatarOnly showHeader relativeDropdown className="header-action" />
+            </div>
+
+            {/* The category row, under the bar from 1024px: after the actions in
+                the source, as it is in reading order. */}
             {isDefaultLayout && (
               <nav
                 className="site-header__mainmenu"
@@ -308,18 +316,6 @@ export function Header({ navOpen: navOpenProp, onNavOpenChange }: HeaderProps = 
                 <HeaderMainMenu />
               </nav>
             )}
-
-            <div className="site-header__actions">
-              <SallaUserMenu avatarOnly showHeader relativeDropdown className="header-action" />
-              {store?.scope && (
-                <ScopeButton label={store.scope.name || t('blocks.header.branches', 'Branches')} />
-              )}
-              <SallaCartSummary className="header-action">
-                <ShoppingBagIcon slot="icon" aria-hidden="true" />
-              </SallaCartSummary>
-              <SearchButton label={searchLabel} />
-              {headerSettings?.dark_mode_toggle === true && <ColorModeToggle />}
-            </div>
           </div>
         </div>
       </div>

@@ -102,6 +102,12 @@ function Slide({
         />
       </picture>
       <span className="hero__scrim" aria-hidden="true" />
+      {url && (
+        // Twig's stretched link: a pointer anywhere on the photograph follows
+        // the slide. Kept out of the tab order and the accessibility tree —
+        // «تسوق الآن» is the same destination for both.
+        <a className="hero__link" href={url} tabIndex={-1} aria-hidden="true" />
+      )}
 
       {(headline || subtitle || cta || hasStrip) && (
         <div className="hero__content">
@@ -133,11 +139,11 @@ function Slide({
 }
 
 /**
- * `home.hero` — the first screen (R-07, REDESIGN-2026-11.md). Each slide has a
- * headline, a subline and a filled accent «تسوق الآن» the merchant names and
- * links. On a phone the copy sits over the bottom of the photograph; from
- * 1024px the photograph and the copy share the row, so neither crowds the
- * other — Salla's review found the old hero all image, no headline, no CTA.
+ * `home.hero` — the first screen: Twig's hero, kept (owner, 2026-11-05). One
+ * rounded photograph with the header over its top on Home, the line centred
+ * with its drawn hearts and the strip along the foot. Salla's review found no
+ * headline and no clear CTA, so the line is larger and a subline and a filled
+ * accent «تسوق الآن» the merchant names and links sit under it.
  *
  * Several slides scroll in the theme's ScrollCarousel. Autoplay is off by
  * default; when on, a pause button stops it (WCAG 2.2.2), and reduced motion

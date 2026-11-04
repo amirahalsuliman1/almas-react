@@ -1,8 +1,10 @@
 /* =========================================================================
-   The hero (Hero.tsx, R-07). REDESIGN-2026-11.md: a headline at text-3xl,
-   text-5xl from 1024px, bold; a subline; a filled accent CTA at least 48px
-   tall. On a phone the copy sits over the photograph's lower part on a scrim;
-   from 1024px the copy has its own panel beside the photograph.
+   The hero (Hero.tsx) — Twig's hero, kept (owner, 2026-11-05): one rounded
+   photograph, 5:7 on a phone, 4:3 on a tablet, 31:20 from 1024px, with the
+   header over its top on Home, the line centred with its drawn hearts and the
+   strip along the foot. Salla's notes change only this: the line is larger
+   (text-3xl, text-5xl from 1024px), and a subline and a filled accent
+   «تسوق الآن» sit under it.
    ========================================================================= */
 
 .hero {
@@ -32,28 +34,48 @@
 .hero__scrim {
   @apply pointer-events-none;
   grid-area: 1 / 1;
-  /* Strong enough under the copy that white text keeps 4.5:1 over a pale
-     product photograph (white over a 55% black veil on a near-white image is
-     about 6.8:1), fading out before the upper half. */
+  /* Twig's veil, deepened for the larger copy: a shade at the top keeps the
+     header over it legible, then clear, then dark from the middle down where
+     the line, the subline and the strip sit — white over 60–70% black on a
+     near-white photograph is above 5.7:1. */
   background: linear-gradient(
-    to top,
-    rgb(0 0 0 / 0.75) 0%,
-    rgb(0 0 0 / 0.55) 50%,
-    rgb(0 0 0 / 0.15) 75%,
-    transparent 90%
+    to bottom,
+    rgb(0 0 0 / 0.5) 0%,
+    rgb(0 0 0 / 0.25) 12%,
+    rgb(0 0 0 / 0) 24%,
+    rgb(0 0 0 / 0) 32%,
+    rgb(0 0 0 / 0.6) 58%,
+    rgb(0 0 0 / 0.72) 100%
   );
 }
 
 .hero__content {
-  @apply relative z-[1] flex flex-col items-center gap-4 self-end px-5 pb-8 text-center;
+  @apply pointer-events-none relative z-[1] flex flex-col items-center justify-end gap-4 self-stretch px-5 pb-5 pt-24 text-center;
   grid-area: 1 / 1;
   color: var(--on-media);
+
+  /* The slide-wide link sits under the copy; only the CTA takes the pointer. */
+  .hero__cta {
+    pointer-events: auto;
+  }
+}
+
+/* Twig's stretched link: the whole photograph goes where the slide points. It
+   is hidden from the keyboard and screen readers, which reach the same place
+   through «تسوق الآن». */
+.hero__link {
+  grid-area: 1 / 1;
 }
 
 .hero__headline {
   @apply relative m-0 text-3xl font-bold leading-tight;
   max-inline-size: 22ch;
   text-wrap: balance;
+}
+
+/* Room for the large heart under the line, as Twig left it. */
+.hero__headline--hearts {
+  margin-block-end: 1.25rem;
 }
 
 .hero__subtitle {
@@ -78,7 +100,7 @@
 }
 
 .hero__strip {
-  @apply m-0 grid w-full list-none grid-cols-3 gap-2 p-0 text-sm font-semibold;
+  @apply m-0 mt-2 grid w-full list-none grid-cols-3 gap-2 p-0 text-sm font-semibold lg:text-base;
 }
 
 .hero__strip-item:nth-child(1) {
@@ -136,33 +158,45 @@
   }
 }
 
-/* From 1024px: the copy's panel beside the photograph, on the section tone. */
-@media (min-width: 1024px) {
-  /* A fixed height, so the headline and CTA sit on the first screen at a
-     laptop's height and nothing moves when the photograph loads. */
-  .hero__slide {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    block-size: clamp(26rem, 38vw, 34rem);
-  }
-
-  .hero__media {
-    @apply h-full min-h-0;
-    grid-area: 1 / 2;
-  }
-
+/* A tablet takes Twig's 4:3, so the photograph is never taller than the screen. */
+@media (min-width: 768px) {
   .hero__image {
-    aspect-ratio: auto;
+    aspect-ratio: 4 / 3;
     max-block-size: none;
+  }
+}
+
+/* From 1024px: Twig's landscape card (31:20, the slide's `image_desktop` when
+   set), the copy centred between the header and the strip. */
+@media (min-width: 1024px) {
+  .hero__image {
+    aspect-ratio: 31 / 20;
   }
 
   .hero__scrim {
-    display: none;
+    /* Under the header's two rows (to about 17% of the card), then Twig's veil. */
+    background: linear-gradient(
+      to bottom,
+      rgb(0 0 0 / 0.55) 0%,
+      rgb(0 0 0 / 0.45) 17%,
+      rgb(0 0 0 / 0.38) 26%,
+      rgb(0 0 0 / 0.45) 45%,
+      rgb(0 0 0 / 0.58) 62%,
+      rgb(0 0 0 / 0.7) 100%
+    );
   }
 
   .hero__content {
-    @apply items-start gap-6 self-center px-12 py-12 text-start;
-    grid-area: 1 / 1;
-    color: var(--main-text-color);
+    @apply gap-5 px-8 pb-6;
+    /* The overlay header's two rows. */
+    padding-block-start: 9rem;
+  }
+
+  /* The headline group takes the free space above it, the strip the space
+     above itself: the group sits centred, the strip at the foot. */
+  .hero__headline,
+  .hero__strip {
+    margin-block-start: auto;
   }
 
   .hero__headline {
@@ -171,19 +205,5 @@
 
   .hero__subtitle {
     @apply text-lg;
-    color: var(--text-secondary);
-  }
-
-  .hero__cta:focus-visible {
-    outline-color: var(--focus-ring-color);
-  }
-
-  .hero__strip {
-    @apply flex w-auto gap-6;
-    color: var(--text-secondary);
-
-    .hero__strip-item {
-      text-align: start;
-    }
   }
 }
