@@ -1275,17 +1275,8 @@ salla-reviews:not(:has(.s-reviews-swiper-slide)) {
     flex-basis: calc((100% - 3rem) / 3);
   }
 
-  &__head {
-    @apply flex items-center justify-between gap-3;
-  }
-
-  &__quote {
-    @apply h-6 w-auto shrink-0;
-    color: var(--color-accent);
-  }
-
   &__stars {
-    @apply inline-flex shrink-0 gap-0.5;
+    @apply inline-flex shrink-0 gap-0.5 self-start;
 
     svg {
       @apply h-[18px] w-[18px] fill-current;

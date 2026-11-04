@@ -1,5 +1,5 @@
 import { useTranslation } from '@salla.sa/twilight-theme-engine/i18n';
-import { QuoteIcon, StarIcon } from '../icons';
+import { StarIcon } from '../icons';
 import { ScrollCarousel } from './ScrollCarousel';
 import { SectionHeader } from './SectionHeader';
 
@@ -20,20 +20,17 @@ function TestimonialCard({ item }: { item: TestimonialItem }) {
 
   return (
     <figure className="testimonial-card">
-      <div className="testimonial-card__head">
-        <QuoteIcon className="testimonial-card__quote" aria-hidden="true" />
-        {stars > 0 && (
-          <span className="testimonial-card__stars">
-            {/* One sentence for a screen reader; the row of stars is for the eye. */}
-            <span className="sr-only">
-              {t('theme.testimonials.rating', 'Rated :stars out of 5').replace(':stars', String(stars))}
-            </span>
-            {STAR_POSITIONS.map((position) => (
-              <StarIcon key={position} className={position <= stars ? 'is-on' : undefined} aria-hidden="true" />
-            ))}
+      {stars > 0 && (
+        <span className="testimonial-card__stars">
+          {/* One sentence for a screen reader; the row of stars is for the eye. */}
+          <span className="sr-only">
+            {t('theme.testimonials.rating', 'Rated :stars out of 5').replace(':stars', String(stars))}
           </span>
-        )}
-      </div>
+          {STAR_POSITIONS.map((position) => (
+            <StarIcon key={position} className={position <= stars ? 'is-on' : undefined} aria-hidden="true" />
+          ))}
+        </span>
+      )}
 
       <blockquote className="testimonial-card__text">
         <p dir="auto">{item.text}</p>
