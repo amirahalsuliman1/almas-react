@@ -1,0 +1,83 @@
+/* Partner banner (PartnerBanner.tsx, R-14). One photograph, 4:5 on a phone and
+   31:15 from 768px, with the title, the line and both buttons centred on it.
+   The veil is darkest behind the copy: white on a 60% veil over a near-white
+   photograph is about 5.6:1, so the line keeps AA on any picture. */
+
+.partner-banner {
+  @apply relative grid overflow-hidden rounded;
+  margin-inline: max(var(--page-gutter), calc((100% - 1280px) / 2 + var(--page-gutter)));
+  background-color: var(--surface-placeholder);
+}
+
+.partner-banner__image {
+  @apply block h-full w-full object-cover;
+  grid-area: 1 / 1;
+  aspect-ratio: 4 / 5;
+
+  @media (min-width: 768px) {
+    aspect-ratio: 31 / 15;
+  }
+}
+
+.partner-banner__veil {
+  @apply pointer-events-none;
+  grid-area: 1 / 1;
+  background: radial-gradient(
+    ellipse 75% 60% at 50% 50%,
+    rgb(0 0 0 / 0.6) 0%,
+    rgb(0 0 0 / 0.45) 60%,
+    rgb(0 0 0 / 0.25) 100%
+  );
+}
+
+.partner-banner__content {
+  @apply relative z-[1] flex flex-col items-center justify-center gap-4 self-center px-5 py-8 text-center;
+  grid-area: 1 / 1;
+  color: var(--on-media);
+}
+
+.partner-banner__title {
+  @apply m-0 text-2xl font-bold leading-tight lg:text-3xl;
+  max-inline-size: 24ch;
+  text-wrap: balance;
+}
+
+.partner-banner__subtitle {
+  @apply m-0 text-base leading-relaxed lg:text-lg;
+  max-inline-size: 40ch;
+}
+
+.partner-banner__actions {
+  @apply mt-2 flex w-full flex-wrap justify-center gap-3;
+}
+
+.partner-banner__cta {
+  @apply inline-flex min-h-12 flex-1 items-center justify-center px-6 text-base font-bold no-underline transition-colors;
+  max-inline-size: 13rem;
+  border-radius: var(--button-radius);
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--on-media);
+    outline-offset: var(--focus-ring-offset);
+  }
+}
+
+/* «انضم كبراند» is the filled accent; «انضم كفرد» the light partner to it.
+   Both sit on the photograph, so neither follows the colour mode. */
+.partner-banner__cta--brand {
+  background-color: var(--color-accent);
+  color: var(--color-accent-ink);
+
+  &:hover {
+    background-color: var(--color-accent-hover);
+  }
+}
+
+.partner-banner__cta--individual {
+  background-color: var(--on-media);
+  color: var(--on-media-ink);
+
+  &:hover {
+    opacity: 0.9;
+  }
+}

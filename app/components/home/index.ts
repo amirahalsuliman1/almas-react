@@ -15,3 +15,4 @@ export { SliderProductsWithHeader } from './SliderProductsWithHeader';
 export { VideoCarousel } from './VideoCarousel';
 export { EnhancedSquareBanners } from './EnhancedSquareBanners';
 export { Stories } from './Stories';
+export { PartnerBanner } from './PartnerBanner';

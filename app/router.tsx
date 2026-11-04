@@ -27,6 +27,7 @@ import {
   VideoCarousel,
   EnhancedSquareBanners,
   Stories,
+  PartnerBanner,
 } from './components/home';
 import { Blog } from './components/home/Blog';
 import {
@@ -55,6 +56,7 @@ registerHomeComponents({
   lookbook: Lookbook,
   'video-carousel': VideoCarousel,
   stories: Stories,
+  'partner-banner': PartnerBanner,
   brands: Brands,
   'enhanced-slider': EnhancedSlider,
   'custom-testimonials': CustomTestimonials,
@@ -110,6 +112,8 @@ registerHomeComponentConfig({
   // Two rows of 3:4 photographs with their tags under the header on a phone;
   // from 1024px the feed is a 31rem window under its header.
   stories: { className: 's-block s-block--stories', height: 'min(calc(122vw + 9rem), 36rem)' },
+  // A 4:5 photograph on a phone; 31:15 of the container from 768px (604px at 1440).
+  'partner-banner': { className: 's-block s-block--partner-banner', height: 'min(calc(125vw - 2.5rem), 38rem)' },
   'featured-products': featuredProductsConfig,
   'featured-products-special-offer': featuredProductsConfig,
   'featured-products-special-product': featuredProductsConfig,
