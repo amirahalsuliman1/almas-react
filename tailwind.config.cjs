@@ -21,7 +21,8 @@ module.exports = {
   ],
   // `<Image objectFit>` builds these at runtime, out of the scanner's sight.
   safelist: ['object-contain', 'object-cover'],
-  darkMode: 'class', // or 'media' or 'class'
+  // The theme's own switch (`html.dark`) or the platform's (`body.color-mode-dark`).
+  darkMode: ['variant', '&:is(.dark *, .color-mode-dark *)'],
   theme: {
     container: {
       center: true,
@@ -47,6 +48,22 @@ module.exports = {
         danger: '#AE0A0A',
         primary: 'var(--color-primary)',
         'primary-dark': 'var(--color-primary-dark)',
+        // Am1als semantic tokens (01-settings/global.scss).
+        page: 'var(--surface-page)',
+        section: 'var(--surface-section)',
+        card: 'var(--surface-card)',
+        placeholder: 'var(--surface-placeholder)',
+        ink: 'var(--main-text-color)',
+        secondary: 'var(--text-secondary)',
+        'border-subtle': 'var(--border-subtle)',
+        'border-interactive': 'var(--border-interactive)',
+        accent: {
+          DEFAULT: 'var(--color-accent)',
+          ink: 'var(--color-accent-ink)',
+          text: 'var(--color-accent-text)',
+        },
+        error: 'var(--color-error)',
+        success: 'var(--color-success)',
       },
       spacing: {
         3.75: '15px',

@@ -42,3 +42,100 @@ $main-text-color: var(--main-text-color);
   --flow-safe-top: max(0px, env(safe-area-inset-top, 0px) - var(--app-safe-area-top, 0px));
   --flow-safe-bottom: max(0px, env(safe-area-inset-bottom, 0px) - var(--app-safe-area-bottom, 0px));
 }
+
+/*
+ * Am1als semantic tokens, ported from the Twig theme's 01-settings/global.scss.
+ *
+ * Named by role, never by appearance. Every component paints from these, so a
+ * palette change or dark mode is a change here and nowhere else. Raw colour
+ * values live in this layer only.
+ *
+ * Contrast (light): ink on page 16.9:1, secondary on card 6.0:1, error on card
+ * 6.4:1. Dark values below were computed the same way.
+ */
+:root {
+  /* Three surfaces: the page, the panel a section sits in, the card on it. */
+  --surface-page: #fdfdfd;
+  --surface-section: #f7f6f4;
+  --surface-card: #ffffff;
+  /* What sits under an image before it arrives. Carries no information. */
+  --surface-placeholder: #ebebeb;
+
+  --main-text-color: #1b1b1b;
+  --text-secondary: #646361;
+
+  /* Decorative only (1.1:1): card edges and dividers. Never a control boundary. */
+  --border-subtle: #edebe8;
+  /* A boundary a user must find: inputs, selects, outlined buttons. 5.9:1. */
+  --border-interactive: var(--text-secondary);
+
+  /*
+   * The accent (owner, 2026-11-04): CTAs, prices, «عرض الكل», active states.
+   * It is the store's primary colour unless the merchant sets `accent_color`,
+   * which ThemeTokens writes over these two. `--color-accent-ink` is the text
+   * on an accent fill; `--color-accent-text` is the accent used AS text on a
+   * surface, lifted in dark mode where the fill colour is too dark to read.
+   */
+  --color-accent: var(--color-primary);
+  --color-accent-ink: var(--color-primary-reverse, #ffffff);
+  --color-accent-text: var(--color-accent);
+
+  --color-error: #c20013;
+  --color-error-strong: #b10011;
+  --color-success: #16ae26;
+  --accent-success-soft: #e8f7e9;
+  --accent-soft: #f9e6e7;
+
+  --overlay-scrim: rgb(21 21 21 / 48%);
+  /* White drawn on a photograph; stays white in dark mode. */
+  --on-media: #ffffff;
+
+  /* Tailwind's shipped durations; near zero under reduced motion. */
+  --motion-fast: 150ms;
+  --motion-base: 300ms;
+  --motion-slow: 500ms;
+  --motion-ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /*
+   * The focus ring is the ink, not the accent: a merchant can pick a pale accent
+   * that would fail WCAG 1.4.11 against a card, and the ring must never vanish.
+   */
+  --focus-ring-color: var(--main-text-color);
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+}
+
+/*
+ * Dark mode: the same tokens, re-pointed. `html.dark` is the theme's own switch;
+ * `body.color-mode-dark` is the platform's (the store's `color.is_dark`).
+ * Three surfaces three visible steps apart, so a card never sits black on black
+ * — the defect Salla's reviewer reported on 2026-11-04. Ink on page 16.6:1,
+ * secondary on card 8.0:1, error on card 6.2:1.
+ */
+html.dark,
+body.color-mode-dark {
+  color-scheme: dark;
+
+  --surface-page: #141210;
+  --surface-section: #211d1a;
+  --surface-card: #2e2a26;
+  --surface-placeholder: #3a3530;
+  --main-text-color: #f3f1ee;
+  --text-secondary: #bfb9b2;
+  --border-subtle: #46413b;
+  --color-error: #ff7a85;
+  --color-error-strong: #ff7a85;
+  --color-success: #5fd36b;
+  --accent-success-soft: #1c3320;
+  --accent-soft: #3b2427;
+  --color-accent-text: color-mix(in srgb, var(--color-accent) 55%, #ffffff);
+  --focus-ring-color: var(--main-text-color);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-fast: 0.01ms;
+    --motion-base: 0.01ms;
+    --motion-slow: 0.01ms;
+  }
+}

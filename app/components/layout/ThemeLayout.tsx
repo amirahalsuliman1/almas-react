@@ -11,6 +11,7 @@ import { ImportantLinksSheet } from './ImportantLinksSheet';
 import { MobileAccountSheet } from './MobileAccountSheet';
 import { MobileBottomBar } from './MobileBottomBar';
 import { MobilePageTitleBar } from './MobilePageTitleBar';
+import { ThemeTokens } from './ThemeTokens';
 import { fillComponentTranslations, type ComponentLang } from '../../lib/componentTranslations';
 
 /**
@@ -166,6 +167,7 @@ export function ThemeLayout({ children }: ThemeLayoutProps) {
 
   return (
     <>
+      <ThemeTokens />
       <div
         className={`app-inner flex flex-col min-h-full product-card-img--${imgRatio}${squarePhotos}`}
         suppressHydrationWarning

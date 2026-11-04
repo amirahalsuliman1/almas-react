@@ -40,6 +40,16 @@
   ],
   "settings": [
     {
+      "type": "string",
+      "format": "color",
+      "id": "accent_color",
+      "icon": "sicon-format-fill",
+      "label": "اللون المميز",
+      "description": "لون الأزرار والأسعار ورابط «عرض الكل». اتركه فارغًا ليُستخدم لون المتجر الأساسي. لون النص فوقه يُختار تلقائيًا، أما تباينه مع الخلفية فمسؤوليتك.",
+      "required": false,
+      "value": ""
+    },
+    {
       "id": "product_card_layout",
       "type": "items",
       "format": "dropdown-list",
