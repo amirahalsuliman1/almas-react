@@ -38,6 +38,30 @@ function colorDeclarations(settings: Record<string, unknown>, map: Record<string
   return out;
 }
 
+/** Where each gradient switch applies, as selectors. */
+const GRADIENT_TARGETS: Record<string, string> = {
+  gradient_on_bars: '.announcement-bar,.marquee',
+  gradient_on_buttons:
+    '.s-product-card .s-product-card-content-footer .s-button-btn,.hero__cta,.highlights__shop',
+  gradient_on_quantity: '.s-quantity-input-button',
+};
+
+/**
+ * The merchant's two-colour gradient, painted where they switched it on. It
+ * runs from the first colour at the right to the second at the left, as the
+ * settings' labels say. Both colours must be valid, or nothing is written.
+ */
+export function gradientRules(settings: Record<string, unknown>): string {
+  const start = normaliseHex(settings.gradient_color_start);
+  const end = normaliseHex(settings.gradient_color_end);
+  if (!start || !end) return '';
+  const selectors = Object.entries(GRADIENT_TARGETS)
+    .filter(([id]) => settings[id] === true)
+    .map(([, sel]) => sel);
+  if (!selectors.length) return '';
+  return `${selectors.join(',')}{background-image:linear-gradient(to left,${start},${end});border-color:transparent}`;
+}
+
 /**
  * Turns the theme-wide settings into CSS custom properties and keeps the
  * colour mode on `<html>`. Rendered on the server, so the first paint carries the merchant's
@@ -71,7 +95,7 @@ export function ThemeTokens() {
   if (darkBg) dark.push(`--store-bg-image:url("${darkBg}")`);
 
   const script = beforePaintScript(mode, storeIsDark, visitorToggle);
-  const css = `:root{${light.join(';')}}${dark.length ? `${DARK_SELECTOR}{${dark.join(';')}}` : ''}`;
+  const css = `:root{${light.join(';')}}${dark.length ? `${DARK_SELECTOR}{${dark.join(';')}}` : ''}${gradientRules(settings)}`;
 
   return (
     <>

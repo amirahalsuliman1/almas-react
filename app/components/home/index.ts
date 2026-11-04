@@ -7,6 +7,7 @@ export { Hero } from './Hero';
 export { Highlights } from './Highlights';
 export { LatestProducts } from './LatestProducts';
 export { MainLinks } from './MainLinks';
+export { Marquee } from './Marquee';
 export { PhotosSlider } from './PhotosSlider';
 export { ProductsSlider } from './ProductsSlider';
 export { SliderProductsWithHeader } from './SliderProductsWithHeader';

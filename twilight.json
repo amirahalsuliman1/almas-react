@@ -195,6 +195,66 @@
     {
       "type": "static",
       "format": "title",
+      "id": "static-am-5",
+      "value": "<div class='rounded-lg' style='background-color: #21636d; display: flex; justify-content: center; align-items: center;padding: 15px;margin-bottom: 20px !important; flex-direction: column;gap: 15px;'><h6 style='color: #ffffff;font-size: 15px; font-weight: bold;'> التدرج اللوني</h6></div>",
+      "variant": "h6"
+    },
+    {
+      "type": "string",
+      "format": "color",
+      "icon": "sicon-format-fill",
+      "id": "gradient_color_start",
+      "label": "لون التدرج الأول (الأيمن)",
+      "description": "اللون الذي يبدأ منه التدرج من جهة اليمين. يعمل التدرج فقط عند اختيار اللونين وتفعيل مكانه أدناه. التباين مسؤوليتك — القالب لا يتحقّق منه ولا يمنع أي قيمة.",
+      "required": false,
+      "value": null
+    },
+    {
+      "type": "string",
+      "format": "color",
+      "icon": "sicon-format-fill",
+      "id": "gradient_color_end",
+      "label": "لون التدرج الثاني (الأيسر)",
+      "description": "اللون الذي ينتهي به التدرج من جهة اليسار. التباين مسؤوليتك — القالب لا يتحقّق منه ولا يمنع أي قيمة.",
+      "required": false,
+      "value": null
+    },
+    {
+      "type": "boolean",
+      "format": "switch",
+      "icon": "sicon-toggle-off",
+      "id": "gradient_on_buttons",
+      "label": "تطبيق التدرج على الأزرار الأساسية",
+      "description": "مثل «أضف إلى السلة» و«إتمام الطلب» وأزرار المتجر الرئيسية.",
+      "required": false,
+      "value": false,
+      "selected": false
+    },
+    {
+      "type": "boolean",
+      "format": "switch",
+      "icon": "sicon-toggle-off",
+      "id": "gradient_on_quantity",
+      "label": "تطبيق التدرج على أزرار الكمية",
+      "description": "زرّا الزيادة والنقصان في صفحة المنتج والسلة.",
+      "required": false,
+      "value": false,
+      "selected": false
+    },
+    {
+      "type": "boolean",
+      "format": "switch",
+      "icon": "sicon-toggle-off",
+      "id": "gradient_on_bars",
+      "label": "تطبيق التدرج على الشريط الإعلاني والشريط المتحرك",
+      "description": "خلفية الشريط أعلى الصفحة وأسفلها والشريط المتحرك في الرئيسية.",
+      "required": false,
+      "value": false,
+      "selected": false
+    },
+    {
+      "type": "static",
+      "format": "title",
       "id": "static-am-2",
       "value": "<div class='rounded-lg' style='background-color: #21636d; display: flex; justify-content: center; align-items: center;padding: 15px;margin-bottom: 20px !important; flex-direction: column;gap: 15px;'><h6 style='color: #ffffff;font-size: 15px; font-weight: bold;'> الوضع اللوني</h6></div>",
       "variant": "h6"
@@ -1273,6 +1333,182 @@
               "value": null
             }
           ]
+        }
+      ]
+    },
+    {
+      "name": "marquee",
+      "key": "7c2e9a41-5b3d-4f86-a0e2-d4b19c6f3a57",
+      "title": {
+        "en": "Moving strip",
+        "ar": "شريط متحرك"
+      },
+      "icon": "sicon-list",
+      "path": "home.marquee",
+      "image": "https://cdn.salla.network/images/themes/raed/preview-images/images-slider-enhancement.png?v=1.1",
+      "fields": [
+        {
+          "type": "static",
+          "format": "description",
+          "id": "static-desc",
+          "value": "شريط بعبارات قصيرة يتحرك أفقيًا بين أقسام الرئيسية، مثل: شحن مجاني ✦ منتجات أصلية ✦ دفع آمن. يتوقف عند مرور المؤشر، ويثبت لمن فعّل تقليل الحركة في جهازه."
+        },
+        {
+          "id": "items",
+          "type": "collection",
+          "format": "collection",
+          "required": true,
+          "minLength": 1,
+          "maxLength": 10,
+          "label": null,
+          "item_label": "عبارة",
+          "value": [
+            {
+              "items.text": "شحن مجاني",
+              "items.url": null
+            },
+            {
+              "items.text": "منتجات أصلية",
+              "items.url": null
+            },
+            {
+              "items.text": "دفع آمن",
+              "items.url": null
+            }
+          ],
+          "fields": [
+            {
+              "type": "string",
+              "icon": "sicon-format-text-alt",
+              "format": "text",
+              "id": "items.text",
+              "label": "العبارة",
+              "multilanguage": true,
+              "required": true,
+              "value": null,
+              "minLength": 1,
+              "maxLength": 60
+            },
+            {
+              "type": "items",
+              "icon": "sicon-link",
+              "format": "variable-list",
+              "id": "items.url",
+              "label": "الرابط (اختياري)",
+              "description": "عند اختيار رابط تصبح العبارة قابلة للضغط.",
+              "required": false,
+              "searchable": true,
+              "source": "custom",
+              "sources": [
+                {
+                  "label": "منتج",
+                  "key": "products",
+                  "value": "products"
+                },
+                {
+                  "label": "منتجات مع وسم",
+                  "key": "products_tags",
+                  "value": "products_tags"
+                },
+                {
+                  "label": "تصنيف",
+                  "key": "categories",
+                  "value": "categories"
+                },
+                {
+                  "label": "ماركة تجارية",
+                  "key": "brands",
+                  "value": "brands"
+                },
+                {
+                  "label": "صفحة تعريفية",
+                  "key": "pages",
+                  "value": "pages"
+                },
+                {
+                  "label": "التخفيضات",
+                  "key": "offers_link",
+                  "value": "offers_link"
+                },
+                {
+                  "label": "الماركات التجارية",
+                  "key": "brands_link",
+                  "value": "brands_link"
+                },
+                {
+                  "label": "رابط خارجي",
+                  "key": "custom",
+                  "value": "custom"
+                }
+              ],
+              "value": null
+            }
+          ]
+        },
+        {
+          "type": "string",
+          "icon": "sicon-format-text-alt",
+          "format": "text",
+          "id": "separator",
+          "label": "الفاصل بين العبارات",
+          "description": "رمز أو حرف يظهر بين كل عبارتين. اتركه فارغًا لاستخدام ✦.",
+          "required": false,
+          "value": "✦",
+          "minLength": 0,
+          "maxLength": 4
+        },
+        {
+          "type": "items",
+          "icon": "sicon-list",
+          "format": "dropdown-list",
+          "id": "speed",
+          "label": "سرعة الحركة",
+          "source": "Manual",
+          "required": true,
+          "selected": [
+            {
+              "label": "عادية",
+              "value": "normal",
+              "key": "marquee-speed-normal"
+            }
+          ],
+          "options": [
+            {
+              "label": "بطيئة",
+              "value": "slow",
+              "key": "marquee-speed-slow"
+            },
+            {
+              "label": "عادية",
+              "value": "normal",
+              "key": "marquee-speed-normal"
+            },
+            {
+              "label": "سريعة",
+              "value": "fast",
+              "key": "marquee-speed-fast"
+            }
+          ]
+        },
+        {
+          "type": "string",
+          "icon": "sicon-format-fill",
+          "format": "color",
+          "id": "background_color",
+          "label": "لون الخلفية",
+          "description": "اتركه فارغًا لاستخدام لون شريط الإعلانات.",
+          "required": false,
+          "value": null
+        },
+        {
+          "type": "string",
+          "icon": "sicon-format-fill",
+          "format": "color",
+          "id": "text_color",
+          "label": "لون النص",
+          "description": "اتركه فارغًا لاستخدام لون نص شريط الإعلانات. تأكّد أنه واضح على لون الخلفية.",
+          "required": false,
+          "value": null
         }
       ]
     },

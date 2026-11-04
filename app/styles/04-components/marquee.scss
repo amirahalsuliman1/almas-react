@@ -1,0 +1,102 @@
+/* =========================================================================
+   The marquee (Marquee.tsx, R-09): phrases moving across the page. Colours
+   default to the announcement bar's, so the two bars read as one family.
+   ========================================================================= */
+
+:root {
+  --marquee-bg: var(--announcement-bg);
+  --marquee-text: var(--announcement-text);
+}
+
+.marquee {
+  @apply relative overflow-hidden py-3.5;
+  background-color: var(--marquee-bg);
+  color: var(--marquee-text);
+}
+
+.marquee__track {
+  @apply flex w-max;
+  animation: marquee-scroll-ltr var(--marquee-duration, 40s) linear infinite;
+}
+
+[dir='rtl'] .marquee__track {
+  animation-name: marquee-scroll-rtl;
+}
+
+.marquee--slow {
+  --marquee-duration: 70s;
+}
+
+.marquee--fast {
+  --marquee-duration: 20s;
+}
+
+.marquee__group {
+  @apply m-0 flex list-none items-center whitespace-nowrap p-0;
+}
+
+.marquee__pair {
+  @apply flex items-center gap-6;
+  padding-inline-end: 1.5rem;
+}
+
+.marquee__item,
+.marquee__separator {
+  @apply text-base font-bold;
+}
+
+.marquee__link {
+  @apply no-underline;
+  color: inherit;
+
+  &:hover {
+    @apply underline underline-offset-4;
+  }
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid currentColor;
+    outline-offset: var(--focus-ring-offset);
+  }
+}
+
+.marquee:hover .marquee__track,
+.marquee:focus-within .marquee__track {
+  animation-play-state: paused;
+}
+
+/* Two halves of identical copies; moving by half loops seamlessly. */
+@keyframes marquee-scroll-ltr {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-scroll-rtl {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(50%);
+  }
+}
+
+/* Reduced motion: one copy, still, wrapping onto more lines if it must. */
+@media (prefers-reduced-motion: reduce) {
+  .marquee__track {
+    @apply w-auto justify-center px-4;
+    animation: none;
+  }
+
+  .marquee__group {
+    @apply flex-wrap justify-center whitespace-normal;
+  }
+
+  .marquee__group[aria-hidden='true'] {
+    display: none;
+  }
+}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderToString } from 'react-dom/server';
-import { ThemeTokens } from '../../../app/components/layout/ThemeTokens';
+import { ThemeTokens, gradientRules } from '../../../app/components/layout/ThemeTokens';
 import { DARK_SELECTOR } from '../../../app/lib/colorMode';
 import manifest from '../../../twilight.json';
 
@@ -146,3 +146,25 @@ describe('manifest', () => {
     expect(setting('color_mode')?.selected?.[0]?.value).toBe('store');
   });
 });
+
+describe('gradientRules', () => {
+  const colours = { gradient_color_start: '#86663A', gradient_color_end: '#F9E6E7' };
+
+  it('writes nothing without both colours or without a switch on', () => {
+    expect(gradientRules({ gradient_on_bars: true, gradient_color_start: '#86663A' })).toBe('');
+    expect(gradientRules(colours)).toBe('');
+  });
+
+  it('paints the switched-on places, first colour at the right', () => {
+    const css = gradientRules({ ...colours, gradient_on_bars: true, gradient_on_buttons: true });
+    expect(css).toContain('.announcement-bar,.marquee');
+    expect(css).toContain('.hero__cta');
+    expect(css).not.toContain('.s-quantity-input-button');
+    expect(css).toContain('linear-gradient(to left,#86663a,#f9e6e7)');
+  });
+
+  it('drops a colour that is not a hex value', () => {
+    expect(gradientRules({ gradient_color_start: 'red', gradient_color_end: '#fff', gradient_on_bars: true })).toBe('');
+  });
+});
+

@@ -19,6 +19,7 @@ import {
   Highlights,
   LatestProducts,
   MainLinks,
+  Marquee,
   PhotosSlider,
   ProductsSlider,
   SliderProductsWithHeader,
@@ -47,6 +48,7 @@ registerHomeComponents({
   ...DefaultHomeComponents,
   hero: Hero,
   highlights: Highlights,
+  marquee: Marquee,
   brands: Brands,
   'enhanced-slider': EnhancedSlider,
   'custom-testimonials': CustomTestimonials,
@@ -91,6 +93,8 @@ registerHomeComponentConfig({
   hero: { className: 's-block s-block--hero' },
   // One row of 76px circles and their names.
   highlights: { className: 's-block s-block--highlights', height: '7.5rem' },
+  // One line of text at text-base with its padding.
+  marquee: { className: 's-block s-block--marquee', height: '3.25rem' },
   'featured-products': featuredProductsConfig,
   'featured-products-special-offer': featuredProductsConfig,
   'featured-products-special-product': featuredProductsConfig,
