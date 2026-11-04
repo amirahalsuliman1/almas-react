@@ -359,6 +359,32 @@ describe('Header', () => {
     expect(strip.getAttribute('aria-hidden')).toBe('true');
   });
 
+  it('a pinned announcement bar takes over from the header: the header never pins', () => {
+    state.theme = {
+      settings: { announcement_sticky: true, announcement_text: 'خصم' },
+    };
+    const { container } = render(<Header />);
+    Object.defineProperty(window, 'scrollY', { value: 200, configurable: true });
+    fireEvent.scroll(window);
+    expect(container.querySelector('.site-header__bar.is-scrolled')).toBeNull();
+  });
+
+  it('shows the colour toggle only when the merchant allows it', () => {
+    state.theme = { settings: {} };
+    const first = render(<Header />);
+    expect(first.container.querySelector('.site-header__color-mode')).toBeNull();
+    first.unmount();
+    state.theme = { settings: { dark_mode_toggle: true } };
+    expect(render(<Header />).container.querySelector('.site-header__color-mode')).toBeTruthy();
+  });
+
+  it('shows the band text on inner pages only', () => {
+    state.theme = { settings: { header_band_text: 'أصالة مضمونة' } };
+    state.isHome = false;
+    const inner = render(<Header />);
+    expect(inner.container.querySelector('.site-header__band')?.textContent).toBe('أصالة مضمونة');
+  });
+
   it('never pins the bar when header_is_sticky is disabled', () => {
     state.theme = { settings: { header_is_sticky: false } };
     const { container } = render(<Header />);

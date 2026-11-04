@@ -98,6 +98,8 @@ $main-text-color: var(--main-text-color);
   --text-footer: var(--main-text-color);
   /* currentColor keeps icons inheriting until the merchant sets a colour. */
   --color-icon: currentColor;
+  --announcement-bg: var(--surface-section);
+  --announcement-text: var(--text-secondary);
   --page-gutter: 16px;
   --logo-height: 44px;
   --button-radius: 0.75rem;
@@ -148,6 +150,8 @@ html.dark {
   --text-header: var(--main-text-color);
   --surface-footer: var(--surface-section);
   --text-footer: var(--main-text-color);
+  --announcement-bg: var(--surface-section);
+  --announcement-text: var(--text-secondary);
   --focus-ring-color: var(--main-text-color);
 }
 

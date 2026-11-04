@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { clampedInteger, safeImageUrl, selectedValue } from '../../app/lib/settings';
+import { clampedInteger, safeImageUrl, selectedValue, textValue } from '../../app/lib/settings';
 
 describe('selectedValue', () => {
   const allowed = ['a', 'b'] as const;
@@ -33,5 +33,19 @@ describe('safeImageUrl', () => {
     for (const bad of ['javascript:x', 'https://a.b/x")', "https://a.b/'", 'data:image/png;base64,x', '', null]) {
       expect(safeImageUrl(bad)).toBeNull();
     }
+  });
+});
+
+describe('textValue', () => {
+  it('reads a string, or the current locale, then Arabic, then anything', () => {
+    expect(textValue(' مرحبا ')).toBe('مرحبا');
+    expect(textValue({ ar: 'مرحبا', en: 'Hello' }, 'en')).toBe('Hello');
+    expect(textValue({ ar: 'مرحبا', en: '' }, 'en')).toBe('مرحبا');
+    expect(textValue({ fr: 'Salut' }, 'en')).toBe('Salut');
+  });
+  it('is empty for nothing usable', () => {
+    expect(textValue(null)).toBe('');
+    expect(textValue({ ar: '  ' })).toBe('');
+    expect(textValue(3)).toBe('');
   });
 });

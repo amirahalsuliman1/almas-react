@@ -24,6 +24,26 @@ describe('beforePaintScript', () => {
   });
 });
 
+describe('beforePaintScript with the visitor toggle', () => {
+  const run = (script: string | null, stored: string | null) => {
+    document.documentElement.classList.remove('dark');
+    localStorage.clear();
+    if (stored) localStorage.setItem('am1als:color-mode', stored);
+    if (script) new Function(script)();
+    return document.documentElement.classList.contains('dark');
+  };
+
+  it("a visitor's stored choice wins over the mode", () => {
+    expect(run(beforePaintScript('light', false, true), 'dark')).toBe(true);
+    expect(run(beforePaintScript('dark', false, true), 'light')).toBe(false);
+  });
+
+  it('with no stored choice the mode decides', () => {
+    expect(run(beforePaintScript('dark', false, true), null)).toBe(true);
+    expect(run(beforePaintScript('light', false, true), null)).toBe(false);
+  });
+});
+
 describe('one statement of "dark"', () => {
   it('global.scss re-points the tokens under DARK_SELECTOR only', () => {
     const css = readFileSync('app/styles/01-settings/global.scss', 'utf8');

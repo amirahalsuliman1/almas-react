@@ -29,3 +29,20 @@ const SAFE_URL = /^https?:\/\/[^\s"'()\\<>]+$/i;
 export function safeImageUrl(raw: unknown): string | null {
   return typeof raw === 'string' && SAFE_URL.test(raw.trim()) ? raw.trim() : null;
 }
+
+/**
+ * A text setting, which may be a plain string or, when it is `multilanguage`,
+ * an object keyed by locale. The docs do not pin the shape, so both are read:
+ * the current locale, then Arabic, then any value. Trimmed; empty is ''.
+ */
+export function textValue(raw: unknown, locale?: string): string {
+  if (typeof raw === 'string') return raw.trim();
+  if (raw && typeof raw === 'object') {
+    const byLocale = raw as Record<string, unknown>;
+    const pick = [locale, 'ar', ...Object.keys(byLocale)].find(
+      (key) => key && typeof byLocale[key] === 'string' && (byLocale[key] as string).trim()
+    );
+    return pick ? (byLocale[pick] as string).trim() : '';
+  }
+  return '';
+}

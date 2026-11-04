@@ -25,5 +25,14 @@ declare module '@salla.sa/twilight-theme-engine/types' {
     logo_main?: string;
     dark_logo?: string;
     header_logo_height?: number | string;
+    dark_mode_toggle?: boolean;
+    announcement_enabled?: boolean;
+    announcement_text?: string | Record<string, string>;
+    announcement_url?: string;
+    announcement_bg?: string;
+    announcement_text_color?: string;
+    announcement_sticky?: boolean;
+    announcement_dismissible?: boolean;
+    header_band_text?: string | Record<string, string>;
   }
 }

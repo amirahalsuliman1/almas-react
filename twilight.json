@@ -328,6 +328,109 @@
       "maxValue": 80
     },
     {
+      "type": "boolean",
+      "format": "switch",
+      "icon": "sicon-toggle-off",
+      "id": "dark_mode_toggle",
+      "label": "السماح للعميل بالتبديل بين الوضع الداكن والفاتح",
+      "description": "يظهر زر في رأس الصفحة، ويُحفظ اختيار العميل في متصفحه ويتقدم على «الوضع اللوني».",
+      "required": false,
+      "value": false,
+      "selected": false
+    },
+    {
+      "type": "static",
+      "format": "title",
+      "id": "static-am-4",
+      "value": "<div class='rounded-lg' style='background-color: #21636d; display: flex; justify-content: center; align-items: center;padding: 15px;margin-bottom: 20px !important; flex-direction: column;gap: 15px;'><h6 style='color: #ffffff;font-size: 15px; font-weight: bold;'> الشريط الإعلاني أعلى الصفحة</h6></div>",
+      "variant": "h6"
+    },
+    {
+      "type": "boolean",
+      "format": "switch",
+      "icon": "sicon-toggle-off",
+      "id": "announcement_enabled",
+      "label": "إظهار الشريط الإعلاني",
+      "description": "يظهر أعلى رأس الصفحة في كل الصفحات عند كتابة نص له.",
+      "required": false,
+      "value": true,
+      "selected": true
+    },
+    {
+      "type": "string",
+      "format": "text",
+      "icon": "sicon-typography",
+      "id": "announcement_text",
+      "label": "نص الشريط الإعلاني",
+      "description": "جملة واحدة أو أكثر يفصل بينها رمز تختاره. يتحرك النص ويتوقف عند وقوف المؤشر عليه.",
+      "required": false,
+      "value": null,
+      "multilanguage": true
+    },
+    {
+      "type": "string",
+      "format": "url",
+      "icon": "sicon-link",
+      "id": "announcement_url",
+      "label": "رابط الشريط الإعلاني",
+      "description": "اختياري. يجعل النص رابطًا.",
+      "required": false,
+      "value": ""
+    },
+    {
+      "type": "string",
+      "format": "color",
+      "id": "announcement_bg",
+      "icon": "sicon-format-fill",
+      "label": "لون خلفية الشريط الإعلاني",
+      "description": "",
+      "required": false,
+      "value": "#F7F6F4"
+    },
+    {
+      "type": "string",
+      "format": "color",
+      "id": "announcement_text_color",
+      "icon": "sicon-format-fill",
+      "label": "لون نصّ الشريط الإعلاني",
+      "description": "التباين مسؤوليتك.",
+      "required": false,
+      "value": "#646361"
+    },
+    {
+      "type": "boolean",
+      "format": "switch",
+      "icon": "sicon-toggle-off",
+      "id": "announcement_sticky",
+      "label": "تثبيت الشريط عند التمرير",
+      "description": "عند تفعيله يتوقف تثبيت رأس الصفحة، فيبقى شريط واحد ثابت.",
+      "required": false,
+      "value": false,
+      "selected": false
+    },
+    {
+      "type": "boolean",
+      "format": "switch",
+      "icon": "sicon-toggle-off",
+      "id": "announcement_dismissible",
+      "label": "السماح للعميل بإغلاق الشريط",
+      "description": "يبقى مغلقًا لهذا العميل حتى تغيّر النص.",
+      "required": false,
+      "value": false,
+      "selected": false
+    },
+    {
+      "type": "string",
+      "format": "text",
+      "icon": "sicon-typography",
+      "id": "header_band_text",
+      "label": "عبارة تحت رأس الصفحة (الكمبيوتر)",
+      "description": "سطر قصير يظهر تحت رأس الصفحة في الصفحات الداخلية على الشاشات الكبيرة. اتركه فارغًا لإخفائه.",
+      "required": false,
+      "value": null,
+      "multilanguage": true
+    },
+    {
       "id": "product_card_layout",
       "type": "items",
       "format": "dropdown-list",

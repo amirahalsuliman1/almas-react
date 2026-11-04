@@ -14,6 +14,8 @@ const LIGHT_COLORS: Record<string, string[]> = {
   color_footer_background: ['--surface-footer'],
   color_footer_text: ['--text-footer'],
   color_icons: ['--color-icon'],
+  announcement_bg: ['--announcement-bg'],
+  announcement_text_color: ['--announcement-text'],
 };
 
 /** The same, in dark mode. */
@@ -47,7 +49,8 @@ export function ThemeTokens() {
   const mode = selectedValue(settings.color_mode, COLOR_MODES, 'store');
 
   const storeIsDark = theme?.color?.is_dark === true;
-  useColorMode(mode, storeIsDark);
+  const visitorToggle = settings.dark_mode_toggle === true;
+  useColorMode(mode, storeIsDark, visitorToggle);
 
   const light = colorDeclarations(settings, LIGHT_COLORS);
   const accent = normaliseHex(settings.accent_color);
@@ -64,7 +67,7 @@ export function ThemeTokens() {
   const darkBg = safeImageUrl(settings.dark_background_image);
   if (darkBg) dark.push(`--store-bg-image:url("${darkBg}")`);
 
-  const script = beforePaintScript(mode, storeIsDark);
+  const script = beforePaintScript(mode, storeIsDark, visitorToggle);
   const css = `:root{${light.join(';')}}${dark.length ? `${DARK_SELECTOR}{${dark.join(';')}}` : ''}`;
 
   return (

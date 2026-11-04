@@ -34,7 +34,13 @@ export const DARK_NOW_SCRIPT = `document.documentElement.classList.add('${DARK_C
 export const AUTO_MODE_SCRIPT = `try{if(window.matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.classList.add('${DARK_CLASS}')}catch(e){}`;
 
 /** The before-paint script for a mode, or null when the page starts light. */
-export function beforePaintScript(mode: ColorMode, storeIsDark: boolean): string | null {
-  if (mode === 'auto') return AUTO_MODE_SCRIPT;
-  return isDark(mode, storeIsDark, false) ? DARK_NOW_SCRIPT : null;
+export function beforePaintScript(
+  mode: ColorMode,
+  storeIsDark: boolean,
+  visitorToggle = false
+): string | null {
+  const base = mode === 'auto' ? AUTO_MODE_SCRIPT : isDark(mode, storeIsDark, false) ? DARK_NOW_SCRIPT : null;
+  if (!visitorToggle) return base;
+  // A visitor's stored choice (colorModeStore) decides first; otherwise the mode does.
+  return `try{var m=localStorage.getItem('am1als:color-mode')}catch(e){}if(m==='dark')document.documentElement.classList.add('${DARK_CLASS}');else if(m!=='light'){${base ?? ''}}`;
 }

@@ -1,0 +1,114 @@
+/* =========================================================================
+   The announcement bar above the header (AnnouncementBar.tsx).
+   40px tall and fixed, so nothing below it moves when the font loads.
+   Text at text-sm bold: Salla's review (2026-11-04) found the old top-bar
+   text too small to read.
+   ========================================================================= */
+
+.announcement-bar {
+  @apply relative flex items-center overflow-hidden;
+  block-size: 2.5rem;
+  background-color: var(--announcement-bg);
+}
+
+.announcement-dismissed .announcement-bar {
+  display: none;
+}
+
+/* Pinned while scrolling; the header gives up its own pin (Header.tsx). */
+.announcement-bar--sticky {
+  position: sticky;
+  inset-block-start: var(--app-safe-area-top, 0px);
+  z-index: 41;
+}
+
+.announcement-bar__track {
+  @apply flex w-max items-center whitespace-nowrap;
+  animation: announcement-scroll-ltr 30s linear infinite;
+}
+
+[dir='rtl'] .announcement-bar__track {
+  animation-name: announcement-scroll-rtl;
+}
+
+.announcement-bar:hover .announcement-bar__track,
+.announcement-bar:focus-within .announcement-bar__track {
+  animation-play-state: paused;
+}
+
+.announcement-bar__text {
+  @apply text-sm font-bold;
+  /* The gap belongs to each copy, so the loop is seamless at -50% / 50%. */
+  padding-inline-end: 4rem;
+  color: var(--announcement-text);
+}
+
+.announcement-bar__link {
+  @apply no-underline;
+
+  &:hover {
+    @apply underline;
+  }
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+}
+
+.announcement-bar__dismiss {
+  @apply absolute inset-y-0 grid w-10 place-items-center;
+  inset-inline-end: 0;
+  background-color: var(--announcement-bg);
+  color: var(--announcement-text);
+
+  svg {
+    @apply h-4 w-4;
+  }
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: calc(var(--focus-ring-offset) * -1);
+  }
+}
+
+/* Two copies in one track; moving it by half its width loops seamlessly. */
+@keyframes announcement-scroll-ltr {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes announcement-scroll-rtl {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(50%);
+  }
+}
+
+/* Reduced motion: still, centred, the copy hidden. */
+@media (prefers-reduced-motion: reduce) {
+  .announcement-bar__track {
+    @apply w-full justify-center;
+    animation: none;
+
+    > [aria-hidden='true'] {
+      display: none;
+    }
+  }
+}
+
+/* `header_band_text`: one short line under the header on inner pages, desktop. */
+.site-header__band {
+  @apply hidden py-2 text-center text-sm font-medium lg:block;
+  background-color: var(--surface-header);
+  border-block-start: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+}

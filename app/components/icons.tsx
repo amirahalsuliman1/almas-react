@@ -358,3 +358,22 @@ export const CrownIcon = (props: SVGProps<SVGSVGElement>) => (
     <path d="M5 21H19" {...stroke} />
   </svg>
 );
+
+export const MoonIcon = (props: SVGProps<SVGSVGElement>) => (
+  <svg {...base} {...props}>
+    <path
+      d="M21.5 14.08C20.3 14.67 18.95 15 17.53 15C12.54 15 8.5 10.96 8.5 5.97C8.5 4.55 8.83 3.2 9.42 2C5.48 2.98 2.5 6.53 2.5 10.78C2.5 15.77 6.73 20 11.72 20C15.97 20 19.52 17.02 20.5 13.08"
+      {...stroke}
+    />
+  </svg>
+);
+
+export const SunIcon = (props: SVGProps<SVGSVGElement>) => (
+  <svg {...base} {...props}>
+    <path d="M17 12C17 14.7614 14.7614 17 12 17C9.23858 17 7 14.7614 7 12C7 9.23858 9.23858 7 12 7C14.7614 7 17 9.23858 17 12Z" {...stroke} />
+    <path
+      d="M12 2V3.5M12 20.5V22M19.07 19.07L18.01 18.01M5.99 5.99L4.93 4.93M22 12H20.5M3.5 12H2M19.07 4.93L18.01 5.99M5.99 18.01L4.93 19.07"
+      {...stroke}
+    />
+  </svg>
+);

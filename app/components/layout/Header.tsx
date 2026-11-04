@@ -12,10 +12,13 @@ import { MapPinIcon, SearchIcon, ShoppingBagIcon } from '../icons';
 import { useAppSafeAreaTop } from '../../hooks/useAppSafeAreaTop';
 import { useNavHasContent } from '../../hooks/useNavHasContent';
 import { HOME_ROUTE_ID, PRODUCT_ROUTE_ID } from '../../lib/routeIds';
+import { textValue } from '../../lib/settings';
 import { HeaderMainMenu } from './HeaderMainMenu';
 import { HeaderNav } from './HeaderNav';
 import { HeaderTopnav } from './HeaderTopnav';
 import { PageAdvertisements } from './PageAdvertisements';
+import { AnnouncementBar } from './AnnouncementBar';
+import { ColorModeToggle } from './ColorModeToggle';
 
 /** Opens the Salla search modal (the `<SallaSearch />` at the end of the header). */
 const openSearch = () => window.salla?.event?.dispatch('search::open');
@@ -116,9 +119,24 @@ interface HeaderProps {
 
 export function Header({ navOpen: navOpenProp, onNavOpenChange }: HeaderProps = {}) {
   const { store, theme } = useTwilight();
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const isDefaultLayout = theme?.settings?.header_layout === 'default';
-  const stickyEnabled = theme?.settings?.header_is_sticky !== false;
+  const headerSettings = theme?.settings as
+    | {
+        announcement_sticky?: boolean;
+        announcement_enabled?: boolean;
+        announcement_text?: unknown;
+        dark_mode_toggle?: boolean;
+        header_band_text?: unknown;
+      }
+    | undefined;
+  // One band pins, never two: a pinned announcement bar takes over from the header.
+  const announcementPins =
+    headerSettings?.announcement_sticky === true &&
+    headerSettings?.announcement_enabled !== false &&
+    !!textValue(headerSettings?.announcement_text);
+  const bandText = textValue(headerSettings?.header_band_text, locale);
+  const stickyEnabled = theme?.settings?.header_is_sticky !== false && !announcementPins;
   const navHasContent = useNavHasContent();
   const [navOpenState, setNavOpenState] = useState(false);
   const navOpen = navOpenProp ?? navOpenState;
@@ -209,6 +227,8 @@ export function Header({ navOpen: navOpenProp, onNavOpenChange }: HeaderProps = 
       <div className="site-header__safe-area" aria-hidden="true" />
       <HookSlot name="header:start" />
 
+      <AnnouncementBar />
+
       <div className="site-header__ad">
         <PageAdvertisements />
       </div>
@@ -298,10 +318,13 @@ export function Header({ navOpen: navOpenProp, onNavOpenChange }: HeaderProps = 
                 <ShoppingBagIcon slot="icon" aria-hidden="true" />
               </SallaCartSummary>
               <SearchButton label={searchLabel} />
+              {headerSettings?.dark_mode_toggle === true && <ColorModeToggle />}
             </div>
           </div>
         </div>
       </div>
+
+      {bandText && !isHomePage && <p className="site-header__band">{bandText}</p>}
 
       {showIntro && <HeaderIntro isHomePage={isHomePage} />}
 
