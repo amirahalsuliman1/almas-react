@@ -6,6 +6,7 @@ import { parseNextPageToken, product } from '@salla.sa/twilight-theme-engine/api
 import type { Product } from '@salla.sa/twilight-theme-engine/types';
 import { ProductCard } from '../product';
 import { useProductCardLayout } from '../../hooks/useProductCardLayout';
+import { SectionHeader } from '../common/SectionHeader';
 
 export interface LatestProductsProps {
   data: {
@@ -39,9 +40,7 @@ export function LatestProducts({ data }: LatestProductsProps) {
 
   return (
     <>
-      <div className="s-block__title">
-        <h2>{data.title || t('blocks.home.latest_products', 'Latest Products')}</h2>
-      </div>
+      <SectionHeader title={data.title || t('blocks.home.latest_products', 'Latest Products')} />
       <SallaProductsList<Product>
         loader={loader}
         mode="infinite"

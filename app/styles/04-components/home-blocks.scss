@@ -1,20 +1,12 @@
 /*
-  Block Title
+  Block Title — the title, subtitle and «عرض الكل» sizes and colours live in
+  section-header.scss (R-06), one rule for every section. What stays here is
+  the Twig-era markup's own layout.
 */
 .s-block {
   &__title {
-    @apply center-between mb-4 md:mb-8;
-
     .right-side {
       @apply rtl:pl-8 ltr:pr-8;
-    }
-
-    h2 {
-      @apply text-lg font-bold relative leading-[1.2];
-    }
-
-    p {
-      @apply text-sm opacity-60 mt-2 line-clamp-1 sm:line-clamp-2 rtl:md:pl-16 ltr:md:pr-16;
     }
 
     &-nav {
@@ -22,12 +14,8 @@
     }
   }
 
-  &__display-all {
-    @apply inline-flex items-center gap-2 text-sm font-bold opacity-80 hover:opacity-100;
-
-    i {
-      @apply ltr:rotate-180 inline-block;
-    }
+  &__display-all i {
+    @apply ltr:rotate-180 inline-block;
   }
 }
 

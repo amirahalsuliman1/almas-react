@@ -2,8 +2,8 @@ import { memo } from 'react';
 import type { Brand } from '@salla.sa/twilight-theme-engine/types';
 import { Link } from '@salla.sa/twilight-theme-engine/common';
 import { getCdnImageUrl } from '@salla.sa/twilight-theme-engine/utils/cdn-image';
-import { useTranslation } from '@salla.sa/twilight-theme-engine/i18n';
 import { useTwilight } from '@salla.sa/twilight-theme-engine/providers';
+import { SectionHeader } from '../common/SectionHeader';
 
 export interface BrandsData {
   brands: Brand[];
@@ -19,7 +19,6 @@ export interface BrandsProps {
 
 export const Brands = memo(function Brands({ data }: BrandsProps) {
   const { brands, title, show_all: showAll } = data;
-  const { t } = useTranslation();
   // Twig's brands block shows "View All" by the theme's setting; the component sends no `show_all`.
   const { theme } = useTwilight();
   const showMoreButton = theme?.settings?.is_more_button_enabled;
@@ -33,19 +32,7 @@ export const Brands = memo(function Brands({ data }: BrandsProps) {
     <>
       <div className="container">
         {(title || showAll) && (
-          <div className="s-block__title">
-            {title && (
-              <div className="right-side">
-                <h2>{title}</h2>
-              </div>
-            )}
-            {showMoreButton && (
-              <Link to="/brands" className="s-block__display-all">
-                {t('blocks.home.display_all', 'View All')}
-                <i className="sicon-arrow-left"></i>
-              </Link>
-            )}
-          </div>
+          <SectionHeader title={title} displayAllUrl={showMoreButton ? '/brands' : null} />
         )}
 
         <div className={`grid grid-cols-2 ${gridCols} grid-flow-row gap-4 lg:gap-8`}>

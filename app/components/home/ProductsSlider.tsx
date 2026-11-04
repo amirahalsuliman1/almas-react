@@ -2,12 +2,12 @@ import { useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from '@salla.sa/twilight-theme-engine/i18n';
 import { product, type ProductsListSource } from '@salla.sa/twilight-theme-engine/api/product';
-import { Link } from '@salla.sa/twilight-theme-engine/common';
 import { ProductsListSkeleton } from '@salla.sa/twilight-components-react';
 import { ScrollCarousel } from '../common';
 import { ProductCard } from '../product';
 import { blockLimit } from '../../lib/blockLimit';
 import { showsDisplayAll } from '../../lib/displayAll';
+import { SectionHeader } from '../common/SectionHeader';
 
 export interface ProductsSliderProps {
   data: {
@@ -28,17 +28,12 @@ export interface ProductsSliderProps {
 }
 
 function ProductsHeading({ title, displayAllUrl }: { title?: string; displayAllUrl: string }) {
-  const { t } = useTranslation();
   return (
-    <div className="s-products-carousel__head">
-      {title && <h2 className="s-products-carousel__title">{title}</h2>}
-      {displayAllUrl && (
-        <Link to={displayAllUrl} className="s-block__display-all">
-          {t('blocks.home.display_all', 'View All')}
-          <i className="sicon-arrow-left" aria-hidden="true" />
-        </Link>
-      )}
-    </div>
+    <SectionHeader
+      className="s-products-carousel__head"
+      title={title}
+      displayAllUrl={displayAllUrl || null}
+    />
   );
 }
 

@@ -1,0 +1,59 @@
+/* =========================================================================
+   Section headers (SectionHeader.tsx, R-06). One look for every section:
+   the title at text-2xl, text-3xl from 1024px, bold; «عرض الكل» in the accent
+   with an arrow. Salla's review (2026-11-04) found the titles small, the link
+   weak and the sections alike.
+
+   The same rules reach the headers Salla's own components draw
+   (`<salla-slider>`'s `.s-slider-block__title`) and the Twig-era markup some
+   blocks still carry (`.s-block__title h2`), so the page reads as one system.
+   ========================================================================= */
+
+.section-header,
+.s-slider-block__title {
+  @apply mb-5 flex items-end justify-between gap-4 lg:mb-8;
+}
+
+.section-header__text {
+  @apply min-w-0;
+}
+
+.section-header__title,
+.s-block__title h2,
+h2.s-block__title,
+.s-products-carousel__title,
+.s-slider-block__title h2 {
+  @apply m-0 text-2xl font-bold leading-tight lg:text-3xl;
+  color: var(--main-text-color);
+}
+
+.section-header__subtitle,
+.s-slider-block__title p {
+  @apply mt-1.5 text-base;
+  color: var(--text-secondary);
+}
+
+.section-header__all,
+.s-block__display-all,
+.s-slider-block__display-all {
+  @apply inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap text-base font-semibold no-underline transition-colors;
+  color: var(--color-accent-text);
+
+  &:hover {
+    @apply underline underline-offset-4;
+  }
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+}
+
+/* The arrow points forward: left in Arabic, right in English. */
+.section-header__arrow {
+  @apply h-5 w-5 shrink-0;
+
+  [dir='ltr'] & {
+    transform: scaleX(-1);
+  }
+}

@@ -114,3 +114,28 @@ describe('the product card (R-05)', () => {
     expect(root.toString()).not.toMatch(/rgb\(153 27 27/);
   });
 });
+
+describe('section headers (R-06)', () => {
+  it('titles at text-2xl, text-3xl from 1024px, bold, in the ink', async () => {
+    const root = await compile('section-header.scss');
+    const sel = '.section-header__title';
+    expect(decls(root, sel)['font-size']).toBe('1.5rem');
+    expect(decls(root, sel)['font-weight']).toBe('700');
+    expect(decls(root, sel).color).toBe('var(--main-text-color)');
+    expect(decls(root, sel, /min-width:\s*1024px/)['font-size']).toBe('1.875rem');
+  });
+
+  it('puts «عرض الكل» in the accent at text-base', async () => {
+    const root = await compile('section-header.scss');
+    const link = decls(root, '.section-header__all');
+    expect(link.color).toBe('var(--color-accent-text)');
+    expect(link['font-size']).toBe('1rem');
+  });
+
+  it("reaches Salla's slider headers and the Twig-era markup too", async () => {
+    const root = await compile('section-header.scss');
+    expect(decls(root, '.s-slider-block__title h2')['font-size']).toBe('1.5rem');
+    expect(decls(root, '.s-block__title h2')['font-size']).toBe('1.5rem');
+    expect(decls(root, '.s-slider-block__display-all').color).toBe('var(--color-accent-text)');
+  });
+});
