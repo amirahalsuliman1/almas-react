@@ -72,31 +72,36 @@ describe('the menu drawer', () => {
 });
 
 describe('the product card (R-05)', () => {
-  it('sits on the card surface with a hairline, apart from its section', async () => {
+  it("is Twig's warm card with no border, and the card surface inside a panelled row", async () => {
     const root = await compile('product.scss');
     const card = decls(root, '.s-product-card-entry.s-product-card-vertical');
-    expect(card['background-color']).toBe('var(--surface-card)');
-    expect(card['border-color']).toBe('var(--border-subtle)');
+    expect(card['background-color']).toBe('var(--surface-section)');
+    expect(card['border-width']).toBe('0px');
+    expect(decls(root, '.s-products-carousel .s-product-card-entry.s-product-card-vertical')['background-color']).toBe(
+      'var(--surface-card)'
+    );
   });
 
-  it('prints the name at text-base semibold and the price at text-lg bold in the accent', async () => {
+  it('prints the name at text-base bold and the price at text-lg bold in the ink', async () => {
     const root = await compile('product.scss');
     const title = decls(root, '.s-product-card .s-product-card-content-title');
     expect(title['font-size']).toBe('1rem');
-    expect(title['font-weight']).toBe('600');
+    expect(title['font-weight']).toBe('700');
     const price = decls(root, '.s-product-card-price');
     expect(price['font-size']).toBe('1.125rem');
     expect(price['font-weight']).toBe('700');
-    expect(price.color).toBe('var(--color-accent-text)');
+    expect(price.color).toBe('var(--main-text-color)');
   });
 
-  it('has a 40px accent add button and a 40px heart', async () => {
+  it("has Twig's pill add button, 44px in the accent, and a 40px heart on the image", async () => {
     const root = await compile('product.scss');
     const add = decls(root, '.s-product-card .s-product-card-content-footer .s-button-btn');
-    expect(add.height).toBe('2.5rem');
+    expect(add.height).toBe('2.75rem');
+    expect(add['border-radius']).toBe('9999px');
     expect(add['background-color']).toBe('var(--color-accent)');
-    const heart = decls(root, '.s-product-card .s-product-card-content-footer .s-product-card-wishlist-btn');
+    const heart = decls(root, '.product-card__heart button.s-product-card-wishlist-btn');
     expect(heart.height).toBe('2.5rem');
+    expect(heart.width).toBe('2.5rem');
   });
 
   it('lays products four to a row on desktop, 24px apart', async () => {

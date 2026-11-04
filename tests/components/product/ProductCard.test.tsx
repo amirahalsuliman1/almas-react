@@ -22,7 +22,7 @@ vi.mock('@salla.sa/twilight-theme-engine/product', () => ({
       data-testid="engine-card"
       data-image={product.image?.url}
     >
-      <div className="s-product-card-image">
+      <div className="s-product-card-image" data-testid="image">
         {layout !== 'horizontal' && (
           <button
             type="button"
@@ -57,6 +57,10 @@ vi.mock('@salla.sa/twilight-theme-engine/i18n', () => ({
 
 const product = { id: 42, name: 'Test product' } as never;
 
+/** The theme's heart, portalled onto the image corner. */
+const heartBtn = (getByTestId: (id: string) => HTMLElement) =>
+  getByTestId('image').querySelector<HTMLButtonElement>('.product-card__heart button');
+
 beforeEach(() => {
   wishlistState.ids = [];
   cleanup();
@@ -78,35 +82,34 @@ describe('ProductCard', () => {
     expect(card.parentElement?.hasAttribute('data-image-placeholder')).toBe(false);
   });
 
-  it('portals a wishlist toggle into the engine card footer instead of moving the image one', async () => {
+  it("portals the theme's heart onto the image corner (Twig), leaving the footer to the add button", async () => {
     const { getByTestId, getByLabelText } = render(<ProductCard product={product} />);
 
     await waitFor(() => {
       expect(
-        getByTestId('footer').querySelector('[aria-label="Add or remove to wishlist"]')
+        getByTestId('image').querySelector('.product-card__heart [aria-label="Add or remove to wishlist"]')
       ).toBeTruthy();
     });
 
     // The engine's own image-corner button is untouched — still inside the image container,
     // not moved (i.e. this is a style hide, not the old appendChild reparenting).
     expect(getByLabelText('engine wishlist').closest('.s-product-card-image')).toBeTruthy();
-    // Our portaled button lives in the footer, as a distinct element.
-    expect(getByTestId('footer').querySelector('button')).toBeTruthy();
+    expect(getByTestId('footer').querySelector('button')).toBeNull();
   });
 
   it('hides the engine image-corner button so only one wishlist control is visible', async () => {
     const { getByTestId, getByLabelText } = render(<ProductCard product={product} />);
 
     await waitFor(() => expect(getByLabelText('engine wishlist').style.display).toBe('none'));
-    // The footer's portaled button stays visible (no inline hide applied to it).
-    expect(getByTestId('footer').querySelector('button')?.style.display).not.toBe('none');
+    // The theme's portaled heart stays visible (no inline hide applied to it).
+    expect(heartBtn(getByTestId)?.style.display).not.toBe('none');
   });
 
   it('toggles the wishlist through the portaled button without touching the engine node', async () => {
     const { getByTestId } = render(<ProductCard product={product} />);
 
-    await waitFor(() => expect(getByTestId('footer').querySelector('button')).toBeTruthy());
-    const footerBtn = getByTestId('footer').querySelector('button')!;
+    await waitFor(() => expect(heartBtn(getByTestId)).toBeTruthy());
+    const footerBtn = heartBtn(getByTestId)!;
     footerBtn.click();
 
     expect(wishlistState.ids).toContain(42);
@@ -117,18 +120,18 @@ describe('ProductCard', () => {
     const { getByTestId } = render(<ProductCard product={{ id: '42', name: 'Listed' } as never} />);
 
     await waitFor(() =>
-      expect(getByTestId('footer').querySelector('button')?.className).toContain(
+      expect(heartBtn(getByTestId)?.className).toContain(
         's-product-card-wishlist-added'
       )
     );
-    expect(getByTestId('footer').querySelector('button')?.getAttribute('aria-pressed')).toBe('true');
+    expect(heartBtn(getByTestId)?.getAttribute('aria-pressed')).toBe('true');
   });
 
   it('reports an unsaved product as not pressed', async () => {
     const { getByTestId } = render(<ProductCard product={product} />);
 
     await waitFor(() =>
-      expect(getByTestId('footer').querySelector('button')?.getAttribute('aria-pressed')).toBe(
+      expect(heartBtn(getByTestId)?.getAttribute('aria-pressed')).toBe(
         'false'
       )
     );
@@ -138,13 +141,13 @@ describe('ProductCard', () => {
     const { getByTestId } = render(<ProductCard product={product} />);
 
     await waitFor(() =>
-      expect(getByTestId('footer').querySelector('button')?.getAttribute('data-id')).toBe('42')
+      expect(heartBtn(getByTestId)?.getAttribute('data-id')).toBe('42')
     );
   });
 
   it('unmounts cleanly — no DOM-reparenting removeChild errors', async () => {
     const { getByTestId, unmount } = render(<ProductCard product={product} />);
-    await waitFor(() => expect(getByTestId('footer').querySelector('button')).toBeTruthy());
+    await waitFor(() => expect(heartBtn(getByTestId)).toBeTruthy());
 
     expect(() => unmount()).not.toThrow();
   });
@@ -155,7 +158,7 @@ describe('ProductCard', () => {
     // so when a `layout` change made the engine stop rendering it there, React's reconciler
     // tried to `removeChild` it from that (no-longer-actual) parent and threw `NotFoundError`.
     const { getByTestId, rerender } = render(<ProductCard product={product} layout="vertical" />);
-    await waitFor(() => expect(getByTestId('footer').querySelector('button')).toBeTruthy());
+    await waitFor(() => expect(heartBtn(getByTestId)).toBeTruthy());
 
     expect(() => rerender(<ProductCard product={product} layout="horizontal" />)).not.toThrow();
   });

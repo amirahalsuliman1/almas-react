@@ -16,7 +16,8 @@ type ProductCardProps = ComponentProps<typeof EngineProductCard>;
  *  - sets `display: none` inline on a vertical card's own image-corner
  *    wishlist button (a plain style mutation on an existing node — safe,
  *    unlike moving it; see below), and portals a theme-owned wishlist button
- *    into `.s-product-card-content-footer` instead. Hiding it inline rather
+ *    onto the same corner instead (Twig's card, owner 2026-11-05), leaving
+ *    the footer to the add-to-cart button alone. Hiding it inline rather
  *    than only through `04-components/product.scss` keeps this component
  *    correct on its own — that stylesheet's rule hides it too, from the
  *    first paint.
@@ -36,7 +37,6 @@ type ProductCardProps = ComponentProps<typeof EngineProductCard>;
  */
 export function ProductCard(props: ProductCardProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const [footerEl, setFooterEl] = useState<HTMLElement | null>(null);
   const [imageEl, setImageEl] = useState<HTMLElement | null>(null);
   const saving = savingPercent(props.product);
   const { product, isPlaceholder } = useMemo(
@@ -64,7 +64,6 @@ export function ProductCard(props: ProductCardProps) {
       );
       if (originalWishlistBtn) originalWishlistBtn.style.display = 'none';
 
-      setFooterEl(vertical.querySelector<HTMLElement>('.s-product-card-content-footer'));
       setImageEl(vertical.querySelector<HTMLElement>('.s-product-card-image'));
     };
 
@@ -82,11 +81,11 @@ export function ProductCard(props: ProductCardProps) {
     >
       <EngineProductCard {...props} product={product} />
       {imageEl && saving !== null && createPortal(<SavingBadge percent={saving} />, imageEl)}
-      {footerEl &&
+      {imageEl &&
         createPortal(
           // List responses send the id as a numeric string; the wishlist holds numbers.
-          <FooterWishlistButton productId={Number(props.product.id)} />,
-          footerEl
+          <CornerWishlistButton productId={Number(props.product.id)} />,
+          imageEl
         )}
     </div>
   );
@@ -126,21 +125,23 @@ function SavingBadge({ percent }: { percent: number }) {
   );
 }
 
-/** Same button the engine renders for `horizontal`/`fullImage` layouts
- * (`ProductCardContent`, theme-engine) — reused here for `vertical`, which
- * the engine only ever places in the image corner. */
-function FooterWishlistButton({ productId }: { productId: number }) {
+/** The heart on the image's corner, as Twig's card has it (owner, 2026-11-05):
+ * the theme's own button, so it is fully React-managed and keeps `data-id` for
+ * wishlist apps, in place of the engine's (hidden in product.scss). */
+function CornerWishlistButton({ productId }: { productId: number }) {
   const { t } = useTranslation();
   const wishlist = useWishlist();
   const inWishlist = wishlist.has(productId);
 
   return (
-    <WishlistHeartButton
-      productId={productId}
+    <div className="product-card__heart">
+      <WishlistHeartButton
+        productId={productId}
       ariaLabel={t('pages.wishlist.toggle', 'Add or remove to wishlist')}
       pressed={inWishlist}
       className={`s-product-card-wishlist-btn animated ${inWishlist ? 's-product-card-wishlist-added pulse-anime' : 'not-added un-favorited'}`}
-      onClick={() => wishlist.toggle(productId)}
-    />
+        onClick={() => wishlist.toggle(productId)}
+      />
+    </div>
   );
 }

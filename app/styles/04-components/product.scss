@@ -136,10 +136,12 @@
 }
 
 /*
-  Product-card enhancements
-  - wishlist button is moved into the footer row (by app/components/product/ProductCard.tsx)
-  - add-to-cart is solid + pill-rounded
-  - content order becomes: subtitle, title, price
+  Product card — Twig's card (owner, 2026-11-05), with Salla's notes applied.
+  - the heart sits on the image's corner (ProductCard.tsx portals the theme's
+    own button there), the saving badge on the other corner
+  - the add-to-cart is Twig's pill, always visible, the accent fill, 44px
+  - name text-base bold, price text-lg bold in the ink (Salla: both too weak)
+  - content order: subtitle, title, price
 */
 .s-product-card {
   /* `ProductCard.tsx` relocates the wishlist button into the footer, but only
@@ -230,13 +232,14 @@
       }
     }
 
-    /* Add to cart, always visible: solid accent at 40px (the engine renders it
-       as fill="outline"; ProductCard.tsx sets it solid). */
+    /* Add to cart, always visible (Salla's note; Twig's desktop card had hidden
+       it behind a bag icon on the image): Twig's pill, filled in the accent,
+       44px (the engine renders it fill="outline"; ProductCard.tsx sets it
+       solid). */
     .s-button-btn {
-      @apply h-10 text-sm font-bold;
+      @apply h-11 rounded-full text-sm font-bold lg:text-base;
       background-color: var(--color-accent);
       border-color: var(--color-accent);
-      border-radius: var(--button-radius);
       color: var(--color-accent-ink);
 
       &:hover {
@@ -269,55 +272,119 @@
     color: var(--text-secondary);
   }
 
-  /* Name: text-base semibold, two lines (Salla's review: names too small). */
+  /* Name: Twig's bold two lines, at text-base (Salla: names too small). */
   .s-product-card-content-title {
-    @apply mb-1 text-base font-semibold leading-snug line-clamp-2;
+    @apply mb-1 text-base font-bold leading-snug line-clamp-2;
     color: var(--main-text-color);
 
     a:hover {
-      color: var(--color-accent-text);
+      @apply underline underline-offset-4;
+    }
+
+    a:focus-visible {
+      outline: var(--focus-ring-width) solid var(--focus-ring-color);
+      outline-offset: var(--focus-ring-offset);
     }
   }
 }
 
-/* The card sits on its own surface, set off from the section it is in. */
+/* Twig's card: the section's warm tone, no border, the photograph inset 12px
+   with its own rounded corners. In a panelled row (section-panel.scss) the
+   panel is that warm tone already, so the card takes the card surface and the
+   page, panel and card stay three steps apart, dark mode included. */
 .s-product-card-entry.s-product-card-vertical {
-  @apply overflow-hidden rounded border transition-shadow;
-  background-color: var(--surface-card);
-  border-color: var(--border-subtle);
+  @apply overflow-hidden rounded border-0 transition-shadow;
+  background-color: var(--surface-section);
 
   &:hover {
     box-shadow: 0 8px 24px rgb(0 0 0 / 0.08);
   }
 
+  .s-product-card-image {
+    @apply relative m-3 mb-0 overflow-hidden rounded;
+  }
+
   .s-product-card-content {
-    @apply p-3 lg:p-4;
+    @apply p-3;
   }
 }
 
-/* Two cards to a phone row leave the add button about 100px beside the heart:
-   tighter padding keeps «أضف إلى السلة» whole instead of cut to «أضف …». */
-@media (max-width: 767px) {
-  .s-product-card-entry.s-product-card-vertical .s-product-card-content-footer {
-    @apply gap-1.5;
+.s-products-carousel .s-product-card-entry.s-product-card-vertical {
+  background-color: var(--surface-card);
+}
 
-    .s-button-btn {
-      @apply px-1.5;
+/* The photograph leans in a little under the pointer (Salla: weak hover). */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .s-product-card-entry.s-product-card-vertical {
+    .s-product-card-image img {
+      transition: transform var(--motion-base) var(--motion-ease);
+    }
 
-      .s-button-text {
-        @apply overflow-visible whitespace-nowrap;
-        text-overflow: clip;
-      }
+    &:hover .s-product-card-image img {
+      transform: scale(1.04);
     }
   }
 }
 
-/* «وفّر ٢٠٪» — ProductCard.tsx, on the image's end corner. */
+/* The heart — ProductCard.tsx, on the image's end corner: Twig's white disc at
+   40px (Twig: 36px; Salla: card icons too small). `!important` because the
+   component library's `.s-button-light-outline` sets its border, fill and ink
+   with `!important`. */
+.product-card__heart {
+  @apply absolute top-2 z-[2];
+  inset-inline-end: 0.5rem;
+
+  .s-button-wrap {
+    @apply block;
+  }
+
+  button.s-product-card-wishlist-btn {
+    @apply inline-flex h-10 w-10 items-center justify-center rounded-full p-0;
+    background-color: var(--surface-card) !important;
+    border: 0 !important;
+    box-shadow: 0 1px 4px rgb(0 0 0 / 0.12);
+    color: var(--main-text-color) !important;
+
+    i {
+      @apply text-lg leading-none;
+    }
+
+    &.s-product-card-wishlist-added {
+      color: var(--color-error) !important;
+    }
+
+    &:focus-visible {
+      outline: var(--focus-ring-width) solid var(--focus-ring-color);
+      outline-offset: var(--focus-ring-offset);
+    }
+  }
+}
+
+/* The footer holds the add button alone now; it takes the whole row. */
+.s-product-card-entry.s-product-card-vertical .s-product-card-content-footer .s-button-btn {
+  @apply w-full;
+}
+
+/* Two cards to a phone row: tighter padding keeps «أضف إلى السلة» whole. */
+@media (max-width: 767px) {
+  .s-product-card-entry.s-product-card-vertical .s-product-card-content-footer .s-button-btn {
+    @apply px-2;
+
+    .s-button-text {
+      @apply overflow-visible whitespace-nowrap;
+      text-overflow: clip;
+    }
+  }
+}
+
+/* «وفّر ٢٠٪» — ProductCard.tsx, on the image's start corner: Twig's tag, a
+   white pill in bold, opposite the heart. */
 .product-card__saving {
-  @apply pointer-events-none absolute top-3 z-[1] rounded-full px-2.5 py-1 text-xs font-bold leading-none;
-  inset-inline-end: 0.75rem;
-  background-color: var(--color-accent);
-  color: var(--color-accent-ink);
+  @apply pointer-events-none absolute top-2 z-[1] rounded-full px-2.5 py-1 text-xs font-bold leading-none;
+  inset-inline-start: 0.5rem;
+  background-color: var(--surface-card);
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.12);
+  color: var(--main-text-color);
 }
 
 /* The placeholder is shown whole, as in Twig, whatever the store's image fit. */
@@ -690,12 +757,13 @@ salla-gifting {
   @apply rtl:rounded-r ltr:rounded-l;
 }
 
-/* Price: text-lg bold in the accent; the old price smaller, struck through. */
+/* Price: text-lg bold in the ink (Salla: prices too weak; the accent is kept
+   for the main buttons, owner 2026-11-05); the old price smaller, struck. */
 .s-product-card-sale-price h4,
 .s-product-card-starting-price h4,
 .s-product-card-price {
   @apply text-lg font-bold;
-  color: var(--color-accent-text);
+  color: var(--main-text-color);
 }
 
 .s-product-card-sale-price span {
@@ -1011,9 +1079,12 @@ salla-gifting {
   margin-inline: 6px 0 #{!important};
 }
 
+/* The sale price in the ink, as Twig's card and PDP have it; the struck
+   regular price beside it says it is a sale. `!important` beats the store's
+   injected customisation CSS. */
 .s-product-card-sale-price {
   h4 {
-    color: var(--color-accent-text) #{!important};
+    color: var(--main-text-color) #{!important};
   }
 }
 
