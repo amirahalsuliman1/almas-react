@@ -15,6 +15,7 @@ import {
   FeaturedProducts,
   featuredProductsConfig,
   FixedProducts,
+  Hero,
   LatestProducts,
   MainLinks,
   PhotosSlider,
@@ -43,6 +44,7 @@ registry.register('product:list-skeleton', ProductListSkeleton);
 
 registerHomeComponents({
   ...DefaultHomeComponents,
+  hero: Hero,
   brands: Brands,
   'enhanced-slider': EnhancedSlider,
   'custom-testimonials': CustomTestimonials,
@@ -83,6 +85,8 @@ registerHomeComponents({
 // the literal `styleN` values; this covers the semantic `view_style`s too.
 // `custom-testimonials` gets `s-block--full-bg` so the gray band runs edge-to-edge.
 registerHomeComponentConfig({
+  // Always the first block: rendered at once, no reservation needed.
+  hero: { className: 's-block s-block--hero' },
   'featured-products': featuredProductsConfig,
   'featured-products-special-offer': featuredProductsConfig,
   'featured-products-special-product': featuredProductsConfig,

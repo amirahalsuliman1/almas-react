@@ -300,5 +300,8 @@
   "theme.testimonials.rating": "Rated :stars out of 5",
   "theme.footer.follow_us": "Follow us",
   "theme.product.save": "Save",
-  "pages.wishlist.toggle": "Add or remove from wishlist"
+  "pages.wishlist.toggle": "Add or remove from wishlist",
+  "theme.hero.shop_now": "Shop now",
+  "theme.hero.previous": "Previous slide",
+  "theme.hero.next": "Next slide"
 }

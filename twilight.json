@@ -892,6 +892,199 @@
   ],
   "components": [
     {
+      "name": "hero",
+      "key": "8f2c1a64-5d70-4b3e-9a51-6c0f2d8b47ae",
+      "title": {
+        "en": "Hero banner",
+        "ar": "غلاف الصفحة الرئيسية"
+      },
+      "icon": "sicon-image-carousel",
+      "path": "home.hero",
+      "image": "https://cdn.salla.network/images/themes/raed/preview-images/images-slider-enhancement.png?v=1.1",
+      "is_default": true,
+      "fields": [
+        {
+          "type": "boolean",
+          "icon": "sicon-toggle-off",
+          "format": "switch",
+          "id": "autoplay",
+          "label": "تنقّل تلقائي بين الصور",
+          "description": "عند تفعيله يظهر زر لإيقاف التنقّل، ويتوقّف تلقائيًا لمن فعّل تقليل الحركة في جهازه.",
+          "required": false,
+          "value": false,
+          "selected": false
+        },
+        {
+          "type": "boolean",
+          "icon": "sicon-toggle-off",
+          "format": "switch",
+          "id": "quote_hearts",
+          "label": "قلوب مرسومة حول العبارة",
+          "description": "قلبان بخطّ اليد بلون العبارة، فوقها وتحتها. يظهران فقط مع الصور التي فيها عبارة.",
+          "required": false,
+          "value": true,
+          "selected": true
+        },
+        {
+          "id": "slides",
+          "type": "collection",
+          "format": "collection",
+          "required": true,
+          "minLength": 1,
+          "maxLength": 10,
+          "label": null,
+          "item_label": "صورة الغلاف",
+          "value": [
+            {
+              "slides.image": "https://cdn.salla.sa/ZrBEO/MopzhoqpTkDObcKc8Q8n77AuydanfsGXdZO7iinH.jpg",
+              "slides.image_desktop": null,
+              "slides.alt": "",
+              "slides.quote": "تشكيلة جديدة وصلت",
+              "slides.subtitle": "منتجات أصلية من الوكيل الرسمي",
+              "slides.cta_label": "",
+              "slides.url": "",
+              "slides.strip_start": "",
+              "slides.strip_center": "",
+              "slides.strip_end": ""
+            }
+          ],
+          "fields": [
+            {
+              "type": "string",
+              "icon": "sicon-image",
+              "format": "image",
+              "id": "slides.image",
+              "label": "صورة الغلاف (الجوال)",
+              "required": true,
+              "value": null,
+              "placeholder": null,
+              "description": "* المقاس المناسب للصورة هو 900×1260 بكسل"
+            },
+            {
+              "type": "string",
+              "icon": "sicon-image",
+              "format": "image",
+              "id": "slides.image_desktop",
+              "label": "صورة الغلاف (اللابتوب)",
+              "required": false,
+              "value": null,
+              "placeholder": null,
+              "description": "اختيارية. تظهر من عرض 1024 بكسل وأكثر، حيث يكون الغلاف أفقيًا. المقاس المناسب 1240×800 بكسل. اتركها فارغة لتُستخدم صورة الجوال مقصوصة."
+            },
+            {
+              "type": "string",
+              "icon": "sicon-info",
+              "format": "text",
+              "id": "slides.alt",
+              "label": "وصف الصورة لقارئ الشاشة",
+              "multilanguage": true,
+              "required": false,
+              "value": null,
+              "description": "اتركه فارغًا إذا كانت الصورة زخرفية ولا تحمل معنى إضافيًا للنص الظاهر عليها.",
+              "placeholder": "مثال: حقيبة جلدية سوداء على طاولة",
+              "minLength": 0,
+              "maxLength": 125
+            },
+            {
+              "type": "string",
+              "icon": "sicon-typography",
+              "format": "text",
+              "id": "slides.quote",
+              "label": "العنوان الرئيسي",
+              "multilanguage": true,
+              "required": false,
+              "value": null,
+              "description": "عنوان كبير يظهر على الغلاف. اكتبه قصيرًا وواضحًا.",
+              "placeholder": "يمكنك إضافة عبارة هنا…",
+              "minLength": 0,
+              "maxLength": 80
+            },
+            {
+              "type": "string",
+              "icon": "sicon-typography",
+              "format": "textarea",
+              "id": "slides.subtitle",
+              "label": "النص تحت العنوان",
+              "multilanguage": true,
+              "required": false,
+              "value": null,
+              "description": "سطر أو سطران يوضحان العرض.",
+              "placeholder": "مثال: تشكيلة الشتاء من أشهر العلامات",
+              "minLength": 0,
+              "maxLength": 160
+            },
+            {
+              "type": "string",
+              "icon": "sicon-typography",
+              "format": "text",
+              "id": "slides.cta_label",
+              "label": "نص الزر",
+              "multilanguage": true,
+              "required": false,
+              "value": null,
+              "description": "اتركه فارغًا ليظهر «تسوق الآن».",
+              "placeholder": "تسوق الآن",
+              "minLength": 0,
+              "maxLength": 30
+            },
+            {
+              "type": "string",
+              "icon": "sicon-link",
+              "format": "text",
+              "id": "slides.url",
+              "label": "رابط زر الغلاف",
+              "required": false,
+              "value": null,
+              "description": "وجهة زر «تسوق الآن». بدون رابط لا يظهر الزر.",
+              "placeholder": "https://"
+            },
+            {
+              "type": "string",
+              "icon": "sicon-format-text-alt",
+              "format": "text",
+              "id": "slides.strip_start",
+              "label": "شريط المعلومات — العنصر الأول",
+              "multilanguage": true,
+              "required": false,
+              "value": null,
+              "description": "يظهر في أول الشريط أسفل الصورة (يمينه في العربية).",
+              "placeholder": "مثال: طلب مسبق",
+              "minLength": 0,
+              "maxLength": 40
+            },
+            {
+              "type": "string",
+              "icon": "sicon-format-text-alt",
+              "format": "text",
+              "id": "slides.strip_center",
+              "label": "شريط المعلومات — العنصر الأوسط",
+              "multilanguage": true,
+              "required": false,
+              "value": null,
+              "description": "يظهر في منتصف الشريط أسفل الصورة.",
+              "placeholder": "مثال: Oct 14",
+              "minLength": 0,
+              "maxLength": 40
+            },
+            {
+              "type": "string",
+              "icon": "sicon-format-text-alt",
+              "format": "text",
+              "id": "slides.strip_end",
+              "label": "شريط المعلومات — العنصر الأخير",
+              "multilanguage": true,
+              "required": false,
+              "value": null,
+              "description": "يظهر في آخر الشريط أسفل الصورة (يساره في العربية).",
+              "placeholder": "مثال: تسليم فوري",
+              "minLength": 0,
+              "maxLength": 40
+            }
+          ]
+        }
+      ]
+    },
+    {
       "key": "186b3f4f-25cf-4d3c-abca-cef7eed6f0ab",
       "title": {
         "en": "Enhances Animated Images",

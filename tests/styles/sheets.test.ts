@@ -139,3 +139,33 @@ describe('section headers (R-06)', () => {
     expect(decls(root, '.s-slider-block__display-all').color).toBe('var(--color-accent-text)');
   });
 });
+
+describe('the hero (R-07)', () => {
+  it('headline text-3xl, text-5xl from 1024px, bold', async () => {
+    const root = await compile('hero.scss');
+    expect(decls(root, '.hero__headline')['font-size']).toBe('1.875rem');
+    expect(decls(root, '.hero__headline')['font-weight']).toBe('700');
+    expect(decls(root, '.hero__headline', /min-width:\s*1024px/)['font-size']).toBe('3rem');
+  });
+
+  it('a filled accent CTA at least 48px tall', async () => {
+    const root = await compile('hero.scss');
+    const cta = decls(root, '.hero__cta');
+    expect(cta['background-color']).toBe('var(--color-accent)');
+    expect(cta.color).toBe('var(--color-accent-ink)');
+    expect(cta['min-height']).toBe('3rem');
+  });
+
+  it('reserves the photograph shape on phones and a fixed height on desktop (no CLS)', async () => {
+    const root = await compile('hero.scss');
+    expect(decls(root, '.hero__image')['aspect-ratio']).toMatch(/^900\s*\/\s*1260$/);
+    expect(decls(root, '.hero__slide', /min-width:\s*1024px/)['block-size']).toMatch(/^clamp\(/);
+  });
+
+  it('copy and photograph share the desktop row', async () => {
+    const root = await compile('hero.scss');
+    expect(decls(root, '.hero__slide', /min-width:\s*1024px/)['grid-template-columns']).toBe(
+      'minmax(0, 5fr) minmax(0, 7fr)'
+    );
+  });
+});

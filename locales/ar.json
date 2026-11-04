@@ -300,5 +300,8 @@
   "theme.testimonials.rating": "تقييم :stars من 5",
   "theme.footer.follow_us": "تابعنا",
   "theme.product.save": "وفّر",
-  "pages.wishlist.toggle": "إضافة إلى المفضلة أو إزالتها منها"
+  "pages.wishlist.toggle": "إضافة إلى المفضلة أو إزالتها منها",
+  "theme.hero.shop_now": "تسوق الآن",
+  "theme.hero.previous": "الشريحة السابقة",
+  "theme.hero.next": "الشريحة التالية"
 }
