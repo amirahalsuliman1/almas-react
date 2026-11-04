@@ -295,7 +295,8 @@
   }
 
   .site-header__actions .s-user-menu-dropdown {
-    @apply absolute inset-x-0 bottom-0 max-h-[85vh] overflow-y-auto overscroll-contain rounded-t bg-white shadow-2xl;
+    @apply absolute inset-x-0 bottom-0 max-h-[85vh] overflow-y-auto overscroll-contain rounded-t shadow-2xl;
+    background-color: var(--surface-card);
     /* clear the mobile bottom bar, which sits on top (z-220) */
     padding-bottom: calc(76px + var(--safe-bottom));
     transform: translateY(100%);
@@ -303,7 +304,8 @@
 
     &::before {
       content: '';
-      @apply mx-auto mt-2.5 block h-1 w-10 rounded-full bg-gray-300;
+      @apply mx-auto mt-2.5 block h-1 w-10 rounded-full;
+      background-color: var(--border-subtle);
     }
   }
 
@@ -413,7 +415,8 @@ html.dark .site-header__brand .brand-logo--dark {
 }
 
 .site-nav-drawer__backdrop {
-  @apply absolute inset-0 bg-black/50;
+  @apply absolute inset-0;
+  background-color: var(--overlay-scrim);
   opacity: 0;
   transition: opacity 0.3s ease;
 
@@ -432,8 +435,10 @@ html.dark .site-header__brand .brand-logo--dark {
   --shown-children: max(0, min(var(--col-count, 1) - 1, var(--visible-children)));
   --extra-children: max(0, (var(--col-count, 1) - 1) - var(--visible-children));
 
-  @apply absolute inset-y-0 flex flex-col overflow-hidden bg-white shadow-2xl;
+  @apply absolute inset-y-0 flex flex-col overflow-hidden shadow-2xl;
   inset-inline-start: 0;
+  background-color: var(--surface-card);
+  color: var(--main-text-color);
   width: min(96vw, calc(var(--root-col-w) + var(--child-col-w) * var(--shown-children)));
   transform: translateX(-100%);
   transition:
@@ -471,7 +476,13 @@ html.dark .site-header__brand .brand-logo--dark {
 }
 
 .site-nav-drawer__close {
-  @apply inline-flex h-9 w-9 items-center justify-center rounded-full text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-800;
+  @apply inline-flex h-10 w-10 items-center justify-center rounded-full transition-colors;
+  color: var(--text-secondary);
+
+  &:hover {
+    background-color: var(--surface-section);
+    color: var(--main-text-color);
+  }
 
   svg {
     @apply h-5 w-5;
@@ -508,7 +519,8 @@ html.dark .site-header__brand .brand-logo--dark {
   /* Column separator — a soft gray hairline (not `currentColor`, which a
      `border-inline-start` shorthand would leave it as). */
   & + & {
-    @apply border-s border-s-gray-100;
+    @apply border-s;
+    border-inline-start-color: var(--border-subtle);
   }
 }
 
@@ -533,7 +545,8 @@ html.dark .site-header__brand .brand-logo--dark {
     /* grab handle */
     &::before {
       content: '';
-      @apply mx-auto mb-1 mt-2.5 block h-1 w-10 shrink-0 rounded-full bg-gray-300;
+      @apply mx-auto mb-1 mt-2.5 block h-1 w-10 shrink-0 rounded-full;
+      background-color: var(--border-subtle);
     }
   }
 
@@ -600,15 +613,26 @@ html.dark .site-header__brand .brand-logo--dark {
 }
 
 .site-nav-drawer__link {
-  @apply flex w-full items-center justify-between gap-3 py-3.5 text-start text-base font-medium text-gray-800 transition-colors hover:text-primary;
+  @apply flex w-full items-center justify-between gap-3 py-3.5 text-start text-base font-medium transition-colors;
+  color: var(--main-text-color);
+
+  &:hover {
+    color: var(--color-accent-text);
+  }
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: calc(var(--focus-ring-offset) * -1);
+  }
 
   /* The parent whose column is currently open — the visible trail. */
   &.is-active {
-    @apply font-semibold text-primary underline decoration-1 underline-offset-4;
+    @apply font-semibold underline decoration-1 underline-offset-4;
+    color: var(--color-accent-text);
   }
 
   &.is-active .site-nav-drawer__chevron {
-    @apply text-primary;
+    color: var(--color-accent-text);
   }
 }
 
@@ -625,7 +649,9 @@ html.dark .site-header__brand .brand-logo--dark {
    circle with the page's icon, so the row still has a thumbnail and its title
    lines up with its siblings that have an image. See NavLabel in HeaderNav.tsx. */
 .site-nav-drawer__link-img-placeholder {
-  @apply flex h-10 w-10 max-w-none shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-500;
+  @apply flex h-10 w-10 max-w-none shrink-0 items-center justify-center rounded-full;
+  background-color: var(--surface-section);
+  color: var(--text-secondary);
 }
 
 .site-nav-drawer__link-img-icon {
@@ -633,7 +659,8 @@ html.dark .site-header__brand .brand-logo--dark {
 }
 
 .site-nav-drawer__chevron {
-  @apply h-4 w-4 shrink-0 text-gray-400;
+  @apply h-4 w-4 shrink-0;
+  color: var(--text-secondary);
 
   [dir='rtl'] & {
     transform: scaleX(-1);
@@ -644,7 +671,13 @@ html.dark .site-header__brand .brand-logo--dark {
    child column is opened: collapsed to zero width at the root, expands with
    `.is-visible`. */
 .site-nav-drawer__back {
-  @apply -ms-1 inline-flex h-9 shrink-0 items-center justify-center overflow-hidden rounded-full text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-800;
+  @apply -ms-1 inline-flex h-10 shrink-0 items-center justify-center overflow-hidden rounded-full transition-colors;
+  color: var(--text-secondary);
+
+  &:hover {
+    background-color: var(--surface-section);
+    color: var(--main-text-color);
+  }
   width: 0;
   margin-inline-end: 0;
   opacity: 0;
@@ -657,7 +690,7 @@ html.dark .site-header__brand .brand-logo--dark {
     color 0.2s ease;
 
   &.is-visible {
-    width: 2.25rem;
+    width: 2.5rem;
     margin-inline-end: 0.5rem;
     opacity: 1;
     pointer-events: auto;
@@ -673,7 +706,8 @@ html.dark .site-header__brand .brand-logo--dark {
 }
 
 .site-nav-drawer__browse-all {
-  @apply block py-3 text-sm font-semibold text-primary transition-colors hover:opacity-80;
+  @apply block py-3 text-base font-semibold transition-colors hover:opacity-80;
+  color: var(--color-accent-text);
 }
 
 /* Sticky footer bar — language / currency triggers (markup: HeaderNav `NavFooter`).
@@ -697,19 +731,27 @@ html.dark .site-header__brand .brand-logo--dark {
 }
 
 .site-nav-drawer__loc {
-  @apply inline-flex items-center gap-1.5 text-sm font-medium text-gray-700 transition-colors hover:text-primary;
+  @apply inline-flex items-center gap-1.5 text-sm font-medium transition-colors;
+  color: var(--main-text-color);
+
+  &:hover {
+    color: var(--color-accent-text);
+  }
 }
 
 .site-nav-drawer__loc-icon {
-  @apply h-[18px] w-[18px] shrink-0 text-gray-400;
+  @apply h-[18px] w-[18px] shrink-0;
+  color: var(--text-secondary);
 }
 
 .site-nav-drawer__loc-caret {
-  @apply h-4 w-4 shrink-0 text-gray-400;
+  @apply h-4 w-4 shrink-0;
+  color: var(--text-secondary);
 }
 
 .site-nav-drawer__foot-sep {
-  @apply h-4 w-px shrink-0 bg-gray-200;
+  @apply h-4 w-px shrink-0;
+  background-color: var(--border-subtle);
 }
 
 /* Cart summary bubble */
