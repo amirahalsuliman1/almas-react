@@ -3,6 +3,11 @@ import { render, fireEvent, cleanup, act } from '@testing-library/react';
 import { renderToString } from 'react-dom/server';
 import { PhotosSlider } from '../../../app/components/home/PhotosSlider';
 
+const twilight = vi.hoisted(() => ({ settings: {} as Record<string, unknown> }));
+vi.mock('@salla.sa/twilight-theme-engine/providers', () => ({
+  useTwilight: () => ({ theme: { settings: twilight.settings } }),
+}));
+
 vi.mock('@salla.sa/twilight-theme-engine/i18n', () => ({
   useTranslation: () => ({ t: (_k: string, fb?: string) => fb ?? _k }),
 }));
@@ -383,4 +388,18 @@ describe('PhotosSlider', () => {
       expect(loaded(0, 0)).toBe('');
     });
   });
+
+  it("titles the block with its own title, else the theme's photos_slider_title", () => {
+    twilight.settings = { photos_slider_title: 'تنسيقات جاهزة' };
+    const fallback = render(<PhotosSlider data={{ items: [{ image: '/a.jpg' }] }} />);
+    expect(fallback.container.querySelector('.section-header__title')?.textContent).toBe('تنسيقات جاهزة');
+    fallback.unmount();
+    const own = render(<PhotosSlider data={{ items: [{ image: '/a.jpg' }], title: 'لوك الأسبوع' }} />);
+    expect(own.container.querySelector('.section-header__title')?.textContent).toBe('لوك الأسبوع');
+    own.unmount();
+    twilight.settings = {};
+    const none = render(<PhotosSlider data={{ items: [{ image: '/a.jpg' }] }} />);
+    expect(none.container.querySelector('.section-header')).toBeNull();
+  });
 });
+

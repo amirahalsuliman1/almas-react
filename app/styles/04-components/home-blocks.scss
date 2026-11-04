@@ -624,6 +624,10 @@
   whole banner stays above the fold, and always leaving room for a peek on phones.
   Every percentage in it resolves against the row, wherever the variable is used.
 */
+.s-photos-stage__header {
+  margin-inline: max(var(--page-gutter), calc((100% - 1280px) / 2 + var(--page-gutter)));
+}
+
 .s-photos-stage {
   --stage-ratio: 1.7; /* until the first banner has loaded */
   --stage-gap: 0.625rem;
@@ -653,6 +657,13 @@
     gap: var(--stage-gap);
     scroll-snap-type: x mandatory;
     overscroll-behavior-x: contain;
+    /* No drawn scroll bar (owner, 2026-11-01): arrows, dots, swipe and the
+       cut-off card carry the row. */
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
 
     &.is-dragging {
       @apply cursor-grabbing select-none;
@@ -1331,6 +1342,13 @@ salla-reviews:not(:has(.s-reviews-swiper-slide)) {
     padding-block-end: 0.25rem;
     scroll-snap-type: x mandatory;
     overscroll-behavior-x: contain;
+    /* No drawn scroll bar (owner, 2026-11-01): arrows, dots, swipe and the
+       cut-off card carry the row. */
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
 
     @media (min-width: 768px) {
       margin-inline: 0;
@@ -1353,14 +1371,19 @@ salla-reviews:not(:has(.s-reviews-swiper-slide)) {
     @apply flex shrink-0 items-center gap-2;
 
     button {
-      @apply inline-flex h-11 w-11 items-center justify-center rounded-full border border-gray-300 text-gray-800 transition-colors;
+      @apply inline-flex h-11 w-11 items-center justify-center rounded-full border transition-colors;
+      border-color: var(--border-interactive);
+      color: var(--main-text-color);
 
       &:hover:not(:disabled) {
-        @apply border-primary bg-primary text-primary-reverse;
+        background-color: var(--color-accent);
+        border-color: var(--color-accent);
+        color: var(--color-accent-ink);
       }
 
       &:focus-visible {
-        @apply outline outline-2 outline-offset-2 outline-primary;
+        outline: var(--focus-ring-width) solid var(--focus-ring-color);
+        outline-offset: var(--focus-ring-offset);
       }
 
       /* Disabled, not hidden, so nothing jumps at the end of the row. */
@@ -1377,7 +1400,8 @@ salla-reviews:not(:has(.s-reviews-swiper-slide)) {
   }
 
   &__count {
-    @apply me-2 whitespace-nowrap text-sm text-gray-500 tabular-nums;
+    @apply me-2 whitespace-nowrap text-sm tabular-nums;
+    color: var(--text-secondary);
   }
 }
 
@@ -1392,7 +1416,8 @@ salla-reviews:not(:has(.s-reviews-swiper-slide)) {
     @apply flex h-6 w-6 shrink-0 items-center justify-center p-0;
 
     &::before {
-      @apply block h-1.5 w-1.5 rounded-full bg-gray-300;
+      @apply block h-1.5 w-1.5 rounded-full;
+      background-color: var(--border-interactive);
       content: '';
       transition:
         width 0.2s ease,
@@ -1400,7 +1425,13 @@ salla-reviews:not(:has(.s-reviews-swiper-slide)) {
     }
 
     &.is-active::before {
-      @apply w-[18px] bg-primary;
+      @apply w-[18px];
+      background-color: var(--color-accent);
+    }
+
+    &:focus-visible {
+      outline: var(--focus-ring-width) solid var(--focus-ring-color);
+      outline-offset: 0;
     }
   }
 }
@@ -1417,10 +1448,6 @@ salla-reviews:not(:has(.s-reviews-swiper-slide)) {
 
   &__head {
     @apply flex items-center justify-between gap-4;
-  }
-
-  &__title {
-    @apply text-lg font-bold text-gray-900 lg:text-2xl;
   }
 
   /* Phones show two cards and a peek of the third; tablets three; desktop four whole. */

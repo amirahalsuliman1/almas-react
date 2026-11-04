@@ -36,6 +36,7 @@ declare module '@salla.sa/twilight-theme-engine/types' {
     header_band_text?: string | Record<string, string>;
     announcement_bottom_enabled?: boolean;
     footer_logo_height?: number | string;
+    photos_slider_title?: string | Record<string, string>;
     gradient_color_start?: string;
     gradient_color_end?: string;
     gradient_on_bars?: boolean;

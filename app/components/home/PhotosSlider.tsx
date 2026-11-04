@@ -2,6 +2,9 @@ import { memo, useEffect, useRef, useState } from 'react';
 import type { CSSProperties, RefObject } from 'react';
 import { Link, Image } from '@salla.sa/twilight-theme-engine/common';
 import { useTranslation } from '@salla.sa/twilight-theme-engine/i18n';
+import { useTwilight } from '@salla.sa/twilight-theme-engine/providers';
+import { SectionHeader } from '../common/SectionHeader';
+import { textValue } from '../../lib/settings';
 import { ArrowLeftIcon, ArrowRightIcon } from '../icons';
 import { useLoopCarousel } from '../../hooks/useLoopCarousel';
 
@@ -176,8 +179,15 @@ export const PhotosSlider = memo(function PhotosSlider({ data }: PhotosSliderPro
   const root = useRef<HTMLDivElement>(null);
   const ratio = useBannerRatio(root, items[0]?.image);
   const offscreen = useOffscreen(root);
+  const { theme } = useTwilight();
+  const { locale } = useTranslation();
 
   if (!count) return null;
+
+  // The platform owns this block's fields: its own title wins, else the theme's
+  // `photos_slider_title` setting; neither, no heading.
+  const settings = (theme?.settings ?? {}) as { photos_slider_title?: unknown };
+  const title = textValue(data.title, locale) || textValue(settings.photos_slider_title, locale);
 
   const multiple = count > 1;
   const autoPlay = multiple && data.auto_play !== false && motionAllowed;
@@ -196,6 +206,8 @@ export const PhotosSlider = memo(function PhotosSlider({ data }: PhotosSliderPro
     ));
 
   return (
+    <>
+    {title && <SectionHeader title={title} className="s-photos-stage__header" />}
     <div
       ref={root}
       className={[
@@ -235,5 +247,6 @@ export const PhotosSlider = memo(function PhotosSlider({ data }: PhotosSliderPro
         )}
       </div>
     </div>
+    </>
   );
 });

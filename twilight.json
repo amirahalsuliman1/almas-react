@@ -184,6 +184,15 @@
     },
     {
       "type": "string",
+      "format": "text",
+      "id": "photos_slider_title",
+      "label": "عنوان قسم معرض الصور",
+      "description": "يظهر فوق قسم «معرض الصور» إن لم يكن للقسم عنوان. اتركه فارغًا بلا عنوان.",
+      "required": false,
+      "value": "تنسيقات جاهزة"
+    },
+    {
+      "type": "string",
       "format": "image",
       "icon": "sicon-image",
       "id": "store_background_image",

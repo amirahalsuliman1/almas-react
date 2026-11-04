@@ -169,3 +169,20 @@ describe('the hero (R-07)', () => {
     );
   });
 });
+
+describe('product rows (R-10)', () => {
+  it('draw no scroll bar on the carousel track', async () => {
+    const { readFileSync } = await import('node:fs');
+    const src = readFileSync(`${themeRoot}app/styles/04-components/home-blocks.scss`, 'utf8');
+    const track = src.slice(src.indexOf('  &__track {\n    @apply flex gap-3 overflow-x-auto'));
+    expect(track.slice(0, 1200)).toMatch(/scrollbar-width: none;/);
+    expect(track.slice(0, 1200)).toMatch(/&::-webkit-scrollbar \{\s*display: none;/);
+  });
+
+  it('paint the arrows and dots from tokens, the active dot in the accent', async () => {
+    const { readFileSync } = await import('node:fs');
+    const src = readFileSync(`${themeRoot}app/styles/04-components/home-blocks.scss`, 'utf8');
+    expect(src).toMatch(/&\.is-active::before \{\s*@apply w-\[18px\];\s*background-color: var\(--color-accent\);/);
+    expect(src).not.toMatch(/border-gray-300 text-gray-800/);
+  });
+});
