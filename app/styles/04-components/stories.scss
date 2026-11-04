@@ -1,0 +1,372 @@
+/* «تجارب عملائنا» — the stories feed and the story dialog (R-13).
+   Markup: app/components/home/Stories.tsx, StoryModal.tsx, StoryTags.tsx. */
+
+/* ---- Feed ---------------------------------------------------------------- */
+
+/* The block spans the screen; the feed keeps to the container's width, as the
+   lookbook and the videos do. */
+.stories {
+  margin-inline: max(var(--page-gutter), calc((100% - 1280px) / 2 + var(--page-gutter)));
+}
+
+/* Masonry by CSS columns: each photograph keeps its own shape and the column
+   flow packs them. 2 / 3 / 4 / 5 columns, the card unchanged (B4). */
+.stories__grid {
+  @apply m-0 list-none p-0;
+  column-count: 2;
+  column-gap: 0.75rem;
+
+  @media (min-width: 768px) {
+    column-count: 3;
+    column-gap: 1rem;
+  }
+
+  @media (min-width: 1024px) {
+    column-count: 4;
+  }
+
+  @media (min-width: 1536px) {
+    column-count: 5;
+  }
+}
+
+.story-card {
+  @apply mb-3 inline-block w-full break-inside-avoid md:mb-4;
+}
+
+.story-card__trigger {
+  @apply block w-full appearance-none rounded p-0 text-start;
+  background: none;
+  border: 0;
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+}
+
+/* The box is reserved from the shape before the photograph arrives. */
+.story-card__media {
+  @apply block overflow-hidden rounded;
+  aspect-ratio: var(--story-ratio, 3 / 4);
+  background-color: var(--surface-placeholder);
+
+  img {
+    @apply block h-full w-full object-cover;
+    transition: transform var(--motion-base) var(--motion-ease);
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .story-card__trigger:hover .story-card__media img {
+    transform: scale(1.04);
+  }
+}
+
+.story-tags {
+  @apply m-0 mt-2 flex list-none flex-wrap gap-1.5 p-0;
+}
+
+.story-tags__tag {
+  @apply rounded-full px-3 py-1 text-xs font-medium;
+  background-color: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  color: var(--main-text-color);
+}
+
+.story-tags__tag--brand {
+  @apply font-bold;
+  color: var(--color-accent-text);
+}
+
+.stories__cta {
+  @apply mt-6 flex justify-center;
+}
+
+.stories__cta-link {
+  @apply inline-flex min-h-12 items-center justify-center px-6 text-base font-bold transition-colors;
+  border-radius: var(--button-radius);
+  border: 1px solid var(--color-accent);
+  color: var(--color-accent-text);
+
+  &:hover {
+    background-color: var(--color-accent);
+    color: var(--color-accent-ink);
+  }
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+}
+
+/* On the home page from 1024px the feed is a window that scrolls in place, and
+   the follow link gives way to it. The stories page shows everything. */
+@media (min-width: 1024px) {
+  .stories:not(.stories--page) {
+    .stories__grid {
+      @apply overflow-y-auto;
+      max-block-size: 31rem;
+      scrollbar-width: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+
+    .stories__cta {
+      display: none;
+    }
+  }
+}
+
+/* ---- Filter (stories page only) ------------------------------------------ */
+
+.stories__controls {
+  @apply mb-4 flex flex-col gap-3;
+
+  @media (min-width: 1024px) {
+    @apply flex-row items-center justify-between gap-6;
+  }
+}
+
+.stories-filter {
+  @apply flex w-fit min-w-0 max-w-full gap-1 overflow-x-auto rounded p-1;
+  background-color: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.stories-filter__chip {
+  @apply min-h-10 flex-none rounded px-4 text-sm font-medium transition-colors;
+  background-color: transparent;
+  color: var(--main-text-color);
+
+  &:hover {
+    background-color: var(--surface-section);
+  }
+
+  &[aria-pressed='true'] {
+    background-color: var(--color-accent);
+    color: var(--color-accent-ink);
+  }
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: calc(-1 * var(--focus-ring-width));
+  }
+}
+
+.stories-filter__brands {
+  @apply block flex-none;
+
+  @media (min-width: 1024px) {
+    inline-size: 22.5rem;
+  }
+}
+
+.stories-filter__select {
+  @apply block min-h-10 w-full rounded px-3 text-sm;
+  background-color: var(--surface-card);
+  border: 1px solid var(--border-interactive);
+  color: var(--main-text-color);
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+}
+
+/* ---- Dialog -------------------------------------------------------------- */
+
+/* The header row holds only the close button; it sits over the photograph's
+   corner, and the title is for screen readers. */
+.story-modal .bottom-sheet__head {
+  @apply absolute z-10 p-0;
+  inset-block-start: 1.75rem;
+  inset-inline-start: 1.5rem;
+}
+
+.story-modal .bottom-sheet__close {
+  background-color: var(--surface-card);
+  color: var(--main-text-color);
+}
+
+.story-modal .bottom-sheet__body {
+  @apply pt-3;
+}
+
+/* The photograph keeps its own shape, never cropped — a point is a percentage
+   of the picture. On a phone it takes the sheet's width up to most of the
+   screen's height; the stage narrows instead of the image being cut. */
+.story-modal__stage {
+  --story-stage: min(62vh, 37rem);
+  @apply mx-auto w-full;
+  max-inline-size: calc(var(--story-stage) * var(--story-ratio-value, 0.75));
+
+  .hotspot__image {
+    aspect-ratio: var(--story-ratio, 3 / 4);
+  }
+}
+
+.story-modal .story-tags {
+  @apply mt-3;
+}
+
+.story-modal__actions {
+  @apply mt-4 flex gap-3;
+}
+
+.story-modal__action {
+  @apply inline-flex min-h-12 flex-1 items-center justify-center gap-2 px-4 text-base font-bold transition-colors;
+  border-radius: var(--button-radius);
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+}
+
+.story-modal__action--close {
+  background-color: var(--surface-section);
+  border: 1px solid var(--border-subtle);
+  color: var(--main-text-color);
+
+  &:hover {
+    border-color: var(--border-interactive);
+  }
+}
+
+.story-modal__action--wishlist {
+  background-color: var(--color-accent);
+  color: var(--color-accent-ink);
+
+  &:hover {
+    background-color: var(--color-accent-hover);
+  }
+
+  &[aria-pressed='true'] i {
+    @apply font-bold;
+  }
+}
+
+/* Arrows and neighbours exist from 1024px, where the sheet is a dialog. */
+.story-modal__nav,
+.story-modal__peek {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .bottom-sheet.story-modal {
+    inline-size: auto;
+    max-block-size: none;
+    overflow: visible;
+  }
+
+  .story-modal .bottom-sheet__body {
+    @apply overflow-visible;
+  }
+
+  /* The dialog is as wide as the photograph at its shape. */
+  .story-modal__stage {
+    --story-stage: min(70vh, 37rem);
+    inline-size: calc(var(--story-stage) * var(--story-ratio-value, 0.75));
+    max-inline-size: calc(100vw - 4rem);
+  }
+
+  .story-modal__nav {
+    @apply absolute inline-flex h-12 w-12 items-center justify-center rounded-full transition-colors;
+    inset-block-start: 50%;
+    transform: translateY(-50%);
+    background-color: var(--surface-card);
+    color: var(--main-text-color);
+    box-shadow: 0 4px 16px rgb(0 0 0 / 0.12);
+
+    &:hover {
+      background-color: var(--surface-section);
+    }
+
+    &:focus-visible {
+      outline: var(--focus-ring-width) solid var(--focus-ring-color);
+      outline-offset: var(--focus-ring-offset);
+    }
+
+    &[hidden] {
+      display: none;
+    }
+
+    svg {
+      @apply h-6 w-6;
+    }
+  }
+
+  .story-modal__nav--prev {
+    inset-inline-end: calc(100% + 1rem);
+  }
+
+  .story-modal__nav--next {
+    inset-inline-start: calc(100% + 1rem);
+  }
+
+  /* The icons are drawn for Arabic; English mirrors them. */
+  [dir='ltr'] .story-modal__nav svg {
+    transform: scaleX(-1);
+  }
+
+  .story-modal__peek {
+    @apply absolute hidden gap-6;
+    inset-block-start: 50%;
+    transform: translateY(-50%);
+  }
+
+  .story-modal__peek--prev {
+    inset-inline-end: calc(100% + 5.5rem);
+  }
+
+  .story-modal__peek--next {
+    inset-inline-start: calc(100% + 5.5rem);
+  }
+
+  .story-modal__peek-item {
+    @apply block flex-none cursor-pointer overflow-hidden rounded p-0;
+    inline-size: 8.5rem;
+    aspect-ratio: 9 / 16;
+    background-color: var(--surface-placeholder);
+    border: 0;
+    opacity: 0.85;
+    transition: opacity var(--motion-fast) var(--motion-ease);
+
+    &:hover {
+      opacity: 1;
+    }
+
+    img {
+      @apply block h-full w-full object-cover;
+    }
+  }
+
+  /* One neighbour a side until the screen has room for two. */
+  .story-modal__peek-item[data-story-step='-2'],
+  .story-modal__peek-item[data-story-step='2'] {
+    display: none;
+  }
+}
+
+/* The neighbours need room either side of the widest (square) dialog: one a
+   side from 1280px, two from 1440px. */
+@media (min-width: 1280px) {
+  .story-modal__peek {
+    display: flex;
+  }
+}
+
+@media (min-width: 1440px) {
+  .story-modal__peek-item[data-story-step='-2'],
+  .story-modal__peek-item[data-story-step='2'] {
+    display: block;
+  }
+}

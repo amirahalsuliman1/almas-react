@@ -193,6 +193,15 @@
     },
     {
       "type": "string",
+      "format": "text",
+      "id": "stories_page_id",
+      "label": "رقم صفحة «تجارب عملائنا»",
+      "description": "أنشئ صفحة من نوع «صفحة مخصّصة» وضع فيها قسم «تجارب عملائنا»، ثم ضع رقم الصفحة هنا — هو الرقم في آخر رابطها. عندها تظهر فوق القسم أزرار التصنيفات وقائمة البراندات.",
+      "required": false,
+      "value": ""
+    },
+    {
+      "type": "string",
       "format": "image",
       "icon": "sicon-image",
       "id": "store_background_image",
@@ -1821,6 +1830,203 @@
               "id": "items.product",
               "label": "المنتج (اختياري)",
               "description": "اختر المنتج الظاهر في الفيديو، فيظهر اسمه وسعره وزر الإضافة أسفله وتُجلب بياناته تلقائيًا. اتركه فارغًا إن لم يكن في الفيديو منتج.",
+              "required": false,
+              "multichoice": false,
+              "searchable": true,
+              "source": "products",
+              "selected": [],
+              "options": [],
+              "maxLength": 1,
+              "value": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "stories",
+      "key": "5e91c7d4-2a06-43bf-8d17-9f4e60ba38c2",
+      "title": {
+        "en": "Customer stories",
+        "ar": "تجارب عملائنا"
+      },
+      "icon": "sicon-chat-bubbles",
+      "path": "home.stories",
+      "image": "https://cdn.salla.network/images/themes/raed/preview-images/custom-testimonials.png?v=1.1",
+      "is_default": false,
+      "fields": [
+        {
+          "type": "string",
+          "icon": "sicon-typography",
+          "format": "text",
+          "id": "title",
+          "label": "عنوان القسم",
+          "multilanguage": true,
+          "required": false,
+          "value": "تجارب عملائنا",
+          "description": "اتركه فارغًا لإخفاء العنوان.",
+          "minLength": 0,
+          "maxLength": 60
+        },
+        {
+          "type": "string",
+          "icon": "sicon-format-text-alt",
+          "format": "text",
+          "id": "cta_label",
+          "label": "نص زر المتابعة",
+          "multilanguage": true,
+          "required": false,
+          "value": "تابعنا على وسائل التواصل",
+          "description": "يظهر أسفل الشبكة. اتركه فارغًا لاستخدام النص الافتراضي.",
+          "minLength": 0,
+          "maxLength": 60
+        },
+        {
+          "type": "string",
+          "icon": "sicon-link",
+          "format": "text",
+          "id": "cta_url",
+          "label": "رابط زر المتابعة",
+          "required": false,
+          "value": null,
+          "description": "حساب المتجر على وسائل التواصل، أو أي وجهة تختارها. لا يظهر الزر إذا تُرك الرابط فارغًا.",
+          "placeholder": "https://"
+        },
+        {
+          "id": "items",
+          "type": "collection",
+          "format": "collection",
+          "required": true,
+          "minLength": 1,
+          "maxLength": 24,
+          "label": null,
+          "item_label": "قصة عميل",
+          "value": [
+            {
+              "items.image": "https://cdn.salla.sa/ZrBEO/MopzhoqpTkDObcKc8Q8n77AuydanfsGXdZO7iinH.jpg",
+              "items.shape": "portrait",
+              "items.alt": "",
+              "items.brand": "",
+              "items.tags": "",
+              "items.hotspot_x": 50,
+              "items.hotspot_y": 50,
+              "items.product": []
+            }
+          ],
+          "fields": [
+            {
+              "type": "string",
+              "icon": "sicon-image",
+              "format": "image",
+              "id": "items.image",
+              "label": "صورة القصة",
+              "required": true,
+              "value": null,
+              "description": "* صورة العميل كما نشرها. الأبعاد حرّة، وتُحدَّد نسبتها من الحقل التالي."
+            },
+            {
+              "id": "items.shape",
+              "type": "items",
+              "format": "dropdown-list",
+              "label": "نسبة الصورة",
+              "icon": "sicon-list",
+              "description": "تُحجز مساحة الصورة قبل تحميلها، فلا تتحرّك الشبكة أثناء الفتح. اختر الأقرب لصورتك.",
+              "selected": [
+                {
+                  "label": "طولية (3:4)",
+                  "value": "portrait",
+                  "key": "story-shape-portrait"
+                }
+              ],
+              "options": [
+                {
+                  "label": "طولية (3:4)",
+                  "value": "portrait",
+                  "key": "story-shape-portrait"
+                },
+                {
+                  "label": "مربعة (1:1)",
+                  "value": "square",
+                  "key": "story-shape-square"
+                },
+                {
+                  "label": "طويلة (2:3)",
+                  "value": "tall",
+                  "key": "story-shape-tall"
+                }
+              ],
+              "source": "Manual",
+              "required": true
+            },
+            {
+              "type": "string",
+              "icon": "sicon-info",
+              "format": "text",
+              "id": "items.alt",
+              "label": "وصف الصورة لقارئ الشاشة",
+              "multilanguage": true,
+              "required": false,
+              "value": null,
+              "description": "اتركه فارغًا إذا كانت الصورة زخرفية.",
+              "minLength": 0,
+              "maxLength": 125
+            },
+            {
+              "type": "string",
+              "icon": "sicon-award-ribbon",
+              "format": "text",
+              "id": "items.brand",
+              "label": "وسم البراند",
+              "required": false,
+              "value": null,
+              "description": "اسم البراند الظاهر أول الوسوم، مثل Rhode.",
+              "minLength": 0,
+              "maxLength": 40
+            },
+            {
+              "type": "string",
+              "icon": "sicon-list",
+              "format": "text",
+              "id": "items.tags",
+              "label": "وسوم التصنيف",
+              "multilanguage": true,
+              "required": false,
+              "value": null,
+              "description": "افصل بين الوسوم بفاصلة، مثل: هدايا، عروض، ميكاب.",
+              "minLength": 0,
+              "maxLength": 120
+            },
+            {
+              "type": "number",
+              "icon": "sicon-align-center",
+              "format": "integer",
+              "id": "items.hotspot_x",
+              "label": "الموضع الأفقي لنقطة المنتج (%)",
+              "required": false,
+              "value": 50,
+              "minValue": 0,
+              "maxValue": 100,
+              "description": "نسبة مئوية من عرض الصورة، من 0 إلى 100. تُقاس من يمين الصورة."
+            },
+            {
+              "type": "number",
+              "icon": "sicon-align-justify",
+              "format": "integer",
+              "id": "items.hotspot_y",
+              "label": "الموضع الرأسي لنقطة المنتج (%)",
+              "required": false,
+              "value": 50,
+              "minValue": 0,
+              "maxValue": 100,
+              "description": "نسبة مئوية من ارتفاع الصورة، من 0 إلى 100. تُقاس من أعلى الصورة."
+            },
+            {
+              "type": "items",
+              "icon": "sicon-keyboard_arrow_down",
+              "format": "dropdown-list",
+              "id": "items.product",
+              "label": "المنتج (اختياري)",
+              "description": "اختر المنتج الظاهر في القصة، فتظهر عليه نقطة تفتح اسمه وسعره. اتركه فارغًا إن لم يكن في القصة منتج.",
               "required": false,
               "multichoice": false,
               "searchable": true,

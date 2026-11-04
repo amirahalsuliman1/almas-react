@@ -63,7 +63,7 @@ function makePage(overrides: Partial<PageWithType> = {}): PageWithType {
 
 describe('PageSingle', () => {
   describe('customised pages', () => {
-    it('renders only the information_page app hook, nothing else', () => {
+    it('renders the breadcrumb, a hidden page heading and the information_page hook, nothing else', () => {
       const { container } = render(<PageSingle page={makePage({ type: 'customised' })} />);
 
       const hook = container.querySelector('.block-hook-slot');
@@ -73,10 +73,12 @@ describe('PageSingle', () => {
       expect(hook?.getAttribute('data-class')).toBe('!mt-0');
       expect(hook?.getAttribute('data-scope')).toBe('{"page_id":42}');
 
-      expect(container.querySelector('.breadcrumb')).toBeNull();
+      expect(container.querySelector('.breadcrumb')).toBeTruthy();
       expect(container.querySelector('.content-entry')).toBeNull();
       expect(container.querySelector('.salla-comments')).toBeNull();
-      expect(container.querySelector('h1')).toBeNull();
+      const h1 = container.querySelector('h1');
+      expect(h1?.className).toBe('sr-only');
+      expect(h1?.textContent).toBe('About Us');
     });
   });
 

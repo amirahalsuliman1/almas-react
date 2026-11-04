@@ -26,6 +26,7 @@ import {
   SliderProductsWithHeader,
   VideoCarousel,
   EnhancedSquareBanners,
+  Stories,
 } from './components/home';
 import { Blog } from './components/home/Blog';
 import {
@@ -53,6 +54,7 @@ registerHomeComponents({
   marquee: Marquee,
   lookbook: Lookbook,
   'video-carousel': VideoCarousel,
+  stories: Stories,
   brands: Brands,
   'enhanced-slider': EnhancedSlider,
   'custom-testimonials': CustomTestimonials,
@@ -105,6 +107,9 @@ registerHomeComponentConfig({
   lookbook: { className: 's-block s-block--lookbook', height: 'min(calc(125vw + 18rem), 50rem)' },
   // A 9:14 frame plus its product row, at the phone width of one slide.
   'video-carousel': { className: 's-block s-block--video-carousel', height: 'min(calc(82vw * 14 / 9 + 10rem), 46rem)' },
+  // Two rows of 3:4 photographs with their tags under the header on a phone;
+  // from 1024px the feed is a 31rem window under its header.
+  stories: { className: 's-block s-block--stories', height: 'min(calc(122vw + 9rem), 36rem)' },
   'featured-products': featuredProductsConfig,
   'featured-products-special-offer': featuredProductsConfig,
   'featured-products-special-product': featuredProductsConfig,

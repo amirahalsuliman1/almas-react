@@ -17,7 +17,8 @@ export interface PageSingleProps {
  *
  * Adds the classic-storefront `information_page.information_page` app hook: on a
  * `customised` page the whole body IS the app-injected block, so we render only
- * the hook — exactly like `page-single.twig`. Every other page type keeps the
+ * the breadcrumb, a visually hidden `<h1>` and the hook — exactly like
+ * `page-single.twig`. Every other page type keeps the
  * engine's breadcrumb + article + comments layout, keyed by the page id so
  * moving from one page to another loads the new page's comments.
  *
@@ -33,13 +34,22 @@ export function PageSingle({ page }: PageSingleProps) {
   );
 
   if (page.type === 'customised') {
+    // The merchant's blocks bring only section headings (`<h2>`, as on Home),
+    // so the page's own `<h1>` is here, present and not visible — as Twig's
+    // `page-single.twig` does for the FAQ and the stories page.
     return (
-      <BlockHookSlot
-        name="information_page.information_page"
-        wrapper="s-information-page"
-        className="!mt-0"
-        scope={page.id != null ? { page_id: page.id } : undefined}
-      />
+      <>
+        <div className="container">
+          <Breadcrumb page={page} />
+        </div>
+        <h1 className="sr-only">{page.title}</h1>
+        <BlockHookSlot
+          name="information_page.information_page"
+          wrapper="s-information-page"
+          className="!mt-0"
+          scope={page.id != null ? { page_id: page.id } : undefined}
+        />
+      </>
     );
   }
 

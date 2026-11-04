@@ -42,5 +42,7 @@ declare module '@salla.sa/twilight-theme-engine/types' {
     gradient_on_bars?: boolean;
     gradient_on_buttons?: boolean;
     gradient_on_quantity?: boolean;
+    /** The custom page that shows the stories feed with its filter. */
+    stories_page_id?: string | number;
   }
 }

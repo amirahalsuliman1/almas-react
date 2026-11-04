@@ -19,6 +19,12 @@ interface BottomSheetProps {
   header?: ReactNode;
   /** Extra class on the sheet element. */
   className?: string;
+  /**
+   * Content placed in the sheet but outside its scrolling body, so it can stand
+   * beyond the panel's edges (the story dialog's arrows and neighbours). It is
+   * inside the focus trap.
+   */
+  aside?: ReactNode;
   children: ReactNode;
 }
 
@@ -40,6 +46,7 @@ export function BottomSheet({
   title,
   header,
   className,
+  aside,
   children,
 }: BottomSheetProps) {
   const { t } = useTranslation();
@@ -116,6 +123,7 @@ export function BottomSheet({
         )}
 
         <div className="bottom-sheet__body">{children}</div>
+        {aside}
       </div>
     </div>,
     document.body
