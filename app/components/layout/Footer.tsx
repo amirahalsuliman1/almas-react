@@ -13,6 +13,7 @@ import { Link, Image } from '@salla.sa/twilight-theme-engine/common';
 import { ImageModal } from '@salla.sa/twilight-theme-engine/modal';
 import { MadeWithSalla } from '@salla.sa/twilight-theme-engine/layout';
 import { menu } from '@salla.sa/twilight-theme-engine/api/menu';
+import { AnnouncementBar } from './AnnouncementBar';
 
 /** Salla's value-added-tax badge icon (70×70, CDN-resized) — a platform
  *  asset shared by every store, not specific to any one theme. */
@@ -113,7 +114,7 @@ function FooterSbc({ dark }: { dark: boolean }) {
         className="h-10 w-14 rounded-sm"
       />
       <div>
-        <p className={`text-xs opacity-70 ${dark ? 'text-white' : ''}`}>
+        <p className={`text-sm opacity-70 ${dark ? 'text-white' : ''}`}>
           {t('blocks.footer.sbc_trusted_by', 'Trusted by')}
         </p>
         <b className="text-sm">{t('blocks.footer.sbc_platform', 'Business Platform')}</b>
@@ -171,7 +172,7 @@ function FooterLinksMenu({
 
   return (
     <div className="store-footer__links">
-      <h3 className={`mb-3 text-lg font-bold lg:mb-5 ${dark ? 'text-white' : 'text-gray-900'}`}>
+      <h3 className="store-footer__heading">
         {heading}
       </h3>
       {links}
@@ -202,19 +203,21 @@ function FooterApps({ className }: { className: string }) {
 
 /** The logo link, same shape in both layouts -- only its own spacing differs. */
 function FooterLogo({ className }: { className: string }) {
-  const { store } = useTwilight();
+  const { store, theme } = useTwilight();
+  // The theme's logo (`logo_main`) stands in for the store logo, as in the header.
+  const logo = (theme.settings as { logo_main?: string } | undefined)?.logo_main || store.logo;
   return (
     <Link
       to="/"
       className={`store-footer__logo inline-flex items-center m-0 transition-opacity hover:opacity-75 ${className}`}
     >
       <Image
-        src={store.logo}
+        src={logo}
         alt={store.name || 'Store'}
         width={150}
         height={44}
         objectFit="contain"
-        className="h-11 w-auto max-w-[180px]"
+        className="store-footer__logo-img w-auto"
       />
     </Link>
   );
@@ -269,10 +272,30 @@ function FooterContactsColumn({ inSheet, dark }: { inSheet: boolean; dark: boole
 
   return (
     <div className="store-footer__contact-list">
-      <h3 className={`mb-3 text-lg font-bold lg:mb-5 ${dark ? 'text-white' : 'text-gray-900'}`}>
+      <h3 className="store-footer__heading">
         {t('blocks.footer.social', 'Contact us')}
       </h3>
       {isClient && <SallaContacts contacts={contacts} hideTitle />}
+    </div>
+  );
+}
+
+/** «تابعنا»: the store's social links, then the app-store buttons. Nothing when
+ *  the store has neither. */
+function FooterSocialColumn() {
+  const { store } = useTwilight();
+  const { t } = useTranslation();
+  const hasSocial = Object.entries(store.social ?? {}).some(
+    ([key, value]) => Boolean(value) && key !== 'whatsapp'
+  );
+  const hasApps = !!store.apps?.appstore || !!store.apps?.googleplay;
+  if (!hasSocial && !hasApps) return null;
+
+  return (
+    <div className="store-footer__follow">
+      <h3 className="store-footer__heading">{t('theme.footer.follow_us', 'Follow us')}</h3>
+      {hasSocial && <SallaSocial className="store-footer__social block" />}
+      <FooterApps className="mt-6" />
     </div>
   );
 }
@@ -300,18 +323,18 @@ function FooterCenteredBody({ inSheet, isDark }: { inSheet: boolean; isDark: boo
   );
 }
 
-/** Columns layout: brand (logo / description / social / trust), the footer menu
- *  and the store's contacts as labeled columns, and the app buttons, side by side.
- *  At `lg` they share one row: the brand two shares, each other column one. */
+/** Columns layout — four groups (REDESIGN-2026-11.md): the brand (logo,
+ *  description, trust marks), the footer menu, the store's contacts, and
+ *  «تابعنا» (social and app buttons). At `lg` they share one row: the brand two
+ *  shares, each other group one. */
 function FooterColumnsBody({ inSheet, isDark }: { inSheet: boolean; isDark: boolean }) {
   const { t } = useTranslation();
 
   return (
     <div className="container grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-flow-col lg:auto-cols-fr lg:gap-16">
-      <div className="store-footer__brand rtl:lg:pl-16 ltr:lg:pr-16 sm:col-span-2">
+      <div className="store-footer__brand sm:col-span-2 lg:pe-16">
         <FooterLogo className="mb-5" />
-        <FooterDescription className="max-w-sm leading-6 my-5" />
-        <SallaSocial className="block mb-6" />
+        <FooterDescription className="max-w-sm leading-7 my-5" />
         <FooterTrust dark={isDark} centered={false} />
       </div>
 
@@ -324,7 +347,7 @@ function FooterColumnsBody({ inSheet, isDark }: { inSheet: boolean; isDark: bool
 
       <FooterContactsColumn inSheet={inSheet} dark={isDark} />
 
-      <FooterApps className="" />
+      <FooterSocialColumn />
     </div>
   );
 }
@@ -374,16 +397,15 @@ export function Footer({ inSheet = false }: FooterProps = {}) {
     <Root
       className={`store-footer store-footer--${isCentered ? 'centered' : 'columns'}${
         inSheet ? ' store-footer--sheet' : ''
-      } relative mt-8 sm:mt-16 ${isDark ? 'bg-[#0E0F0F] text-white' : 'bg-[#F4F7F2] text-gray-600'}`}
+      }${isDark && !inSheet ? ' store-footer--dark' : ''} relative mt-8 sm:mt-16`}
       suppressHydrationWarning
     >
       {!inSheet && <HookSlot name="footer:start" />}
+      {!inSheet && <AnnouncementBar position="bottom" />}
 
       <div
         aria-label="footer"
-        className={`store-footer__inner border-b py-8 lg:py-16 ${
-          isDark ? 'bg-[#1D1F1F] border-dashed border-white/10' : 'bg-transparent border-gray-200'
-        }`}
+        className="store-footer__inner border-b py-10 lg:py-16"
       >
         {isCentered ? (
           <FooterCenteredBody inSheet={inSheet} isDark={isDark} />
@@ -393,14 +415,14 @@ export function Footer({ inSheet = false }: FooterProps = {}) {
       </div>
 
       <div className="store-footer__bottom container md:flex items-center justify-between gap-4 py-4 lg:py-7 text-center">
-        <span className={`text-sm copyright-text ${isDark ? 'text-gray-400' : 'text-gray-700'}`}>
+        <span className="store-footer__copyright text-sm copyright-text">
           <HookSlot
             name="copyright"
             context={{ storeName: store.name }}
             fallback={
               <>
                 {t('blocks.footer.copyright', 'All rights reserved')}{' '}
-                <Link to="/" className="transition-opacity hover:opacity-75 hover:text-primary">
+                <Link to="/" className="store-footer__store-link">
                   {store.name}
                 </Link>{' '}
                 © {year}

@@ -6,6 +6,7 @@ import { CloseIcon } from '../icons';
 
 interface AnnouncementSettings {
   announcement_enabled?: boolean;
+  announcement_bottom_enabled?: boolean;
   announcement_text?: unknown;
   announcement_url?: string;
   announcement_sticky?: boolean;
@@ -13,18 +14,24 @@ interface AnnouncementSettings {
 }
 
 /**
- * The merchant's announcement above the header: one sentence, scrolling, a link
- * when `announcement_url` is set. The sentence is read once — the copy that
+ * The merchant's announcement, above the header (`top`) or above the footer
+ * (`bottom`): one sentence, scrolling, a link when `announcement_url` is set.
+ * One text for both, so they cannot drift apart; each has its own switch. The sentence is read once — the copy that
  * fills the loop is `aria-hidden` — and the link is the text itself, so there
  * is one tab stop. The loop pauses on hover and focus and stands still under
  * reduced motion (announcement.scss).
  */
-export function AnnouncementBar() {
+export function AnnouncementBar({ position = 'top' }: { position?: 'top' | 'bottom' }) {
   const { theme } = useTwilight();
   const { t, locale } = useTranslation();
   const settings = (theme?.settings ?? {}) as AnnouncementSettings;
   const text = textValue(settings.announcement_text, locale);
-  if (settings.announcement_enabled === false || !text) return null;
+  const topOn = settings.announcement_enabled !== false;
+  const on = position === 'top' ? topOn : settings.announcement_bottom_enabled !== false;
+  if (!on || !text) return null;
+  // With both bars on, the lower one is decoration: one sentence is read once
+  // per page, and nothing hidden from screen readers stays in the tab order.
+  const silent = position === 'bottom' && topOn;
 
   const url = settings.announcement_url?.trim();
   const key = dismissKey(text);
@@ -44,16 +51,23 @@ export function AnnouncementBar() {
 
   return (
     <>
-      {settings.announcement_dismissible && (
+      {settings.announcement_dismissible && !silent && (
         <script dangerouslySetInnerHTML={{ __html: dismissedScript(key) }} />
       )}
       <div
-        className={`announcement-bar${settings.announcement_sticky ? ' announcement-bar--sticky' : ''}`}
-        data-testid="announcement-bar"
+        className={`announcement-bar announcement-bar--${position}${
+          settings.announcement_sticky && position === 'top' ? ' announcement-bar--sticky' : ''
+        }`}
+        data-testid={`announcement-bar-${position}`}
+        aria-hidden={silent || undefined}
       >
         <div className="announcement-bar__track">
           {url ? (
-            <a className="announcement-bar__text announcement-bar__link" href={url}>
+            <a
+              className="announcement-bar__text announcement-bar__link"
+              href={url}
+              tabIndex={silent ? -1 : undefined}
+            >
               {text}
             </a>
           ) : (
@@ -67,6 +81,7 @@ export function AnnouncementBar() {
           <button
             type="button"
             className="announcement-bar__dismiss"
+            tabIndex={silent ? -1 : undefined}
             aria-label={t('theme.common.dismiss_announcement', 'Close the announcement')}
             onClick={dismiss}
           >

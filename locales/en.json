@@ -297,5 +297,6 @@
   "theme.listing.grid_label": "Product grid size",
   "theme.listing.grid_large": "Larger products",
   "theme.listing.grid_small": "More products",
-  "theme.testimonials.rating": "Rated :stars out of 5"
+  "theme.testimonials.rating": "Rated :stars out of 5",
+  "theme.footer.follow_us": "Follow us"
 }

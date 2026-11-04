@@ -14,24 +14,84 @@
   margin-top: 0;
 }
 
-/* `Footer` (`@salla.sa/twilight-theme-engine/layout`) owns its own structure
-   and colors (including footer_is_dark) via Tailwind classNames in the
-   component itself now -- nothing left to add there. What's left here is
-   just the handful of pieces rendered by web components Footer has no markup
-   of its own for, which it explicitly leaves to the consuming theme. */
+/* =========================================================================
+   The footer (Footer.tsx) — four groups, painted from the theme tokens so the
+   merchant's footer colours and dark mode reach it. Sizes follow
+   REDESIGN-2026-11.md: headings text-lg bold, links text-base, social icons
+   40px; Salla's review (2026-11-04) found the old footer small and ungrouped.
+   ========================================================================= */
 .store-footer {
-  .social-link {
-    @apply flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 text-sm transition duration-300 hover:opacity-75;
+  background-color: var(--surface-footer);
+  color: var(--text-footer);
+
+  &__inner {
+    border-color: var(--border-subtle);
+  }
+
+  &__heading {
+    @apply mb-4 text-lg font-bold lg:mb-5;
+    color: var(--text-footer);
+  }
+
+  &__desc {
+    @apply text-base;
+  }
+
+  &__logo-img {
+    height: var(--footer-logo-height);
+    max-width: 14rem;
+  }
+
+  &__copyright {
+    color: var(--text-secondary);
+  }
+
+  &__store-link {
+    @apply font-semibold transition-colors;
+
+    &:hover {
+      color: var(--color-accent-text);
+    }
+  }
+
+  a:focus-visible,
+  button:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  /* `<salla-social>`'s links: 40px targets. */
+  .social-link,
+  .s-social-link a {
+    @apply flex h-10 w-10 items-center justify-center rounded-full border text-base transition-colors;
+    border-color: var(--border-subtle);
+    color: var(--text-footer);
+
+    &:hover {
+      border-color: var(--color-accent);
+      color: var(--color-accent-text);
+    }
+  }
+
+  .s-social-list {
+    @apply flex flex-wrap gap-3;
   }
 
   /* Footer menu — `<salla-menu source="footer">` renders a bare
      `.s-menu-footer-list` of `.s-menu-footer-item` anchors (no list markup).
-     Two presentations, picked by the modifier class `Footer` adds:
-       `--stacked` (columns layout) — a single vertical column, however many
-       links there are;
-       `--inline`  (centered layout) — a single pipe-separated row. */
+     `--stacked` (columns layout) is one vertical column; `--inline` (centered
+     layout) one pipe-separated row. */
   &__menu {
     @apply block;
+
+    .s-menu-footer-item {
+      @apply text-base transition-colors;
+      color: var(--text-footer);
+
+      &:hover {
+        color: var(--color-accent-text);
+      }
+    }
 
     &--stacked {
       .s-menu-footer-list {
@@ -39,8 +99,8 @@
       }
 
       .s-menu-footer-item {
-        @apply block text-[15px] leading-snug text-gray-600;
-        margin-bottom: 0.625rem;
+        @apply block leading-snug;
+        margin-bottom: 0.75rem;
 
         &:last-child {
           margin-bottom: 0;
@@ -54,7 +114,8 @@
       }
 
       .s-menu-footer-item {
-        @apply border-e border-gray-300 px-3 text-[15px] leading-none text-gray-600 mb-0;
+        @apply mb-0 border-e px-3 leading-none;
+        border-color: var(--border-subtle);
 
         &:first-child {
           @apply ps-0;
@@ -63,36 +124,26 @@
     }
   }
 
+  /* Payment marks come from Salla (`<salla-payments>`), never theme images. */
   .s-payments-list-item {
     @apply w-16;
   }
 }
 
-/* Mobile: no page footer — its widgets live in the bottom bar's account sheet
-   (`MobileAccountSheet`, `.store-footer--sheet`). Same breakpoint as the bar.
-   Hidden with CSS rather than unmounted so the SSR'd footer (links, tax / SBC
-   details) stays in the document. Only the widgets are hidden: the
-   `footer:start` / `footer:end` hook output stays visible for apps. */
-@media (max-width: 767px) {
-  .store-footer:not(.store-footer--sheet) {
-    margin-top: 0;
-
-    > .store-footer__inner,
-    > .store-footer__bottom {
-      display: none;
-    }
-  }
+/* `footer_is_dark`: the footer alone takes the dark palette, whatever the page. */
+.store-footer--dark {
+  --surface-footer: #141210;
+  --text-footer: #f3f1ee;
+  --text-secondary: #bfb9b2;
+  --border-subtle: #46413b;
+  --color-accent-text: color-mix(in srgb, var(--color-accent) 55%, #ffffff);
+  --focus-ring-color: #f3f1ee;
 }
 
-/* `footer_is_dark` darkens `.s-menu-footer-item`'s own border/text too -- the
-   one piece of dark-mode handling still theme-owned, since the two menu
-   variants above are. */
-body.footer-is-dark .store-footer {
-  &__menu--stacked .s-menu-footer-item {
-    @apply text-white;
-  }
-
-  &__menu--inline .s-menu-footer-item {
-    @apply border-white/10 text-white;
-  }
+/* The bar at the top of the footer: the container's width, rounded, inset from
+   the footer's top edge; the footer's own padding spaces it from the columns. */
+.announcement-bar--bottom {
+  @apply rounded;
+  margin-block: 2rem 0;
+  margin-inline: max(var(--page-gutter), calc((100% - 1280px) / 2 + var(--page-gutter)));
 }

@@ -420,6 +420,29 @@
       "selected": false
     },
     {
+      "type": "boolean",
+      "format": "switch",
+      "icon": "sicon-toggle-off",
+      "id": "announcement_bottom_enabled",
+      "label": "إظهار الشريط الإعلاني أعلى التذييل أيضًا",
+      "description": "النص نفسه، في شريط فوق تذييل الصفحة.",
+      "required": false,
+      "value": true,
+      "selected": true
+    },
+    {
+      "type": "number",
+      "format": "integer",
+      "icon": "sicon-align-justify",
+      "id": "footer_logo_height",
+      "label": "ارتفاع الشعار في التذييل (بكسل)",
+      "description": "من 24 إلى 80.",
+      "required": false,
+      "value": 40,
+      "minValue": 24,
+      "maxValue": 80
+    },
+    {
       "type": "string",
       "format": "text",
       "icon": "sicon-typography",

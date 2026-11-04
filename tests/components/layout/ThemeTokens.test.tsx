@@ -72,6 +72,12 @@ describe('ThemeTokens — colour panel', () => {
     expect(render()).toContain('--logo-height:80px');
   });
 
+  it('writes the footer logo height, clamped to 24–80 and 40 by default', () => {
+    expect(render()).toContain('--footer-logo-height:40px');
+    theme.settings = { footer_logo_height: 10 };
+    expect(render()).toContain('--footer-logo-height:24px');
+  });
+
   it('writes a background image only for an http(s) URL', () => {
     theme.settings = { store_background_image: 'https://cdn.salla.sa/a.jpg' };
     expect(render()).toContain('--store-bg-image:url("https://cdn.salla.sa/a.jpg")');

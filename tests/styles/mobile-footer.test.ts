@@ -42,20 +42,15 @@ function decl(rule: Rule, prop: string): string | undefined {
 }
 
 describe('page footer on mobile', () => {
-  it('hides only its widgets, so the footer:start / footer:end hook output stays visible', async () => {
+  // The redesign shows the footer at every width (B4: content on mobile is not
+  // hidden); the account sheet keeps its own copy as well.
+  it('is not hidden on a phone', async () => {
     const root = await compile('footer.scss');
 
     for (const part of ['__inner', '__bottom']) {
-      const [rule] = rulesFor(
-        root,
-        `.store-footer:not(.store-footer--sheet) > .store-footer${part}`
-      );
-      expect(rule?.parent?.type).toBe('atrule');
-      expect(decl(rule, 'display')).toBe('none');
-    }
-
-    for (const rule of rulesFor(root, '.store-footer:not(.store-footer--sheet)')) {
-      expect(decl(rule, 'display')).not.toBe('none');
+      expect(
+        rulesFor(root, `.store-footer:not(.store-footer--sheet) > .store-footer${part}`)
+      ).toHaveLength(0);
     }
   });
 });

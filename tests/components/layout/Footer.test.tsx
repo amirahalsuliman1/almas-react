@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, cleanup } from '@testing-library/react';
 import { renderToString } from 'react-dom/server';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Footer } from '../../../app/components/layout/Footer';
@@ -24,7 +24,7 @@ vi.mock('@salla.sa/twilight-theme-engine/hooks', () => ({
 }));
 vi.mock('@salla.sa/twilight-theme-engine/common', () => ({
   Link: ({ children }: { children?: unknown }) => <a>{children as never}</a>,
-  Image: () => <img alt="" />,
+  Image: (props: { src?: string }) => <img alt="" src={props.src} />,
 }));
 vi.mock('@salla.sa/twilight-theme-engine/modal', () => ({
   ImageModal: () => {
@@ -123,4 +123,49 @@ describe('Footer', () => {
     renderFooter();
     expect(screen.getByTestId('contacts-row')).toBeTruthy();
   });
+
+  it('groups social links under «تابعنا» in their own column', () => {
+    state.store = { ...state.store, social: { instagram: 'https://instagram.com/am1als' } };
+    const { container } = renderFooter();
+    const follow = container.querySelector('.store-footer__follow');
+    expect(follow?.querySelector('.store-footer__heading')?.textContent).toBe('Follow us');
+    expect(container.querySelector('.store-footer__brand .store-footer__social')).toBeNull();
+  });
+
+  it('drops the «تابعنا» column when the store has no social links or apps', () => {
+    state.store = { ...state.store, social: { whatsapp: '+966500000000' } };
+    expect(renderFooter().container.querySelector('.store-footer__follow')).toBeNull();
+  });
+
+  it("uses the theme's logo_main for the footer logo", () => {
+    state.theme = { settings: { logo_main: 'https://cdn.salla.sa/am1als.svg' } };
+    const { container } = renderFooter();
+    expect(container.querySelector('.store-footer__brand img')?.getAttribute('src')).toBe(
+      'https://cdn.salla.sa/am1als.svg'
+    );
+  });
+
+  it('paints footer_is_dark as a footer-scoped class, never inside the account sheet', () => {
+    state.theme = { settings: { footer_is_dark: true } };
+    expect(renderFooter().container.querySelector('.store-footer--dark')).toBeTruthy();
+    cleanup();
+    expect(renderFooter(true).container.querySelector('.store-footer--dark')).toBeNull();
+  });
+
+  it('carries no hard-coded footer colours', () => {
+    state.theme = { settings: { footer_is_dark: true } };
+    expect(renderFooter().container.innerHTML).not.toMatch(/bg-\[#/);
+  });
+
+  it('shows the bottom announcement bar, silent when the top bar is also on', () => {
+    state.theme = { settings: { announcement_text: 'خصم ١٠٪' } };
+    const { container } = renderFooter();
+    const bar = container.querySelector('[data-testid="announcement-bar-bottom"]');
+    expect(bar?.getAttribute('aria-hidden')).toBe('true');
+    cleanup();
+    state.theme = { settings: { announcement_text: 'خصم ١٠٪', announcement_enabled: false } };
+    const alone = renderFooter().container.querySelector('[data-testid="announcement-bar-bottom"]');
+    expect(alone?.getAttribute('aria-hidden')).toBeNull();
+  });
 });
+

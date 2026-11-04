@@ -29,30 +29,19 @@ function declarations(root: Root, selector: string): Record<string, string> {
   return decls;
 }
 
-describe('footer_is_dark (body.footer-is-dark)', () => {
-  // The footer's own background/text colors for this setting moved into the
-  // Footer component itself (@salla.sa/twilight-theme-engine/layout) along
-  // with the rest of its structure -- see that package's own
-  // Footer.test.tsx for the equivalent "Raed palette, not a generic Tailwind
-  // shade" regression guard. What's left compiled here is just the one piece
-  // still theme-owned: the footer-menu item colors, which depend on the
-  // `--stacked` / `--inline` modifier classes this theme's own Footer usage
-  // adds, not something the shared component could style itself.
-  it('darkens the footer menu items, not a generic Tailwind shade', async () => {
+describe('footer_is_dark (.store-footer--dark)', () => {
+  // The footer paints from tokens (footer.scss); the setting re-points the
+  // footer's own tokens to the dark palette, so its menu, headings and links
+  // follow without a rule per element.
+  it('re-points the footer tokens, and the menu items read them', async () => {
     const root = await compile('footer.scss');
 
-    const stacked = declarations(
-      root,
-      'body.footer-is-dark .store-footer__menu--stacked .s-menu-footer-item'
-    );
-    expect(stacked.color).toContain('rgb(255 255 255');
+    const dark = declarations(root, '.store-footer--dark');
+    expect(dark['--surface-footer']).toBeDefined();
+    expect(dark['--text-footer']).toBeDefined();
 
-    const inline = declarations(
-      root,
-      'body.footer-is-dark .store-footer__menu--inline .s-menu-footer-item'
-    );
-    expect(inline.color).toContain('rgb(255 255 255');
-    expect(inline['border-color']).toBe('rgb(255 255 255 / 0.1)');
+    const item = declarations(root, '.store-footer__menu .s-menu-footer-item');
+    expect(item.color).toBe('var(--text-footer)');
   });
 });
 

@@ -34,5 +34,7 @@ declare module '@salla.sa/twilight-theme-engine/types' {
     announcement_sticky?: boolean;
     announcement_dismissible?: boolean;
     header_band_text?: string | Record<string, string>;
+    announcement_bottom_enabled?: boolean;
+    footer_logo_height?: number | string;
   }
 }

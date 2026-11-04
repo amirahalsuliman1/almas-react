@@ -297,5 +297,6 @@
   "theme.listing.grid_label": "حجم عرض المنتجات",
   "theme.listing.grid_large": "منتجات أكبر",
   "theme.listing.grid_small": "منتجات أكثر",
-  "theme.testimonials.rating": "تقييم :stars من 5"
+  "theme.testimonials.rating": "تقييم :stars من 5",
+  "theme.footer.follow_us": "تابعنا"
 }
