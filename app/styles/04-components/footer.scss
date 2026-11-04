@@ -132,12 +132,12 @@
 
 /* `footer_is_dark`: the footer alone takes the dark palette, whatever the page. */
 .store-footer--dark {
-  --surface-footer: #141210;
-  --text-footer: #f3f1ee;
-  --text-secondary: #bfb9b2;
-  --border-subtle: #46413b;
-  --color-accent-text: color-mix(in srgb, var(--color-accent) 55%, #ffffff);
-  --focus-ring-color: #f3f1ee;
+  --surface-footer: var(--dark-page);
+  --text-footer: var(--dark-ink);
+  --text-secondary: var(--dark-secondary);
+  --border-subtle: var(--dark-border);
+  --color-accent-text: color-mix(in srgb, var(--color-accent) 55%, var(--on-media));
+  --focus-ring-color: var(--dark-ink);
 }
 
 /* The bar at the top of the footer: the container's width, rounded, inset from

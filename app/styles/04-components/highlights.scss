@@ -1,0 +1,193 @@
+/* =========================================================================
+   Highlights (Highlights.tsx, R-08): story circles and their viewer.
+   ========================================================================= */
+
+.highlights {
+  margin-inline: max(var(--page-gutter), calc((100% - 1280px) / 2 + var(--page-gutter)));
+}
+
+.highlights__row {
+  @apply m-0 flex list-none gap-4 overflow-x-auto p-0 pb-1 lg:gap-6;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.highlights__item {
+  @apply flex-none;
+}
+
+.highlights__bubble {
+  @apply flex w-20 flex-col items-center gap-2 bg-transparent p-0 lg:w-24;
+
+  &:focus-visible {
+    outline: none;
+
+    .highlights__ring {
+      outline: var(--focus-ring-width) solid var(--focus-ring-color);
+      outline-offset: var(--focus-ring-offset);
+    }
+  }
+}
+
+/* An unopened highlight wears the accent; an opened one a quiet hairline. */
+.highlights__ring {
+  @apply flex h-[4.75rem] w-[4.75rem] items-center justify-center rounded-full p-[3px] lg:h-[5.5rem] lg:w-[5.5rem];
+  background: linear-gradient(135deg, var(--color-accent), var(--color-brand-secondary));
+}
+
+.highlights__bubble--seen .highlights__ring {
+  background: var(--border-subtle);
+}
+
+.highlights__cover {
+  @apply h-full w-full rounded-full object-cover;
+  border: 2px solid var(--surface-card);
+  background-color: var(--surface-placeholder);
+}
+
+.highlights__name {
+  @apply w-full truncate text-center text-sm font-medium;
+  color: var(--main-text-color);
+}
+
+/* The viewer: full screen on a phone, a 9:16 panel from 768px. */
+.highlights__viewer {
+  @apply m-0 h-full max-h-none w-full max-w-none overflow-hidden border-0 p-0;
+  background-color: var(--surface-media);
+  color: var(--on-media);
+
+  &[open] {
+    @apply flex flex-col;
+  }
+
+  &::backdrop {
+    background-color: var(--overlay-scrim);
+  }
+}
+
+@media (min-width: 768px) {
+  .highlights__viewer {
+    @apply m-auto rounded-large;
+    block-size: min(90vh, 52rem);
+    inline-size: calc(min(90vh, 52rem) * 9 / 16);
+  }
+}
+
+.highlights__progress {
+  @apply flex gap-1 px-3 pt-3;
+}
+
+.highlights__bar {
+  @apply relative h-0.5 flex-1 overflow-hidden rounded-full;
+  background-color: rgb(255 255 255 / 35%);
+
+  > span {
+    @apply absolute inset-y-0 block;
+    inset-inline-start: 0;
+    inline-size: 0;
+    background-color: var(--on-media);
+  }
+}
+
+.highlights__bar--done > span,
+.highlights__bar--static > span {
+  inline-size: 100%;
+}
+
+.highlights__bar--active > span {
+  animation: highlights-fill 5s linear forwards;
+}
+
+.highlights__viewer--held .highlights__bar--active > span {
+  animation-play-state: paused;
+}
+
+@keyframes highlights-fill {
+  from {
+    inline-size: 0;
+  }
+
+  to {
+    inline-size: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .highlights__bar--active > span {
+    animation: none;
+    inline-size: 100%;
+  }
+}
+
+.highlights__head {
+  @apply flex items-center justify-between gap-3 px-3 py-2;
+}
+
+.highlights__viewer-title {
+  @apply m-0 truncate text-base font-bold;
+}
+
+.highlights__close {
+  @apply inline-flex h-11 w-11 flex-none items-center justify-center rounded-full bg-transparent;
+  color: inherit;
+
+  svg {
+    @apply h-6 w-6;
+  }
+}
+
+.highlights__stage {
+  @apply relative min-h-0 flex-1;
+}
+
+.highlights__slide {
+  @apply absolute inset-0 h-full w-full object-contain;
+}
+
+/* Tap the start half to go back, the end half to go on. */
+.highlights__nav {
+  @apply absolute inset-y-0 w-1/2 bg-transparent;
+}
+
+.highlights__nav--prev {
+  inset-inline-start: 0;
+}
+
+.highlights__nav--next {
+  inset-inline-end: 0;
+}
+
+.highlights__close,
+.highlights__nav,
+.highlights__shop,
+.highlights__link {
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--on-media);
+    outline-offset: calc(var(--focus-ring-offset) * -1);
+  }
+}
+
+.highlights__foot {
+  @apply flex flex-col gap-2 p-3;
+}
+
+.highlights__shop {
+  @apply flex min-h-12 items-center justify-center gap-2 px-4 text-base font-bold no-underline;
+  background-color: var(--color-accent);
+  border-radius: var(--button-radius);
+  color: var(--color-accent-ink);
+}
+
+.highlights__shop-name {
+  @apply min-w-0 truncate font-medium;
+}
+
+.highlights__link {
+  @apply flex min-h-12 items-center justify-center px-4 text-base font-bold no-underline;
+  background-color: var(--on-media);
+  border-radius: var(--button-radius);
+  color: var(--on-media-ink);
+}

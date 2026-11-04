@@ -1085,6 +1085,198 @@
       ]
     },
     {
+      "name": "highlights",
+      "key": "b84e1f3a-6c2d-4a97-9e15-0d7c3f62a8e4",
+      "title": {
+        "en": "Highlights",
+        "ar": "هايلايت"
+      },
+      "icon": "sicon-image-carousel",
+      "path": "home.highlights",
+      "image": "https://cdn.salla.network/images/themes/raed/preview-images/images-slider-enhancement.png?v=1.1",
+      "fields": [
+        {
+          "type": "static",
+          "format": "description",
+          "id": "static-desc",
+          "value": "دوائر مثل هايلايت إنستغرام. يضغطها الزائر فتُعرض القصص بملء الشاشة وتتنقّل تلقائيًا، ويمكن ربط كل هايلايت بمنتج يظهر عليه زر «تسوّق»."
+        },
+        {
+          "type": "string",
+          "icon": "sicon-format-text-alt",
+          "format": "text",
+          "id": "title",
+          "label": "العنوان (اختياري)",
+          "multilanguage": true,
+          "required": false,
+          "value": null,
+          "minLength": 0,
+          "maxLength": 60
+        },
+        {
+          "id": "items",
+          "type": "collection",
+          "format": "collection",
+          "required": true,
+          "minLength": 1,
+          "maxLength": 12,
+          "label": null,
+          "item_label": "هايلايت",
+          "value": [],
+          "fields": [
+            {
+              "type": "string",
+              "icon": "sicon-format-text-alt",
+              "format": "text",
+              "id": "items.title",
+              "label": "اسم الهايلايت",
+              "description": "يظهر تحت الدائرة. كلمة أو كلمتان.",
+              "multilanguage": true,
+              "required": true,
+              "value": null,
+              "minLength": 1,
+              "maxLength": 20
+            },
+            {
+              "type": "string",
+              "icon": "sicon-image",
+              "format": "image",
+              "id": "items.cover",
+              "label": "صورة الدائرة (اختيارية)",
+              "description": "مربعة. إن تُركت فارغة تُستخدم صورة القصة الأولى.",
+              "required": false,
+              "value": null
+            },
+            {
+              "type": "string",
+              "icon": "sicon-image",
+              "format": "image",
+              "id": "items.slide_1",
+              "label": "صورة القصة 1",
+              "required": true,
+              "value": null,
+              "description": "* المقاس المناسب 1080×1920 بكسل (طولية). الصور الفارغة تُتخطّى."
+            },
+            {
+              "type": "string",
+              "icon": "sicon-image",
+              "format": "image",
+              "id": "items.slide_2",
+              "label": "صورة القصة 2",
+              "required": false,
+              "value": null
+            },
+            {
+              "type": "string",
+              "icon": "sicon-image",
+              "format": "image",
+              "id": "items.slide_3",
+              "label": "صورة القصة 3",
+              "required": false,
+              "value": null
+            },
+            {
+              "type": "string",
+              "icon": "sicon-image",
+              "format": "image",
+              "id": "items.slide_4",
+              "label": "صورة القصة 4",
+              "required": false,
+              "value": null
+            },
+            {
+              "type": "string",
+              "icon": "sicon-image",
+              "format": "image",
+              "id": "items.slide_5",
+              "label": "صورة القصة 5",
+              "required": false,
+              "value": null
+            },
+            {
+              "type": "string",
+              "icon": "sicon-image",
+              "format": "image",
+              "id": "items.slide_6",
+              "label": "صورة القصة 6",
+              "required": false,
+              "value": null
+            },
+            {
+              "type": "items",
+              "icon": "sicon-keyboard_arrow_down",
+              "format": "dropdown-list",
+              "id": "items.product",
+              "label": "المنتج (اختياري)",
+              "description": "يظهر داخل القصص زر «تسوّق» باسم المنتج وسعره، وتُجلب بياناته تلقائيًا.",
+              "required": false,
+              "multichoice": false,
+              "searchable": true,
+              "source": "products",
+              "selected": [],
+              "options": [],
+              "maxLength": 1,
+              "value": []
+            },
+            {
+              "type": "items",
+              "icon": "sicon-link",
+              "format": "variable-list",
+              "id": "items.url",
+              "label": "رابط (اختياري)",
+              "description": "يظهر داخل القصص زر «المزيد» إلى صفحة أو تصنيف أو منتج، أو خيار الرابط الخارجي.",
+              "required": false,
+              "searchable": true,
+              "source": "custom",
+              "sources": [
+                {
+                  "label": "منتج",
+                  "key": "products",
+                  "value": "products"
+                },
+                {
+                  "label": "منتجات مع وسم",
+                  "key": "products_tags",
+                  "value": "products_tags"
+                },
+                {
+                  "label": "تصنيف",
+                  "key": "categories",
+                  "value": "categories"
+                },
+                {
+                  "label": "ماركة تجارية",
+                  "key": "brands",
+                  "value": "brands"
+                },
+                {
+                  "label": "صفحة تعريفية",
+                  "key": "pages",
+                  "value": "pages"
+                },
+                {
+                  "label": "التخفيضات",
+                  "key": "offers_link",
+                  "value": "offers_link"
+                },
+                {
+                  "label": "الماركات التجارية",
+                  "key": "brands_link",
+                  "value": "brands_link"
+                },
+                {
+                  "label": "رابط خارجي",
+                  "key": "custom",
+                  "value": "custom"
+                }
+              ],
+              "value": null
+            }
+          ]
+        }
+      ]
+    },
+    {
       "key": "186b3f4f-25cf-4d3c-abca-cef7eed6f0ab",
       "title": {
         "en": "Enhances Animated Images",

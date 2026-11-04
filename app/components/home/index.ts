@@ -4,6 +4,7 @@ export { EnhancedSlider } from './EnhancedSlider';
 export { FeaturedProducts, featuredProductsConfig } from './FeaturedProducts';
 export { FixedProducts } from './FixedProducts';
 export { Hero } from './Hero';
+export { Highlights } from './Highlights';
 export { LatestProducts } from './LatestProducts';
 export { MainLinks } from './MainLinks';
 export { PhotosSlider } from './PhotosSlider';

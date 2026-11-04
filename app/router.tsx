@@ -16,6 +16,7 @@ import {
   featuredProductsConfig,
   FixedProducts,
   Hero,
+  Highlights,
   LatestProducts,
   MainLinks,
   PhotosSlider,
@@ -45,6 +46,7 @@ registry.register('product:list-skeleton', ProductListSkeleton);
 registerHomeComponents({
   ...DefaultHomeComponents,
   hero: Hero,
+  highlights: Highlights,
   brands: Brands,
   'enhanced-slider': EnhancedSlider,
   'custom-testimonials': CustomTestimonials,
@@ -87,6 +89,8 @@ registerHomeComponents({
 registerHomeComponentConfig({
   // Always the first block: rendered at once, no reservation needed.
   hero: { className: 's-block s-block--hero' },
+  // One row of 76px circles and their names.
+  highlights: { className: 's-block s-block--highlights', height: '7.5rem' },
   'featured-products': featuredProductsConfig,
   'featured-products-special-offer': featuredProductsConfig,
   'featured-products-special-product': featuredProductsConfig,

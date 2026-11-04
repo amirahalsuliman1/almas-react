@@ -79,6 +79,17 @@ $main-text-color: var(--main-text-color);
   --color-accent: var(--color-primary);
   --color-accent-ink: var(--color-primary-reverse, #ffffff);
   --color-accent-text: var(--color-accent);
+  /* The accent a step darker, for hover on accent fills. */
+  --color-accent-hover: color-mix(in srgb, var(--color-accent) 85%, #000000);
+
+  /* The dark palette, named once: html.dark re-points the tokens to these, and
+     so does `footer_is_dark` for the footer alone. */
+  --dark-page: #141210;
+  --dark-section: #211d1a;
+  --dark-card: #2e2a26;
+  --dark-ink: #f3f1ee;
+  --dark-secondary: #bfb9b2;
+  --dark-border: #46413b;
 
   --color-error: #c20013;
   --color-error-strong: #b10011;
@@ -89,6 +100,10 @@ $main-text-color: var(--main-text-color);
   --overlay-scrim: rgb(21 21 21 / 48%);
   /* White drawn on a photograph; stays white in dark mode. */
   --on-media: #ffffff;
+  /* Behind full-screen media (the story viewers), and dark ink on a white
+     button over media; neither changes in dark mode. */
+  --surface-media: #000000;
+  --on-media-ink: #1b1b1b;
 
   /* Merchant panel (ThemeTokens writes the settings over these defaults). */
   --color-brand-secondary: #f9e6e7;
@@ -133,13 +148,13 @@ $main-text-color: var(--main-text-color);
 html.dark {
   color-scheme: dark;
 
-  --surface-page: #141210;
-  --surface-section: #211d1a;
-  --surface-card: #2e2a26;
+  --surface-page: var(--dark-page);
+  --surface-section: var(--dark-section);
+  --surface-card: var(--dark-card);
   --surface-placeholder: #3a3530;
-  --main-text-color: #f3f1ee;
-  --text-secondary: #bfb9b2;
-  --border-subtle: #46413b;
+  --main-text-color: var(--dark-ink);
+  --text-secondary: var(--dark-secondary);
+  --border-subtle: var(--dark-border);
   --color-error: #ff7a85;
   --color-error-strong: #ff7a85;
   --color-success: #5fd36b;

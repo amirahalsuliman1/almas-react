@@ -241,8 +241,8 @@
 
       &:hover {
         @apply opacity-100;
-        background-color: color-mix(in srgb, var(--color-accent) 85%, #000000);
-        border-color: color-mix(in srgb, var(--color-accent) 85%, #000000);
+        background-color: var(--color-accent-hover);
+        border-color: var(--color-accent-hover);
         color: var(--color-accent-ink);
       }
 

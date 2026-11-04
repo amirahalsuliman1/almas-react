@@ -1,0 +1,53 @@
+/**
+ * Helpers for the highlights row (home.highlights): which highlights a visitor
+ * has opened, and the shapes the product and link pickers send.
+ */
+
+const SEEN_KEY = 'am1als:highlights-seen';
+
+/** A stable id for a highlight, from its slides, so a changed highlight shows as new. */
+export function highlightId(slides: string[]): string {
+  let h = 5381;
+  const text = slides.join('|');
+  for (let i = 0; i < text.length; i += 1) h = ((h * 33) ^ text.charCodeAt(i)) >>> 0;
+  return h.toString(36);
+}
+
+export function readSeen(): string[] {
+  try {
+    const list = JSON.parse(window.localStorage.getItem(SEEN_KEY) || '[]');
+    return Array.isArray(list) ? list.filter((x) => typeof x === 'string') : [];
+  } catch {
+    return [];
+  }
+}
+
+/** Remembers the last 100 opened highlights. */
+export function markSeen(id: string): void {
+  const list = [id, ...readSeen().filter((seen) => seen !== id)].slice(0, 100);
+  try {
+    window.localStorage.setItem(SEEN_KEY, JSON.stringify(list));
+  } catch {
+    // Private mode: the ring stays unseen; nothing else depends on it.
+  }
+}
+
+/** The product picker sends a list even for one choice, of products or of ids. */
+export function pickedProductId(raw: unknown): string | null {
+  const first = Array.isArray(raw) ? raw[0] : raw;
+  if (first == null || first === '') return null;
+  if (typeof first === 'number' || typeof first === 'string') return String(first);
+  const id = (first as { id?: unknown; value?: unknown }).id ?? (first as { value?: unknown }).value;
+  return id == null || id === '' ? null : String(id);
+}
+
+/** A variable-list link arrives as a URL string or as `{ url }` / `{ value }`. */
+export function pickedUrl(raw: unknown): string | null {
+  const first = Array.isArray(raw) ? raw[0] : raw;
+  if (typeof first === 'string') return first.trim() || null;
+  if (first && typeof first === 'object') {
+    const value = (first as { url?: unknown; value?: unknown }).url ?? (first as { value?: unknown }).value;
+    return typeof value === 'string' && value.trim() ? value.trim() : null;
+  }
+  return null;
+}

@@ -4,13 +4,18 @@ import { contrastRatio } from '../../app/lib/accent';
 
 const css = readFileSync('app/styles/01-settings/global.scss', 'utf8');
 
-/** The value of `--name` inside the first block whose selector starts with `selector`. */
+/** The value of `--name` inside the first block whose selector starts with `selector`,
+ *  following one `var(--other)` into the light `:root` block. */
 function token(selector: string, name: string): string {
   const start = css.indexOf(`${selector}`);
   const block = css.slice(start, css.indexOf('}', start));
-  const match = block.match(new RegExp(`--${name}:\\s*(#[0-9a-f]{6})`, 'i'));
+  const match = block.match(new RegExp(`--${name}:\\s*(#[0-9a-f]{6}|var\\(--[a-z-]+\\))`, 'i'));
   if (!match) throw new Error(`--${name} not found under ${selector}`);
-  return match[1].toLowerCase();
+  const ref = match[1].match(/^var\((--[a-z-]+)\)$/i);
+  if (!ref) return match[1].toLowerCase();
+  const resolved = css.match(new RegExp(`${ref[1]}:\\s*(#[0-9a-f]{6})`, 'i'));
+  if (!resolved) throw new Error(`${ref[1]} has no hex value`);
+  return resolved[1].toLowerCase();
 }
 
 describe.each([
