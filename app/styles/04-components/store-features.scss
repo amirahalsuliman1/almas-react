@@ -1,0 +1,62 @@
+/* «مميزات المتجر» (StoreFeatures.tsx, R-16) — Twig's features strip, kept
+   (owner, 2026-11-05): a list on a phone, centred columns from 768px, the icon
+   on a white disc with a ring. Salla's note (a small features strip) sets only
+   the sizes: title text-lg (Twig: text-base), line text-base (Twig: text-sm),
+   the glyph 28px on its 56px disc (Twig: 24px). The panel is section-panel.scss. */
+
+.features__grid {
+  @apply m-0 grid list-none grid-cols-1 p-0;
+}
+
+.features__item {
+  @apply grid items-center gap-x-4 gap-y-1 px-2 py-4;
+  grid-template-columns: auto 1fr;
+}
+
+.features__item + .features__item {
+  border-block-start: 1px solid var(--border-subtle);
+}
+
+.features__icon {
+  @apply row-span-2 inline-flex h-14 w-14 items-center justify-center rounded-full;
+  font-size: 1.75rem;
+  color: var(--main-text-color);
+  background-color: var(--surface-card);
+  outline: 1px solid var(--border-subtle);
+  outline-offset: 4px;
+
+  img {
+    @apply h-7 w-7 object-contain;
+  }
+}
+
+.features__title {
+  @apply m-0 text-lg font-bold leading-snug;
+  color: var(--main-text-color);
+}
+
+.features__text {
+  @apply m-0 text-base leading-relaxed;
+  color: var(--text-secondary);
+}
+
+/* Twig's columns from the tablet: one per feature, up to four, centred, a
+   hairline between. */
+@media (min-width: 768px) {
+  .features__grid {
+    grid-template-columns: repeat(var(--features-count, 3), minmax(0, 1fr));
+  }
+
+  .features__item {
+    @apply flex flex-col items-center gap-2 px-6 py-8 text-center;
+  }
+
+  .features__item + .features__item {
+    border-block-start: 0;
+    border-inline-start: 1px solid var(--border-subtle);
+  }
+
+  .features__icon {
+    @apply mb-3;
+  }
+}

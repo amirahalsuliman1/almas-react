@@ -28,6 +28,7 @@ import {
   EnhancedSquareBanners,
   Stories,
   PartnerBanner,
+  StoreFeatures,
 } from './components/home';
 import { Blog } from './components/home/Blog';
 import {
@@ -57,6 +58,8 @@ registerHomeComponents({
   'video-carousel': VideoCarousel,
   stories: Stories,
   'partner-banner': PartnerBanner,
+  // Salla's own section, drawn as Twig drew it (R-16).
+  'store-features': StoreFeatures,
   brands: Brands,
   'enhanced-slider': EnhancedSlider,
   'custom-testimonials': CustomTestimonials,
@@ -114,6 +117,9 @@ registerHomeComponentConfig({
   stories: { className: 's-block s-block--stories', height: 'min(calc(122vw + 9rem), 36rem)' },
   // A 4:5 photograph on a phone; 31:15 of the container from 768px (604px at 1440).
   'partner-banner': { className: 's-block s-block--partner-banner', height: 'min(calc(125vw - 2.5rem), 38rem)' },
+  // Three features: a list of three rows on a phone, one row of columns from
+  // 768px. Measured 298px at 393, 273px at 820, 263px at 1440.
+  'store-features': { className: 's-block s-block--store-features', height: 'max(16.5rem, calc(18.75rem - 2.5vw))' },
   'featured-products': featuredProductsConfig,
   'featured-products-special-offer': featuredProductsConfig,
   'featured-products-special-product': featuredProductsConfig,
