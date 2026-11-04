@@ -1,0 +1,557 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { render, fireEvent, act, waitFor } from '@testing-library/react';
+import { renderToString } from 'react-dom/server';
+import {
+  FeaturedProducts,
+  FeaturedProductsSpecialOffer,
+  FeaturedProductsWithSpecialProduct,
+  featuredProductsConfig,
+} from '../../../app/components/home/FeaturedProducts';
+
+const cardLayout = { value: 'vertical' as 'vertical' | 'horizontal' };
+vi.mock('../../../app/hooks/useProductCardLayout', () => ({
+  useProductCardLayout: () => cardLayout.value,
+}));
+
+// Only the module under test, not the whole barrel and everything it re-exports.
+vi.mock('../../../app/components/product', async () => ({
+  ProductCard: (await vi.importActual<typeof import('../../../app/components/product/ProductCard')>(
+    '../../../app/components/product/ProductCard'
+  )).ProductCard,
+}));
+
+vi.mock('@salla.sa/twilight-theme-engine/i18n', () => ({
+  useTranslation: () => ({ t: (_k: string, fb?: string) => fb ?? _k }),
+}));
+
+const listMock = vi.fn().mockResolvedValue({
+  data: [
+    { id: 1, name: 'Full P1', is_out_of_stock: false },
+    { id: 2, name: 'Full P2', is_out_of_stock: false },
+  ],
+});
+
+vi.mock('@salla.sa/twilight-theme-engine/api/product', () => ({
+  product: { list: (...args: unknown[]) => listMock(...args) },
+}));
+
+vi.mock('@salla.sa/twilight-theme-engine/product', () => ({
+  ProductCard: ({
+    product,
+    layout,
+  }: {
+    product: { id?: number; name?: string };
+    layout?: string;
+  }) => (
+    <div data-testid="product-card" data-layout={layout ?? 'vertical'}>
+      {product.name}
+    </div>
+  ),
+}));
+
+// Set by the loading tests at the end to render the real SallaProductsList.
+// `vi.hoisted` shares it with the hoisted `vi.mock` factory.
+const realList = vi.hoisted(() => ({ on: false }));
+
+vi.mock('@salla.sa/twilight-components-react', async () => {
+  const actual = await vi.importActual<typeof import('@salla.sa/twilight-components-react')>(
+    '@salla.sa/twilight-components-react'
+  );
+  return {
+    ProductsListSkeleton: () => <div data-testid="list-skeleton" />,
+    ProductCardSkeleton: () => <div data-testid="card-skeleton" />,
+    SallaProductsList: (props: {
+      loader: () => unknown;
+      children: (items: unknown[]) => unknown;
+      itemsClassName?: string;
+    }) => {
+      if (realList.on) return <actual.SallaProductsList {...(props as never)} />;
+      const { loader, children, itemsClassName } = props;
+      loader();
+      return (
+        <div data-testid="salla-products-list" className={itemsClassName}>
+          {
+            children([
+              { id: 1, name: 'Full P1' },
+              { id: 2, name: 'Full P2' },
+            ]) as never
+          }
+        </div>
+      );
+    },
+  };
+});
+
+const tab = (over: Record<string, unknown> = {}) => ({
+  name: 'Tab',
+  type: 'latest_products',
+  ...over,
+});
+
+describe('FeaturedProducts', () => {
+  beforeEach(() => {
+    cardLayout.value = 'vertical';
+  });
+
+  it('renders nothing without sections', () => {
+    const { container } = render(<FeaturedProducts data={{}} />);
+    expect(container.firstChild).toBeNull();
+  });
+
+  it.each([
+    ['latest_products', {}, { source: 'latest' }],
+    ['most_sales', {}, { source: 'sales' }],
+    ['top_rated_products', {}, { source: 'top-rated' }],
+    ['category', { category: [{ value: '12' }] }, { source: 'categories', sourceValue: [12] }],
+    ['tag', { tag: 5 }, { source: 'tags', sourceValue: [5] }],
+    [
+      'chosen_products',
+      { chosen_products: { source: 'selected', source_value: [1, 2] } },
+      { source: 'selected', sourceValue: [1, 2] },
+    ],
+  ])('loads a %s tab from its source', (type, extra, expected) => {
+    listMock.mockClear();
+    const { getAllByTestId } = render(
+      <FeaturedProducts data={{ items: [tab({ type, ...extra })] }} />
+    );
+    expect(listMock).toHaveBeenCalledWith(expect.objectContaining(expected));
+    expect(getAllByTestId('product-card')).toHaveLength(2);
+  });
+
+  it('still renders the legacy payload (label, stub products, nested main_product)', () => {
+    listMock.mockClear();
+    const { getAllByTestId, getAllByText, container } = render(
+      <FeaturedProducts
+        data={{
+          title: 'Legacy heading',
+          items: [
+            { label: 'Old A', products: [{ id: 1 }, { id: 2 }] },
+            { label: 'Old B', products: [{ id: 3 }] },
+          ],
+        }}
+      />
+    );
+    expect(getAllByText('Old A').length).toBeGreaterThan(0);
+    expect(container.querySelector('h2.s-block__title')?.textContent).toBe('Legacy heading');
+    expect(listMock).toHaveBeenCalledWith(
+      expect.objectContaining({ source: 'selected', sourceValue: [1, 2] })
+    );
+    expect(getAllByTestId('product-card').length).toBeGreaterThan(0);
+  });
+
+  it('renders a legacy nested main_product as the special product', () => {
+    const { getAllByTestId, container } = render(
+      <FeaturedProducts
+        data={{
+          main_product: { title: 'Old deal', product: { id: 9, name: 'Hero' } },
+          items: [{ label: 'A', products: [{ id: 1 }] }],
+        }}
+      />
+    );
+    expect(
+      getAllByTestId('product-card').some((el) => el.getAttribute('data-layout') === 'special')
+    ).toBe(true);
+    expect(container.querySelector('h2.s-block__title')?.textContent).toBe('Old deal');
+  });
+
+  it('keeps the legacy main_product title even without a product', () => {
+    const { container } = render(
+      <FeaturedProducts
+        data={{ title: 'Fallback', main_product: { title: 'Only title' }, items: [tab()] }}
+      />
+    );
+    expect(container.querySelector('h2.s-block__title')?.textContent).toBe('Only title');
+  });
+
+  it('skips a tab whose source needs a value that is missing', () => {
+    listMock.mockClear();
+    const { container } = render(
+      <FeaturedProducts data={{ items: [tab({ type: 'category', category: null })] }} />
+    );
+    expect(listMock).not.toHaveBeenCalled();
+    expect(container.querySelector('[data-testid="product-card"]')).toBeNull();
+  });
+
+  it('marks the first tab panel active so it is not left display:none', () => {
+    const { container } = render(
+      <FeaturedProducts data={{ items: [tab({ name: 'A' }), tab({ name: 'B' })] }} />
+    );
+    const panels = container.querySelectorAll('.tabs-wrapper .tabs__item');
+    expect(panels).toHaveLength(2);
+    expect(panels[0].classList.contains('is-active')).toBe(true);
+    expect(panels[1].classList.contains('is-active')).toBe(false);
+  });
+
+  it('switches the active panel when another tab is clicked', () => {
+    const { container, getAllByText } = render(
+      <FeaturedProducts data={{ items: [tab({ name: 'A' }), tab({ name: 'B' })] }} />
+    );
+    fireEvent.click(getAllByText('B')[0]);
+    const panels = container.querySelectorAll('.tabs-wrapper .tabs__item');
+    expect(panels[0].classList.contains('is-active')).toBe(false);
+    expect(panels[1].classList.contains('is-active')).toBe(true);
+  });
+
+  it('tells screen readers which tab is showing, not only through its class', () => {
+    const { container, getAllByText } = render(
+      <FeaturedProducts data={{ items: [tab({ name: 'A' }), tab({ name: 'B' })] }} />
+    );
+    const pressed = () =>
+      [...container.querySelectorAll('.tab-trigger')].map((b) => b.getAttribute('aria-pressed'));
+
+    expect(pressed()).toEqual(['true', 'false']);
+    fireEvent.click(getAllByText('B')[0]);
+    expect(pressed()).toEqual(['false', 'true']);
+  });
+
+  it('falls back to a numbered label when a tab has no name', () => {
+    const { getAllByText } = render(
+      <FeaturedProducts data={{ items: [tab({ name: '' }), tab({ name: undefined })] }} />
+    );
+    expect(getAllByText('Products 1').length).toBeGreaterThan(0);
+    expect(getAllByText('Products 2').length).toBeGreaterThan(0);
+  });
+
+  it('hides the tab bar for a single section', () => {
+    const { container } = render(<FeaturedProducts data={{ items: [tab()] }} />);
+    expect(container.querySelector('.tabs')).toBeNull();
+    expect(container.querySelector('.tabs-wrapper .tabs__item.is-active')).toBeTruthy();
+  });
+
+  it.each([
+    ['one tab', [tab()]],
+    ['several tabs', [tab(), tab({ name: 'Second' })]],
+  ])('follows the store card layout with %s', (_label, items) => {
+    cardLayout.value = 'horizontal';
+    const { container } = render(<FeaturedProducts data={{ items }} />);
+    const panel = container.querySelector('.tabs__item.is-active')!;
+    expect(panel.querySelector('.s-products-list-horizontal-cards')).toBeTruthy();
+    const cards = panel.querySelectorAll('[data-testid="product-card"]');
+    expect(cards.length).toBeGreaterThan(0);
+    cards.forEach((card) => expect(card.getAttribute('data-layout')).toBe('horizontal'));
+  });
+
+  it('keeps vertical cards beside a special offer whatever the store card layout', () => {
+    cardLayout.value = 'horizontal';
+    const { container } = render(
+      <FeaturedProductsSpecialOffer
+        data={{ main_product: { id: 9, name: 'Hero' }, items: [tab()] }}
+      />
+    );
+    const panel = container.querySelector('.tabs__item.is-active')!;
+    panel
+      .querySelectorAll('[data-testid="product-card"]')
+      .forEach((card) => expect(card.getAttribute('data-layout')).toBe('vertical'));
+  });
+
+  it('renders the main product and title for special_offer_with_products', () => {
+    const { getAllByTestId, container } = render(
+      <FeaturedProducts
+        data={{
+          show_method: [{ value: 'special_offer_with_products' }],
+          main_product_title: 'Deal',
+          main_product: { id: 9, name: 'Hero' },
+          items: [tab()],
+        }}
+      />
+    );
+    const special = getAllByTestId('product-card').find(
+      (el) => el.getAttribute('data-layout') === 'special'
+    );
+    expect(special?.textContent).toBe('Hero');
+    expect(container.querySelector('h2.s-block__title')?.textContent).toBe('Deal');
+  });
+
+  it('fetches an unhydrated special product by id for products_with_special_product', () => {
+    listMock.mockClear();
+    render(
+      <FeaturedProducts
+        data={{
+          show_method: 'products_with_special_product',
+          items: [tab({ special_product: { source: 'selected', source_value: [7] } })],
+        }}
+      />
+    );
+    expect(listMock).toHaveBeenCalledWith(
+      expect.objectContaining({ source: 'selected', sourceValue: [7], perPage: 1 })
+    );
+  });
+});
+
+describe('single-layout blocks', () => {
+  it('FeaturedProductsSpecialOffer shows the main product and title without a show_method', () => {
+    const { getAllByTestId, container } = render(
+      <FeaturedProductsSpecialOffer
+        data={{ main_product_title: 'Deal', main_product: { id: 9, name: 'Hero' }, items: [tab()] }}
+      />
+    );
+    const special = getAllByTestId('product-card').find(
+      (el) => el.getAttribute('data-layout') === 'special'
+    );
+    expect(special?.textContent).toBe('Hero');
+    expect(container.querySelector('h2.s-block__title')?.textContent).toBe('Deal');
+  });
+
+  it('FeaturedProductsWithSpecialProduct loads the active tab special product without a show_method', () => {
+    listMock.mockClear();
+    render(
+      <FeaturedProductsWithSpecialProduct
+        data={{ items: [tab({ special_product: { source: 'selected', source_value: [7] } })] }}
+      />
+    );
+    expect(listMock).toHaveBeenCalledWith(
+      expect.objectContaining({ source: 'selected', sourceValue: [7], perPage: 1 })
+    );
+  });
+
+  it('FeaturedProductsSpecialOffer puts the title and tabs in one header row', () => {
+    const { container } = render(
+      <FeaturedProductsSpecialOffer
+        data={{
+          main_product_title: 'Deal',
+          main_product: { id: 9, name: 'Hero' },
+          items: [tab({ name: 'A' }), tab({ name: 'B' })],
+        }}
+      />
+    );
+    const header = container.querySelector('.featured-products__header');
+    expect(header?.querySelector('h2')?.textContent).toBe('Deal');
+    expect(header?.querySelector('.tabs.tabs--inline')).toBeTruthy();
+  });
+
+  it('FeaturedProductsWithSpecialProduct shows every section side by side, three list cards each', () => {
+    listMock.mockClear();
+    const { container } = render(
+      <FeaturedProductsWithSpecialProduct
+        data={{
+          items: [
+            tab({ name: 'A', special_product: { id: 9, name: 'Hero A' } }),
+            tab({ name: 'B', special_product: { id: 8, name: 'Hero B' } }),
+          ],
+        }}
+      />
+    );
+    const columns = container.querySelectorAll('.featured-products__column');
+    expect(columns).toHaveLength(2);
+    expect(container.querySelector('.tabs')).toBeNull();
+    expect([...columns].map((c) => c.querySelector('h2')?.textContent)).toEqual(['A', 'B']);
+    expect(
+      [...columns].map(
+        (c) => c.querySelector('[data-layout="special"]')?.textContent
+      )
+    ).toEqual(['Hero A', 'Hero B']);
+    expect(columns[0].querySelectorAll('[data-layout="horizontal"]').length).toBeGreaterThan(0);
+    expect(listMock).toHaveBeenCalledWith(expect.objectContaining({ perPage: 3 }));
+  });
+
+  it('FeaturedProductsWithSpecialProduct features a column\'s first product when none is picked', () => {
+    listMock.mockClear();
+    const { container } = render(
+      <FeaturedProductsWithSpecialProduct data={{ items: [tab({ name: 'A', special_product: [] })] }} />
+    );
+    const column = container.querySelector('.featured-products__column');
+    expect(listMock).toHaveBeenCalledWith(expect.objectContaining({ source: 'latest', perPage: 4 }));
+    expect(column?.querySelector('[data-layout="special"]')?.textContent).toBe('Full P1');
+    expect(column?.querySelector('[data-layout="horizontal"]')?.textContent).toBe('Full P2');
+  });
+
+  it('the tabs-only block loads ten products per tab', () => {
+    listMock.mockClear();
+    render(<FeaturedProducts data={{ items: [tab()] }} />);
+    expect(listMock).toHaveBeenCalledWith(expect.objectContaining({ perPage: 10 }));
+  });
+
+  it('the tabs-only block ignores main_product without a special-offer show_method', () => {
+    const { getAllByTestId, container } = render(
+      <FeaturedProducts
+        data={{ main_product_title: 'Deal', main_product: { id: 9, name: 'Hero' }, items: [tab()] }}
+      />
+    );
+    expect(
+      getAllByTestId('product-card').some((el) => el.getAttribute('data-layout') === 'special')
+    ).toBe(false);
+    expect(container.querySelector('h2.s-block__title')).toBeNull();
+  });
+});
+
+describe('featuredProductsConfig.className', () => {
+  const cls = featuredProductsConfig.className;
+
+  it('marks the default / without-special variant as an initialized tab block in the container', () => {
+    const out = cls({ view_style: 'products_without_special_product' });
+    expect(out).toContain('s-block--featured-products');
+    expect(out).toContain('s-block-tabs');
+    expect(out).toContain('tabs-initialized');
+    expect(out).toContain('container');
+  });
+
+  it('adds the full-bg tabbed classes for style 2', () => {
+    const out = cls({ view_style: 'style2', is_slider: true });
+    expect(out).toContain('s-block--tabs-produtcs');
+    expect(out).toContain('as-slider');
+  });
+
+  it('adds two-cols only for a multi-section grid (style 3)', () => {
+    expect(cls({ view_style: 'style3', items: [{}, {}] })).toContain('two-cols');
+    expect(cls({ view_style: 'style3', items: [{}] })).not.toContain('two-cols');
+  });
+});
+
+describe('loading with the real SallaProductsList', () => {
+  // A first page with a next cursor, as `product.list` returns it when there are more.
+  const firstPage = {
+    items: [
+      { id: 1, name: 'Full P1' },
+      { id: 2, name: 'Full P2' },
+    ],
+    next: 'https://store.test/api/products?source=latest&page=2',
+  };
+  /** The elements being observed (each list's end sentinel), with their observer's callback. */
+  const observed = new Map<Element, IntersectionObserverCallback>();
+  let defaultList: ReturnType<typeof listMock.getMockImplementation>;
+
+  /** Scrolls every observed list end into view, lets a load finish, then scrolls it out. */
+  const scrollPast = async () => {
+    for (const isIntersecting of [true, false]) {
+      await act(async () => {
+        observed.forEach((callback, target) =>
+          callback(
+            [{ target, isIntersecting, intersectionRatio: isIntersecting ? 1 : 0 } as IntersectionObserverEntry],
+            {} as IntersectionObserver
+          )
+        );
+      });
+    }
+  };
+
+  beforeEach(() => {
+    realList.on = true;
+    defaultList = listMock.getMockImplementation();
+    listMock.mockClear().mockResolvedValue(firstPage);
+    observed.clear();
+    vi.stubGlobal(
+      'IntersectionObserver',
+      class {
+        callback: IntersectionObserverCallback;
+        constructor(callback: IntersectionObserverCallback) {
+          this.callback = callback;
+        }
+        observe(target: Element) {
+          observed.set(target, this.callback);
+        }
+        unobserve(target: Element) {
+          observed.delete(target);
+        }
+        disconnect() {}
+        takeRecords() {
+          return [];
+        }
+      }
+    );
+  });
+
+  afterEach(() => {
+    realList.on = false;
+    listMock.mockImplementation(defaultList!);
+    vi.unstubAllGlobals();
+  });
+
+  it.each([
+    ['a tab grid', () => <FeaturedProducts data={{ items: [tab()] }} />, 1],
+    [
+      'a special offer and its tab grid',
+      () => <FeaturedProductsSpecialOffer data={{ main_product: [7], items: [tab()] }} />,
+      2,
+    ],
+    [
+      'a column without a picked product',
+      () => <FeaturedProductsWithSpecialProduct data={{ items: [tab({ special_product: [] })] }} />,
+      1,
+    ],
+  ])('fetches %s once, however often the list end scrolls into view', async (_label, ui, lists) => {
+    const { findAllByTestId } = render(ui());
+    expect((await findAllByTestId('product-card')).length).toBeGreaterThan(0);
+    await waitFor(() => expect(listMock).toHaveBeenCalledTimes(lists));
+
+    for (let pass = 0; pass < 3; pass++) await scrollPast();
+
+    expect(listMock).toHaveBeenCalledTimes(lists);
+  });
+
+  it('shows nothing in a tab whose source has no products, not a "no results" placeholder', async () => {
+    listMock.mockResolvedValue({ items: [], next: null });
+    const { container } = render(
+      <FeaturedProducts data={{ items: [tab({ type: ['most_sales'] })] }} />
+    );
+
+    await waitFor(() => expect(container.querySelector('.s-items-list-empty')).toBeTruthy());
+    expect(container.querySelector('salla-placeholder')).toBeNull();
+    expect(container.querySelector('.s-items-list-empty')!.childElementCount).toBe(0);
+  });
+
+  // Lists load in the browser, so the server renders each in its loading state. The default
+  // loader there is `<salla-loading>`, which the web component fills before React hydrates the
+  // block: React #418 on 18 of 20 stores in the migration review.
+  it.each([
+    ['a tab grid', () => <FeaturedProducts data={{ items: [tab()] }} />],
+    [
+      'a special offer and its tab grid',
+      () => <FeaturedProductsSpecialOffer data={{ main_product: [7], items: [tab()] }} />,
+    ],
+    [
+      'columns with and without a picked product',
+      () => (
+        <FeaturedProductsWithSpecialProduct
+          data={{ items: [tab({ special_product: [3] }), tab({ special_product: [] })] }}
+        />
+      ),
+    ],
+  ])('server-renders %s with card skeletons, never a web component', (_label, ui) => {
+    const html = renderToString(ui());
+    expect(html).toContain('card-skeleton');
+    expect(html).not.toContain('<salla-');
+  });
+
+  // Twig picks random products in the database; the API has no random source.
+  describe('a random_products tab', () => {
+    const pool = Array.from({ length: 32 }, (_, i) => ({ id: i + 1, name: `P${i + 1}` }));
+    const names = (cards: HTMLElement[]) => cards.map((card) => card.textContent);
+
+    beforeEach(() => {
+      listMock.mockResolvedValue({ items: pool, next: 'https://store.test/api/products?page=2' });
+      vi.spyOn(Math, 'random').mockReturnValue(0);
+    });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it('shows a shuffled few of the newest products, from one page of them', async () => {
+      const { findAllByTestId } = render(
+        <FeaturedProducts data={{ items: [tab({ type: [{ value: 'random_products' }] })] }} />
+      );
+
+      const shown = names(await findAllByTestId('product-card'));
+      expect(listMock).toHaveBeenCalledWith(expect.objectContaining({ source: 'latest', perPage: 32 }));
+      expect(shown).toHaveLength(10);
+      expect(new Set(shown).size).toBe(10);
+      expect(shown.every((name) => pool.some((p) => p.name === name))).toBe(true);
+      expect(shown).not.toEqual(names(pool.slice(0, 10) as never));
+
+      for (let pass = 0; pass < 3; pass++) await scrollPast();
+      expect(listMock).toHaveBeenCalledTimes(1);
+    });
+
+    it("fills a column's featured product and three cards from the pool", async () => {
+      const { findAllByTestId, container } = render(
+        <FeaturedProductsWithSpecialProduct
+          data={{ items: [tab({ type: 'random_products', special_product: [] })] }}
+        />
+      );
+
+      expect(await findAllByTestId('product-card')).toHaveLength(4);
+      expect(listMock).toHaveBeenCalledWith(expect.objectContaining({ source: 'latest', perPage: 32 }));
+      expect(container.querySelectorAll('[data-layout="special"]')).toHaveLength(1);
+    });
+  });
+});
