@@ -191,6 +191,12 @@ export function Header({ navOpen: navOpenProp, onNavOpenChange }: HeaderProps = 
   }, [isDefaultLayout, stickyEnabled, safeTop]);
 
   const searchLabel = t('blocks.header.search', 'Search');
+  // The theme's own logo (`logo_main`) stands in for the store logo, which on
+  // a store whose identity sits behind an SMS code cannot be changed; empty, the
+  // store logo is used. `dark_logo` replaces it in dark mode (header.scss).
+  const settings = theme?.settings as { logo_main?: string; dark_logo?: string } | undefined;
+  const brandLogo = settings?.logo_main || store?.logo;
+  const darkLogo = settings?.dark_logo || undefined;
 
   return (
     <header
@@ -253,12 +259,22 @@ export function Header({ navOpen: navOpenProp, onNavOpenChange }: HeaderProps = 
 
             <a className="site-header__brand" href={store?.url || '/'}>
               <Image
-                src={store?.logo}
+                className="brand-logo--main"
+                src={brandLogo}
                 alt=""
                 priority
                 width={140}
                 height={48}
               />
+              {darkLogo && (
+                <Image
+                  className="brand-logo--dark"
+                  src={darkLogo}
+                  alt=""
+                  width={140}
+                  height={48}
+                />
+              )}
               {/* With no intro row, the home page's only `<h1>` is the store name here,
                   as in the engine Header. */}
               <BrandName className="sr-only">{store?.name || 'Store'}</BrandName>

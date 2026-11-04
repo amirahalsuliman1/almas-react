@@ -53,6 +53,7 @@ export function ThemeTokens() {
   const accent = normaliseHex(settings.accent_color);
   if (accent) light.push(`--color-accent:${accent}`, `--color-accent-ink:${inkOn(accent)}`);
   light.push(`--page-gutter:${clampedInteger(settings.page_gutter, 0, 48, 16)}px`);
+  light.push(`--logo-height:${clampedInteger(settings.header_logo_height, 24, 80, 44)}px`);
   light.push(
     `--button-radius:${BUTTON_RADIUS[selectedValue(settings.button_style, BUTTON_STYLES, 'rounded')]}`
   );

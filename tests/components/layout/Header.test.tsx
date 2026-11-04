@@ -44,7 +44,11 @@ vi.mock('@salla.sa/twilight-theme-engine/hooks', () => ({
 
 vi.mock('@salla.sa/twilight-theme-engine/common', () => ({
   Image: (props: Record<string, unknown>) => (
-    <img alt={String(props.alt ?? '')} src={String(props.src ?? '')} />
+    <img
+      alt={String(props.alt ?? '')}
+      src={String(props.src ?? '')}
+      className={props.className as string | undefined}
+    />
   ),
 }));
 
@@ -109,6 +113,32 @@ describe('Header', () => {
     expect(getAllByLabelText('Search')).toHaveLength(1);
     expect(container.querySelector('[data-hook-slot="header:start"]')).toBeTruthy();
     expect(container.querySelector('[data-hook-slot="header:end"]')).toBeTruthy();
+  });
+
+  it("uses the theme's logo_main over the store logo, and the store logo when it is empty", () => {
+    state.theme = { settings: { logo_main: 'https://cdn.salla.sa/am1als.svg' } };
+    const { container, unmount } = render(<Header />);
+    expect(container.querySelector('.brand-logo--main')?.getAttribute('src')).toBe(
+      'https://cdn.salla.sa/am1als.svg'
+    );
+    unmount();
+    state.theme = { settings: {} };
+    const second = render(<Header />);
+    expect(second.container.querySelector('.brand-logo--main')?.getAttribute('src')).toBe(
+      (state.store as { logo?: string }).logo
+    );
+  });
+
+  it('adds the dark logo only when dark_logo is set', () => {
+    state.theme = { settings: {} };
+    const { container, unmount } = render(<Header />);
+    expect(container.querySelector('.brand-logo--dark')).toBeNull();
+    unmount();
+    state.theme = { settings: { dark_logo: 'https://cdn.salla.sa/am1als-light.svg' } };
+    const second = render(<Header />);
+    expect(second.container.querySelector('.brand-logo--dark')?.getAttribute('src')).toBe(
+      'https://cdn.salla.sa/am1als-light.svg'
+    );
   });
 
   it('names the logo link by the store name once', () => {

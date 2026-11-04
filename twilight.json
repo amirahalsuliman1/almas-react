@@ -289,6 +289,45 @@
       "value": null
     },
     {
+      "type": "static",
+      "format": "title",
+      "id": "static-am-3",
+      "value": "<div class='rounded-lg' style='background-color: #21636d; display: flex; justify-content: center; align-items: center;padding: 15px;margin-bottom: 20px !important; flex-direction: column;gap: 15px;'><h6 style='color: #ffffff;font-size: 15px; font-weight: bold;'> الشعار</h6></div>",
+      "variant": "h6"
+    },
+    {
+      "type": "string",
+      "format": "image",
+      "icon": "sicon-image",
+      "id": "logo_main",
+      "label": "شعار الثيم (اختياري)",
+      "description": "يحل محل شعار المتجر في رأس الصفحة. اتركه فارغًا لاستخدام شعار المتجر.",
+      "required": false,
+      "value": null
+    },
+    {
+      "type": "string",
+      "format": "image",
+      "icon": "sicon-image",
+      "id": "dark_logo",
+      "label": "شعار الوضع الداكن (اختياري)",
+      "description": "يظهر بدل الشعار في الوضع الداكن، مثل نسخة فاتحة اللون من الشعار.",
+      "required": false,
+      "value": null
+    },
+    {
+      "type": "number",
+      "format": "integer",
+      "icon": "sicon-align-justify",
+      "id": "header_logo_height",
+      "label": "ارتفاع الشعار في رأس الصفحة (بكسل)",
+      "description": "من 24 إلى 80. يصغر قليلًا عند التمرير.",
+      "required": false,
+      "value": 44,
+      "minValue": 24,
+      "maxValue": 80
+    },
+    {
       "id": "product_card_layout",
       "type": "items",
       "format": "dropdown-list",
@@ -382,9 +421,9 @@
       "required": true,
       "selected": [
         {
-          "label": "المبسّط (Lite)",
-          "value": "lite",
-          "key": "header-layout-lite"
+          "label": "الافتراضي (Default)",
+          "value": "default",
+          "key": "header-layout-default"
         }
       ],
       "options": [

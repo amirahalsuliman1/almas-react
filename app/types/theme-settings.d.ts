@@ -22,5 +22,8 @@ declare module '@salla.sa/twilight-theme-engine/types' {
     dark_color_card?: string;
     dark_color_text?: string;
     dark_background_image?: string;
+    logo_main?: string;
+    dark_logo?: string;
+    header_logo_height?: number | string;
   }
 }

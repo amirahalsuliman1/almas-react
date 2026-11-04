@@ -25,8 +25,9 @@
    (`top: var(--app-safe-area-top)`). 0px tall in a browser. Above the pinned bar
    (z-40), below the drawers and sheets (z-200 and up). */
 .site-header__safe-area {
-  @apply sticky top-0 z-[45] bg-white;
+  @apply sticky top-0 z-[45];
   height: var(--app-safe-area-top, 0px);
+  background-color: var(--surface-header);
 }
 
 /* `<SallaSearch>` is a modal and takes no room once loaded, but its SSR
@@ -49,13 +50,16 @@
 
 .site-header__bar {
   @apply z-40 border-b border-transparent;
+  background-color: var(--surface-header);
+  color: var(--text-header);
   transition:
     background-color 0.25s ease,
     border-color 0.25s ease,
     box-shadow 0.25s ease;
 
   &.is-scrolled {
-    @apply fixed inset-x-0 bg-white border-gray-100 shadow-sm;
+    @apply fixed inset-x-0 shadow-sm;
+    border-color: var(--border-subtle);
     /* below the status bar inside the Salla app; 0 in a browser */
     top: var(--app-safe-area-top, 0px);
   }
@@ -142,12 +146,27 @@
 }
 
 .header-action {
-  @apply inline-grid place-items-center w-10 h-10 rounded-full text-gray-700 transition-colors hover:bg-gray-100 hover:text-primary;
+  /* 40px hit area, 24px glyph (REDESIGN-2026-11.md). The merchant's icon
+     colour (`--color-icon`) applies to the glyph; unset it is currentColor,
+     the header ink. */
+  @apply inline-grid place-items-center w-10 h-10 rounded-full transition-colors;
+  color: var(--text-header);
+
+  &:hover {
+    background-color: color-mix(in srgb, var(--text-header) 8%, transparent);
+    color: var(--color-accent-text);
+  }
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
 
   /* Size the action-button icons only — not the icons inside the user-menu
      dropdown items, which keep their own (smaller) size. */
   svg:not(.s-user-menu-dropdown-item *) {
     @apply w-6 h-6;
+    color: var(--color-icon);
   }
 }
 
@@ -214,7 +233,13 @@
 
 /* Like the other header icons, without Twilight's outline; apps reuse this class for their own buttons. */
 .site-header__actions .s-user-menu-login-btn {
-  @apply border-none text-gray-700 transition-colors hover:bg-gray-100 hover:text-primary;
+  @apply border-none transition-colors;
+  color: var(--text-header);
+
+  &:hover {
+    background-color: color-mix(in srgb, var(--text-header) 8%, transparent);
+    color: var(--color-accent-text);
+  }
 }
 
 /* Desktop: with `relativeDropdown` the panel is positioned against the
@@ -290,14 +315,28 @@
 .site-header__brand {
   @apply flex items-center justify-self-center;
 
+  /* The merchant's `header_logo_height` (ThemeTokens → --logo-height). A
+     prominent mark was one of Salla's review points (2026-11-04). */
   img {
-    @apply h-12 w-auto max-w-[160px] object-contain;
+    @apply w-auto object-contain;
+    height: var(--logo-height);
+    max-width: 14rem;
     transition: height 0.25s ease;
   }
 }
 
 .site-header__bar.is-scrolled .site-header__brand img {
-  @apply h-9;
+  height: calc(var(--logo-height) * 0.75);
+}
+
+/* `dark_logo`: shown instead of the main logo in dark mode, when set. */
+.site-header__brand .brand-logo--dark,
+html.dark .site-header__brand:has(.brand-logo--dark) .brand-logo--main {
+  display: none;
+}
+
+html.dark .site-header__brand .brand-logo--dark {
+  display: block;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -704,7 +743,10 @@
 
 /* --- top bar ----------------------------------------------------------- */
 .site-header__topnav {
-  @apply hidden border-b border-gray-100 bg-white text-xs text-gray-500 lg:block;
+  @apply hidden border-b text-sm lg:block;
+  background-color: var(--surface-header);
+  border-color: var(--border-subtle);
+  color: var(--text-secondary);
 }
 
 .site-header__topnav-inner {
@@ -720,7 +762,12 @@
   }
 
   a {
-    @apply whitespace-nowrap text-gray-500 transition-colors hover:text-primary;
+    @apply whitespace-nowrap transition-colors;
+    color: var(--text-secondary);
+
+    &:hover {
+      color: var(--color-accent-text);
+    }
   }
 
   /* The divider is each item's inline-end border. Equal padding on both of its
@@ -763,7 +810,13 @@
 }
 
 .site-header__topnav-action {
-  @apply inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-gray-600 transition-colors hover:bg-gray-50 hover:text-primary;
+  @apply inline-flex items-center gap-1.5 rounded-full px-2 py-1 transition-colors;
+  color: var(--text-header);
+
+  &:hover {
+    background-color: color-mix(in srgb, var(--text-header) 8%, transparent);
+    color: var(--color-accent-text);
+  }
 }
 
 .site-header__topnav-action + .site-header__topnav-action {
@@ -771,7 +824,8 @@
 
   &::before {
     content: '';
-    @apply absolute inset-y-1.5 w-px bg-gray-200;
+    @apply absolute inset-y-1.5 w-px;
+    background-color: var(--border-subtle);
     inset-inline-start: -2px;
   }
 }
@@ -783,13 +837,20 @@
 
   .site-header__topnav-action + &::before {
     content: '';
-    @apply absolute inset-y-1.5 w-px bg-gray-200;
+    @apply absolute inset-y-1.5 w-px;
+    background-color: var(--border-subtle);
     inset-inline-start: -2px;
   }
 }
 
 .site-header__topnav-contact {
-  @apply inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-gray-600 transition-colors hover:bg-gray-50 hover:text-primary;
+  @apply inline-flex items-center gap-1.5 rounded-full px-2 py-1 transition-colors;
+  color: var(--text-header);
+
+  &:hover {
+    background-color: color-mix(in srgb, var(--text-header) 8%, transparent);
+    color: var(--color-accent-text);
+  }
 }
 
 .site-header__topnav-action-label {
@@ -797,11 +858,13 @@
 }
 
 .site-header__topnav-icon {
-  @apply h-4 w-4 shrink-0 text-gray-400;
+  @apply h-4 w-4 shrink-0;
+  color: var(--text-secondary);
 }
 
 .site-header__topnav-caret {
-  @apply h-3 w-3 shrink-0 text-gray-400;
+  @apply h-3 w-3 shrink-0;
+  color: var(--text-secondary);
 }
 
 /* `topnav_is_dark` setting: the engine adds `topnav-is-dark` to <body>. */
@@ -916,8 +979,20 @@ body.topnav-is-dark .site-header--lite .site-header__bar {
       @apply relative my-0 items-center;
     }
 
+    /* Category links at text-base (REDESIGN-2026-11.md; Salla's review
+       found the old 14px row too small). */
     .s-menu-root-level > a {
-      @apply inline-flex items-center gap-1 whitespace-nowrap rounded px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:text-primary;
+      @apply inline-flex items-center gap-1 whitespace-nowrap rounded px-3 py-2 text-base font-medium transition-colors;
+      color: var(--text-header);
+
+      &:hover {
+        color: var(--color-accent-text);
+      }
+
+      &:focus-visible {
+        outline: var(--focus-ring-width) solid var(--focus-ring-color);
+        outline-offset: calc(var(--focus-ring-offset) * -1);
+      }
     }
 
     /* rows inside a panel — stacked */
@@ -930,12 +1005,20 @@ body.topnav-is-dark .site-header--lite .site-header__bar {
     }
 
     .s-menu-sub-menu a {
-      @apply flex items-center justify-between gap-2 whitespace-nowrap rounded px-3 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50 hover:text-primary;
+      @apply flex items-center justify-between gap-2 whitespace-nowrap rounded px-3 py-2 text-base transition-colors;
+      color: var(--main-text-color);
+
+      &:hover {
+        background-color: var(--surface-section);
+        color: var(--color-accent-text);
+      }
     }
 
     /* the panel — hidden until the parent item is hovered / focused */
     .s-menu-sub-menu {
-      @apply invisible absolute z-40 max-w-[90vw] rounded border border-gray-100 bg-white p-1.5 opacity-0 shadow-xl;
+      @apply invisible absolute z-40 max-w-[90vw] rounded border p-1.5 opacity-0 shadow-xl;
+      background-color: var(--surface-card);
+      border-color: var(--border-subtle);
       /* Never a scroll container: one clips the panel that flies out of its
          rows, so a sub-sub menu would never show. */
       overflow: visible;

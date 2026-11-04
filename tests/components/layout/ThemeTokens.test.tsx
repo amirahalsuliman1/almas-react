@@ -66,6 +66,12 @@ describe('ThemeTokens — colour panel', () => {
     expect(html).toContain('--button-radius:9999px');
   });
 
+  it('writes the logo height, clamped to 24–80 and 44 by default', () => {
+    expect(render()).toContain('--logo-height:44px');
+    theme.settings = { header_logo_height: 200 };
+    expect(render()).toContain('--logo-height:80px');
+  });
+
   it('writes a background image only for an http(s) URL', () => {
     theme.settings = { store_background_image: 'https://cdn.salla.sa/a.jpg' };
     expect(render()).toContain('--store-bg-image:url("https://cdn.salla.sa/a.jpg")');
@@ -118,9 +124,16 @@ describe('manifest', () => {
       'dark_color_card',
       'dark_color_text',
       'dark_background_image',
+      'logo_main',
+      'dark_logo',
+      'header_logo_height',
     ]) {
       expect(setting(id), id).toBeDefined();
     }
+  });
+
+  it('defaults the header to the layout with the desktop category row', () => {
+    expect(setting('header_layout')?.selected?.[0]?.value).toBe('default');
   });
 
   it('defaults the colour mode to the store setting', () => {
