@@ -44,14 +44,19 @@ describe('CustomTestimonials', () => {
     expect(container.querySelector('.scroll-carousel__track')).toBeTruthy();
   });
 
-  it('renders the rating as a row of stars, read out as a number', () => {
+  it('reads the rating out once, as a sentence, and hides the row of stars', () => {
     const { container } = render(<CustomTestimonials data={{ items }} />);
-    const cards = container.querySelectorAll('.testimonial-card');
-    const stars = cards[1].querySelector('.testimonial-card__stars') as HTMLElement;
-    expect(stars.getAttribute('role')).toBe('img');
-    expect(stars.getAttribute('aria-label')).toBe('4 of 5');
+    const stars = container.querySelectorAll('.testimonial-card')[1].querySelector('.testimonial-card__stars') as HTMLElement;
+    expect(stars.querySelector('.sr-only')?.textContent).toBe('Rated 4 out of 5');
     expect(stars.querySelectorAll('svg')).toHaveLength(5);
     expect(stars.querySelectorAll('svg.is-on')).toHaveLength(4);
+    expect([...stars.querySelectorAll('svg')].every((svg) => svg.getAttribute('aria-hidden') === 'true')).toBe(true);
+  });
+
+  it('gives the photo no text of its own and isolates the name', () => {
+    const { container } = render(<CustomTestimonials data={{ items: [{ avatar: 'a.jpg', name: 'Sara A.', text: 'ممتاز', stars: 5 }] }} />);
+    expect(container.querySelector('.testimonial-card__avatar')?.getAttribute('alt')).toBe('');
+    expect(container.querySelector('.testimonial-card__name bdi')?.textContent).toBe('Sara A.');
   });
 
   it('leaves the stars out of a review with no rating', () => {
@@ -127,5 +132,25 @@ describe('CustomTestimonials', () => {
     );
     expect(getByText('آراء العملاء')).toBeTruthy();
     expect(getByText('اكتشف تجارب عملائنا')).toBeTruthy();
+  });
+
+  it('hides the header when the merchant clears the title, and keeps a default for blocks saved before it', () => {
+    const cleared = render(<CustomTestimonials data={{ items, title: '' }} />);
+    expect(cleared.container.querySelector('h2')).toBeNull();
+    cleared.unmount();
+    const legacy = render(<CustomTestimonials data={{ items }} />);
+    expect(legacy.container.querySelector('h2')?.textContent).toBe('Customer reviews');
+  });
+
+  it('reads a multilanguage title', () => {
+    const { container } = render(<CustomTestimonials data={{ items, title: { ar: 'آراء عملائنا', en: 'Reviews' } }} />);
+    expect(container.querySelector('h2')?.textContent).toBe('آراء عملائنا');
+  });
+
+  it('declares a title and a line in twilight.json, ahead of the reviews', async () => {
+    const manifest = (await import('../../../twilight.json')).default as { components: { path: string; fields: { id: string; value?: unknown }[] }[] };
+    const comp = manifest.components.find((c) => c.path === 'home.custom-testimonials');
+    expect(comp?.fields.map((f) => f.id)).toEqual(['title', 'description', 'items']);
+    expect(comp?.fields[0].value).toBe('آراء عملائنا');
   });
 });

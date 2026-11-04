@@ -1,6 +1,7 @@
 import { useTranslation } from '@salla.sa/twilight-theme-engine/i18n';
 import { QuoteIcon, StarIcon } from '../icons';
 import { ScrollCarousel } from './ScrollCarousel';
+import { SectionHeader } from './SectionHeader';
 
 export interface TestimonialItem {
   avatar?: string;
@@ -12,7 +13,7 @@ export interface TestimonialItem {
 const MAX_STARS = 5;
 const STAR_POSITIONS = Array.from({ length: MAX_STARS }, (_, position) => position + 1);
 
-function TestimonialCard({ item, index }: { item: TestimonialItem; index: number }) {
+function TestimonialCard({ item }: { item: TestimonialItem }) {
   const { t } = useTranslation();
   const name = item.name?.trim();
   const stars = Math.max(0, Math.min(MAX_STARS, Math.round(Number(item.stars ?? 0))));
@@ -22,52 +23,58 @@ function TestimonialCard({ item, index }: { item: TestimonialItem; index: number
       <div className="testimonial-card__head">
         <QuoteIcon className="testimonial-card__quote" aria-hidden="true" />
         {stars > 0 && (
-          <span
-            className="testimonial-card__stars"
-            role="img"
-            aria-label={`${stars} ${t('blocks.home.count_of', 'of')} ${MAX_STARS}`}
-          >
+          <span className="testimonial-card__stars">
+            {/* One sentence for a screen reader; the row of stars is for the eye. */}
+            <span className="sr-only">
+              {t('theme.testimonials.rating', 'Rated :stars out of 5').replace(':stars', String(stars))}
+            </span>
             {STAR_POSITIONS.map((position) => (
-              <StarIcon
-                key={position}
-                className={position <= stars ? 'is-on' : undefined}
-                aria-hidden="true"
-              />
+              <StarIcon key={position} className={position <= stars ? 'is-on' : undefined} aria-hidden="true" />
             ))}
           </span>
         )}
       </div>
 
-      <blockquote className="testimonial-card__text">{item.text}</blockquote>
+      <blockquote className="testimonial-card__text">
+        <p dir="auto">{item.text}</p>
+      </blockquote>
 
-      <figcaption className="testimonial-card__person">
-        {item.avatar ? (
-          <img
-            className="testimonial-card__avatar"
-            src={item.avatar}
-            alt={name ?? `testimonial-${index}`}
-            width={44}
-            height={44}
-            loading="lazy"
-            decoding="async"
-            draggable={false}
-          />
-        ) : (
-          name && (
-            <span className="testimonial-card__avatar is-initial" aria-hidden="true">
-              {name.charAt(0)}
-            </span>
-          )
-        )}
-        <b className="testimonial-card__name">{item.name}</b>
-      </figcaption>
+      {(name || item.avatar) && (
+        <figcaption className="testimonial-card__person">
+          {item.avatar ? (
+            // The name is written beside it, so the photo adds nothing to read out.
+            <img
+              className="testimonial-card__avatar"
+              src={item.avatar}
+              alt=""
+              width={44}
+              height={44}
+              loading="lazy"
+              decoding="async"
+              draggable={false}
+            />
+          ) : (
+            name && (
+              <span className="testimonial-card__avatar is-initial" aria-hidden="true">
+                {name.charAt(0)}
+              </span>
+            )
+          )}
+          {name && (
+            <b className="testimonial-card__name">
+              <bdi>{name}</bdi>
+            </b>
+          )}
+        </figcaption>
+      )}
     </figure>
   );
 }
 
 export interface TestimonialsCarouselProps {
   items: TestimonialItem[];
-  title: string;
+  /** Empty draws no header (the arrows still sit on their own line). */
+  title?: string;
   description?: string;
 }
 
@@ -75,8 +82,8 @@ export interface TestimonialsCarouselProps {
  * Customer reviews as whole cards in the shared {@link ScrollCarousel}: three in
  * the container on desktop, with the arrows beside the title and none at all when
  * every review fits. Used by the `custom-testimonials` home block
- * ({@link CustomTestimonials}). Styling: `04-components/home-blocks.scss`
- * (`.s-testimonials` / `.testimonial-card`).
+ * ({@link CustomTestimonials}), under the shared section header (R-15).
+ * Styling: `04-components/home-blocks.scss` (`.s-testimonials` / `.testimonial-card`).
  */
 export function TestimonialsCarousel({ items, title, description }: TestimonialsCarouselProps) {
   const { t } = useTranslation();
@@ -86,12 +93,7 @@ export function TestimonialsCarousel({ items, title, description }: Testimonials
   return (
     <div className="s-testimonials container">
       <ScrollCarousel
-        heading={
-          <>
-            <h2 className="s-testimonials__title">{title}</h2>
-            {description && <p className="s-testimonials__desc">{description}</p>}
-          </>
-        }
+        heading={(title || description) && <SectionHeader className="s-testimonials__head" title={title} subtitle={description} />}
         prevLabel={t('blocks.home.reviews_prev', 'Previous')}
         nextLabel={t('blocks.home.reviews_next', 'Next')}
       >
@@ -99,7 +101,7 @@ export function TestimonialsCarousel({ items, title, description }: Testimonials
           // A static settings list whose items have no id: see
           // .react-doctor/false-positives.md.
           // react-doctor-disable-next-line react-doctor/no-array-index-as-key
-          <TestimonialCard key={`${index}-${item.name ?? ''}`} item={item} index={index} />
+          <TestimonialCard key={`${index}-${item.name ?? ''}`} item={item} />
         ))}
       </ScrollCarousel>
     </div>

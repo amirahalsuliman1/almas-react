@@ -3850,10 +3850,30 @@
       "is_default": true,
       "fields": [
         {
-          "type": "static",
-          "format": "description",
-          "id": "static-desc",
-          "value": "<div ><img class='w-full' src='https://cdn.salla.network/images/themes/raed/preview-images/custom-testimonials.png?v=1.1'></div>"
+          "type": "string",
+          "format": "text",
+          "icon": "sicon-typography",
+          "id": "title",
+          "label": "عنوان القسم",
+          "multilanguage": true,
+          "required": false,
+          "value": "آراء عملائنا",
+          "description": "يظهر فوق التقييمات. اتركه فارغًا بلا عنوان.",
+          "minLength": 0,
+          "maxLength": 60
+        },
+        {
+          "type": "string",
+          "format": "text",
+          "icon": "sicon-format-text-alt",
+          "id": "description",
+          "label": "سطر الوصف",
+          "multilanguage": true,
+          "required": false,
+          "value": null,
+          "description": "سطر قصير تحت العنوان (اختياري).",
+          "minLength": 0,
+          "maxLength": 120
         },
         {
           "id": "items",

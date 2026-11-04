@@ -122,8 +122,11 @@ registerHomeComponentConfig({
     className: 's-block s-block--blog s-block--full-bg',
     height: 'clamp(480px, 45vw, 660px)',
   },
+  // The band with its header and a row of cards: measured 394px at 393 wide
+  // and 436px at 1440 (R-15); the text is clamped to five lines, so it holds.
   'custom-testimonials': {
     className: 's-block s-block--custom-testimonials s-block--full-bg',
+    height: 'clamp(24.5rem, 30vw, 27.25rem)',
   },
   // Lazy placements (blocks 4+): reserve the loaded blocks' height and show the
   // same SliderSkeleton the SSR path shows (sized in home-blocks.scss), not the

@@ -1234,11 +1234,14 @@
 }
 
 /*
-  Custom testimonials — full-width gray band around a row of whole cards.
+  Custom testimonials (R-15) — a band on the section surface, edge to edge,
+  around a row of whole cards on the card surface. Tokens throughout, so the
+  three steps (page, section, card) hold in dark mode as well.
   Markup: app/components/home/CustomTestimonials.tsx
 */
 .s-block--custom-testimonials {
-  @apply bg-gray-50 py-10 lg:py-16 overflow-hidden;
+  @apply py-10 lg:py-16 overflow-hidden;
+  background-color: var(--surface-section);
 }
 
 /*
@@ -1250,21 +1253,19 @@ salla-reviews:not(:has(.s-reviews-swiper-slide)) {
   display: none;
 }
 
-.s-testimonials {
-  &__title {
-    @apply text-xl font-bold text-gray-900 lg:text-2xl;
-  }
-
-  &__desc {
-    @apply mt-1 text-sm text-gray-500;
-  }
+.s-testimonials__head {
+  @apply mb-0 lg:mb-0;
 }
 
 /* Three whole cards on desktop, and any fewer share the row between them. */
 .testimonial-card {
-  @apply m-0 flex flex-col gap-4 rounded-2xl border border-gray-100 bg-white p-5 lg:p-7;
+  /* Relative: the rating's screen-reader sentence is absolutely placed, and in
+     a scrolled row it must be clipped with its card, not widen the page. */
+  @apply relative m-0 flex flex-col gap-4 rounded p-5 lg:p-7;
   flex: 1 0 calc(100% - 2.5rem);
   scroll-snap-align: start;
+  background-color: var(--surface-card);
+  border: 1px solid var(--border-subtle);
 
   @media (min-width: 640px) {
     flex-basis: calc((100% - 1rem) / 2);
@@ -1279,38 +1280,48 @@ salla-reviews:not(:has(.s-reviews-swiper-slide)) {
   }
 
   &__quote {
-    @apply h-5 w-auto shrink-0 text-primary lg:h-6;
+    @apply h-6 w-auto shrink-0;
+    color: var(--color-accent);
   }
 
   &__stars {
     @apply inline-flex shrink-0 gap-0.5;
 
     svg {
-      @apply h-4 w-4 fill-current text-gray-200 lg:h-[18px] lg:w-[18px];
+      @apply h-[18px] w-[18px] fill-current;
+      color: var(--border-subtle);
 
       &.is-on {
-        @apply text-amber-400;
+        color: var(--color-accent);
       }
     }
   }
 
   &__text {
-    @apply m-0 flex-1 text-base leading-7 text-gray-800 line-clamp-5;
+    @apply m-0 flex-1 text-base leading-7 line-clamp-5;
+    color: var(--main-text-color);
+
+    p {
+      @apply m-0;
+    }
   }
 
   &__person {
-    @apply flex items-center gap-3 rtl:text-right ltr:text-left;
+    @apply flex items-center gap-3 text-start;
   }
 
   &__name {
-    @apply min-w-0 truncate text-sm font-bold text-gray-900;
+    @apply min-w-0 truncate text-base font-bold;
+    color: var(--main-text-color);
   }
 
   &__avatar {
-    @apply h-11 w-11 shrink-0 rounded-full bg-gray-100 object-cover;
+    @apply h-11 w-11 shrink-0 rounded-full object-cover;
+    background-color: var(--surface-placeholder);
 
     &.is-initial {
-      @apply inline-flex items-center justify-center font-bold text-primary;
+      @apply inline-flex items-center justify-center font-bold;
+      color: var(--color-accent-text);
     }
   }
 }
