@@ -12,4 +12,5 @@ export { Marquee } from './Marquee';
 export { PhotosSlider } from './PhotosSlider';
 export { ProductsSlider } from './ProductsSlider';
 export { SliderProductsWithHeader } from './SliderProductsWithHeader';
+export { VideoCarousel } from './VideoCarousel';
 export { EnhancedSquareBanners } from './EnhancedSquareBanners';

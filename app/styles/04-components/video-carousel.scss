@@ -1,0 +1,51 @@
+/* =========================================================================
+   Shoppable videos (VideoCarousel.tsx, R-12). One slide on a phone with a
+   peek of the next, two on a tablet, three from 1024px.
+   ========================================================================= */
+
+.video-carousel {
+  margin-inline: max(var(--page-gutter), calc((100% - 1280px) / 2 + var(--page-gutter)));
+}
+
+.video-carousel__slide {
+  @apply flex flex-col gap-3;
+  flex: 0 0 82%;
+  scroll-snap-align: start;
+
+  @media (min-width: 768px) {
+    flex-basis: calc((100% - 1rem) / 2);
+  }
+
+  @media (min-width: 1024px) {
+    flex-basis: calc((100% - 3rem) / 3);
+  }
+}
+
+.video-carousel--single .video-carousel__slide {
+  @apply mx-auto max-w-md;
+}
+
+.video-carousel__media {
+  @apply relative;
+}
+
+/* The shape is fixed before any player arrives: no shift when it mounts. */
+.video-carousel__frame {
+  @apply relative block w-full overflow-hidden rounded;
+  aspect-ratio: 9 / 14;
+  background-color: var(--surface-media);
+}
+
+.video-carousel__embed {
+  @apply absolute inset-0 h-full w-full border-0 object-cover;
+}
+
+.video-carousel__publisher {
+  @apply pointer-events-none absolute inset-x-0 top-0 m-0 truncate rounded-t p-3 text-sm font-bold;
+  background: linear-gradient(to bottom, rgb(0 0 0 / 0.6), rgb(0 0 0 / 0));
+  color: var(--on-media);
+}
+
+.video-carousel__product {
+  @apply m-0 list-none p-0;
+}

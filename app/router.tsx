@@ -24,6 +24,7 @@ import {
   PhotosSlider,
   ProductsSlider,
   SliderProductsWithHeader,
+  VideoCarousel,
   EnhancedSquareBanners,
 } from './components/home';
 import { Blog } from './components/home/Blog';
@@ -51,6 +52,7 @@ registerHomeComponents({
   highlights: Highlights,
   marquee: Marquee,
   lookbook: Lookbook,
+  'video-carousel': VideoCarousel,
   brands: Brands,
   'enhanced-slider': EnhancedSlider,
   'custom-testimonials': CustomTestimonials,
@@ -101,6 +103,8 @@ registerHomeComponentConfig({
   // its header and about three product cards on a phone, capped at the
   // desktop row's height. Measured: 829px at 393 wide with three points.
   lookbook: { className: 's-block s-block--lookbook', height: 'min(calc(125vw + 18rem), 50rem)' },
+  // A 9:14 frame plus its product row, at the phone width of one slide.
+  'video-carousel': { className: 's-block s-block--video-carousel', height: 'min(calc(82vw * 14 / 9 + 10rem), 46rem)' },
   'featured-products': featuredProductsConfig,
   'featured-products-special-offer': featuredProductsConfig,
   'featured-products-special-product': featuredProductsConfig,

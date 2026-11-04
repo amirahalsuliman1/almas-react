@@ -1751,6 +1751,90 @@
       ]
     },
     {
+      "name": "video-carousel",
+      "key": "9c02f5ab-71d3-4e68-a4b9-0d6738ec514f",
+      "title": {
+        "en": "Shoppable videos",
+        "ar": "فيديوهات تسوّق"
+      },
+      "icon": "sicon-list-play",
+      "path": "home.video-carousel",
+      "image": "https://cdn.salla.network/images/themes/raed/preview-images/slider-products-with-bg.png?v=1.1",
+      "is_default": false,
+      "fields": [
+        {
+          "type": "string",
+          "format": "text",
+          "icon": "sicon-typography",
+          "id": "title",
+          "label": "عنوان القسم",
+          "multilanguage": true,
+          "required": false,
+          "value": "شاهديها قبل ما تطلبينها",
+          "description": "يظهر فوق الفيديوهات. اتركه فارغًا بلا عنوان.",
+          "maxLength": 60
+        },
+        {
+          "id": "items",
+          "type": "collection",
+          "format": "collection",
+          "required": true,
+          "minLength": 1,
+          "maxLength": 12,
+          "label": null,
+          "item_label": "فيديو",
+          "value": [
+            {
+              "items.embed_url": "",
+              "items.poster": "",
+              "items.product": []
+            }
+          ],
+          "fields": [
+            {
+              "type": "string",
+              "icon": "sicon-link",
+              "format": "text",
+              "id": "items.embed_url",
+              "label": "رابط الفيديو",
+              "required": true,
+              "value": null,
+              "description": "رابط فيديو من يوتيوب أو تيك توك أو إنستغرام، أو رابط مباشر لملف فيديو (mp4). يُشغَّل داخل الصفحة. في تيك توك افتح الفيديو وانسخ الرابط الكامل من المتصفح، فالروابط المختصرة (vm.tiktok.com) لا تعمل.",
+              "placeholder": "https://"
+            },
+            {
+              "type": "string",
+              "icon": "sicon-user",
+              "format": "text",
+              "id": "items.poster",
+              "label": "اسم الناشر",
+              "required": false,
+              "value": null,
+              "description": "يظهر أعلى الفيديو، مثل itsawjan.",
+              "minLength": 0,
+              "maxLength": 40
+            },
+            {
+              "type": "items",
+              "icon": "sicon-keyboard_arrow_down",
+              "format": "dropdown-list",
+              "id": "items.product",
+              "label": "المنتج (اختياري)",
+              "description": "اختر المنتج الظاهر في الفيديو، فيظهر اسمه وسعره وزر الإضافة أسفله وتُجلب بياناته تلقائيًا. اتركه فارغًا إن لم يكن في الفيديو منتج.",
+              "required": false,
+              "multichoice": false,
+              "searchable": true,
+              "source": "products",
+              "selected": [],
+              "options": [],
+              "maxLength": 1,
+              "value": []
+            }
+          ]
+        }
+      ]
+    },
+    {
       "key": "186b3f4f-25cf-4d3c-abca-cef7eed6f0ab",
       "title": {
         "en": "Enhances Animated Images",

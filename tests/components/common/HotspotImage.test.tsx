@@ -75,14 +75,14 @@ describe('HotspotImage', () => {
     const { container } = render(<HotspotImage image="/look.jpg" points={points} />);
     await waitFor(() => expect(container.querySelectorAll('.hotspot__pill')).toHaveLength(2));
     const sale = container.querySelectorAll('.hotspot__pill')[1];
-    expect(sale.querySelector('.hotspot__pill-price')?.textContent).toBe('96 SAR');
-    expect(sale.querySelector('.hotspot__pill-price-was')?.textContent).toContain('120 SAR');
+    expect(sale.querySelector('.product-pill__price')?.textContent).toBe('96 SAR');
+    expect(sale.querySelector('.product-pill__price-was')?.textContent).toContain('120 SAR');
   });
 
   it('labels the add button with the product for screen readers', async () => {
     const { container } = render(<HotspotImage image="/look.jpg" points={points} />);
-    await waitFor(() => expect(container.querySelector('.hotspot__pill-buy')).toBeTruthy());
-    expect(container.querySelector('.hotspot__pill-buy .sr-only')?.textContent).toContain('Stanley Quencher');
+    await waitFor(() => expect(container.querySelector('.product-pill__buy')).toBeTruthy());
+    expect(container.querySelector('.product-pill__buy .sr-only')?.textContent).toContain('Stanley Quencher');
   });
 });
 

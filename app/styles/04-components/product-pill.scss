@@ -1,0 +1,70 @@
+/* =========================================================================
+   A product in one row (ProductPill.tsx): the shoppable images' and the
+   videos' product row. Name, price in the accent, a 44px accent add button.
+   ========================================================================= */
+
+.product-pill {
+  @apply relative flex items-center gap-3 rounded border p-2;
+  background-color: var(--surface-card);
+  border-color: var(--border-subtle);
+
+  &[aria-current='true'] {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 1px var(--color-accent);
+  }
+}
+
+.product-pill__link {
+  @apply flex min-w-0 flex-1 items-center gap-3 no-underline;
+  color: var(--main-text-color);
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+}
+
+.product-pill__thumb {
+  @apply h-[4.5rem] w-[4.5rem] flex-none rounded object-cover;
+  background-color: var(--surface-placeholder);
+}
+
+.product-pill__body {
+  @apply flex min-w-0 flex-1 flex-col gap-1 text-start;
+}
+
+.product-pill__name {
+  @apply line-clamp-2 text-base font-semibold leading-snug;
+}
+
+.product-pill__prices {
+  @apply inline-flex flex-wrap items-baseline gap-2;
+}
+
+.product-pill__price {
+  @apply text-base font-bold;
+  color: var(--color-accent-text);
+}
+
+.product-pill__price-was {
+  @apply text-sm line-through;
+  color: var(--text-secondary);
+}
+
+/* The add button: a 44px accent square with a bag. */
+.product-pill__buy {
+  @apply flex-none;
+
+  .s-button-element {
+    @apply inline-flex h-11 w-11 min-w-0 items-center justify-center p-0;
+    background-color: var(--color-accent) !important;
+    border-color: var(--color-accent) !important;
+    border-radius: var(--button-radius);
+    color: var(--color-accent-ink) !important;
+  }
+
+  svg {
+    @apply h-5 w-5;
+  }
+}
+
