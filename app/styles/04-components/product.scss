@@ -1512,3 +1512,58 @@ salla-gifting {
     transform: translateY(1rem);
   }
 }
+
+/* Twig's shipping and notice notes (ProductNotes.tsx, R-19 part C): the FAQ's
+   accordion (faq.scss) on the section panel the container's width, two
+   columns from 1024px; lines without bullets, an empty line a gap. */
+.product-notes {
+  @apply mt-6 rounded p-4 md:p-6 lg:mt-10 lg:p-8;
+  margin-inline: max(var(--page-gutter), calc((100% - 1280px) / 2 + var(--page-gutter)));
+  background-color: var(--surface-section);
+
+  .faq__item,
+  .faq__item:last-child {
+    @apply pb-4;
+    border-block-end: 1px solid var(--border-interactive);
+  }
+
+  .faq__answer-inner ul {
+    @apply list-none ps-0;
+  }
+
+  .faq__answer-inner li:empty {
+    @apply block h-3;
+  }
+}
+
+@media (min-width: 1024px) {
+  .product-notes__grid {
+    @apply grid grid-cols-2 gap-x-10;
+
+    .faq__item {
+      @apply pt-0;
+    }
+  }
+}
+
+/* Phones: the add button shares its row with Salla's buy-now, so its label
+   runs at text-sm with tighter padding and is never cut to «أضف إلى…». */
+@media (max-width: 640px) {
+  .sticky-product-bar__btn {
+    .s-button-btn,
+    .s-button-element {
+      @apply px-3 text-sm;
+    }
+
+    .s-button-text {
+      @apply overflow-visible whitespace-nowrap;
+      text-overflow: clip;
+    }
+  }
+}
+
+/* The row's slot takes the bar's width wherever the bar lays its children out
+   as a centred column (Salla's docked phone bar does). */
+.product-actions-slot {
+  @apply w-full;
+}

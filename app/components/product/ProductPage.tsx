@@ -16,6 +16,7 @@ import { AddToCartForm } from './AddToCartForm';
 import { BlockHookSlot } from '../common';
 import { ProductsSlider } from '../home';
 import { recordRecentlyViewed } from '../../lib/recentlyViewed';
+import { ProductNotes } from './ProductNotes';
 
 /**
  * "Similar products" slider. A separate component (not inline in
@@ -152,6 +153,9 @@ export function ProductPage({ product: initialProduct, page }: ProductPageProps)
 
         <SallaOffer />
       </div>
+
+      {/* Twig's shipping and notice notes, under the product (R-19 part C). */}
+      <ProductNotes />
 
       {/* App-block hook `product.single.before_customer_reviews` — between the info and the reviews */}
       <BlockHookSlot

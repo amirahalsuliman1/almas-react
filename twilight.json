@@ -824,6 +824,46 @@
       "value": null
     },
     {
+      "type": "string",
+      "format": "text",
+      "icon": "sicon-format-text-alt",
+      "id": "pdp_shipping_title",
+      "label": "عنوان قسم الشحن في صفحة المنتج",
+      "description": "اتركه فارغًا ليظهر «خيارات الشحن والاستلام».",
+      "required": false,
+      "value": null
+    },
+    {
+      "type": "string",
+      "format": "textarea",
+      "icon": "sicon-typography",
+      "id": "pdp_shipping_text",
+      "label": "نص قسم الشحن في صفحة المنتج",
+      "description": "يظهر تحت كل منتج. كل سطر يظهر في سطر مستقل، والسطر الفارغ يفصل بين الفقرات. اتركه فارغًا لإخفاء القسم.",
+      "required": false,
+      "value": null
+    },
+    {
+      "type": "string",
+      "format": "text",
+      "icon": "sicon-format-text-alt",
+      "id": "pdp_notice_title",
+      "label": "عنوان قسم التنويه في صفحة المنتج",
+      "description": "اتركه فارغًا ليظهر «تنويه هام».",
+      "required": false,
+      "value": null
+    },
+    {
+      "type": "string",
+      "format": "textarea",
+      "icon": "sicon-typography",
+      "id": "pdp_notice_text",
+      "label": "نص قسم التنويه في صفحة المنتج",
+      "description": "يظهر بجانب قسم الشحن على الشاشات الكبيرة وتحته في الجوال. اتركه فارغًا لإخفائه.",
+      "required": false,
+      "value": null
+    },
+    {
       "type": "boolean",
       "icon": "sicon-toggle-off",
       "label": "عرض خيارات المنتج في لوحة قابلة للطي",
