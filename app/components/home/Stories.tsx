@@ -147,7 +147,7 @@ interface StoryCardProps {
 }
 
 /** The photograph is the button that opens the story; the tags stay outside it. */
-function StoryCard({ story, buttonRef, onOpen }: StoryCardProps) {
+export function StoryCard({ story, buttonRef, onOpen }: StoryCardProps) {
   const { t } = useTranslation();
   const shape = STORY_SHAPES[story.shape];
   const label = story.brand

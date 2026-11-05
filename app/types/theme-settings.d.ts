@@ -26,6 +26,9 @@ declare module '@salla.sa/twilight-theme-engine/types' {
     dark_logo?: string;
     /** The white logo over the hero on Home. */
     logo_light?: string;
+    /** «شاهدته مؤخراً» at the foot of the product page, and how many. */
+    recently_viewed_enabled?: boolean;
+    recently_viewed_count?: number | string;
     header_logo_height?: number | string;
     dark_mode_toggle?: boolean;
     announcement_enabled?: boolean;

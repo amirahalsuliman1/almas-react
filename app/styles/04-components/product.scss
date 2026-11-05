@@ -1567,3 +1567,59 @@ salla-gifting {
 .product-actions-slot {
   @apply w-full;
 }
+
+/* =========================================================================
+   Product page, below the fold — Twig's (R-19 part D): «نسّقيه مع» (the
+   Home lookbook with this product), the stories row, the similar products
+   and «شاهدته مؤخراً», each on the section panel like Home's rows.
+   ========================================================================= */
+.product-look,
+.product-stories,
+.product-recently-viewed,
+.product-related {
+  @apply mt-8 lg:mt-12;
+}
+
+.product-stories {
+  @apply rounded px-2 py-4 md:px-6 md:py-6 lg:px-8 lg:py-8;
+  margin-inline: max(var(--page-gutter), calc((100% - 1280px) / 2 + var(--page-gutter)));
+  background-color: var(--surface-section);
+}
+
+/* A row that scrolls sideways, a peek of the next card at the edge. */
+.product-stories__track {
+  @apply m-0 flex list-none items-start gap-4 overflow-x-auto p-0;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  .story-card {
+    @apply mb-0 block;
+    flex: 0 0 44%;
+    scroll-snap-align: start;
+
+    @media (min-width: 768px) {
+      flex-basis: calc((100% - 2rem) / 3.2);
+    }
+
+    @media (min-width: 1024px) {
+      flex-basis: calc((100% - 4rem) / 5);
+    }
+  }
+}
+
+.product-stories__cta {
+  @apply mt-6 flex justify-center;
+}
+
+.product-related > .s-products-carousel {
+  @apply overflow-hidden rounded px-2 py-4 md:px-6 md:py-6 lg:px-8 lg:py-8;
+  background-color: var(--surface-section);
+}
+
+.product-related .s-product-card-entry.s-product-card-vertical {
+  background-color: var(--surface-card);
+}

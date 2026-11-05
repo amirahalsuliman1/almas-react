@@ -5,6 +5,8 @@ import { pickedProductId } from '../../lib/pickers';
 import { selectedValue, textValue } from '../../lib/settings';
 
 export interface LookbookProps {
+  /** The section title's alignment: centred on Home, start on the product page (Twig). */
+  headerAlign?: 'center' | 'start';
   data: {
     title?: unknown;
     hint?: unknown;
@@ -25,7 +27,7 @@ export interface LookbookProps {
  * the photograph and the product cards share the row, the photograph on the
  * side the merchant picks.
  */
-export function Lookbook({ data }: LookbookProps) {
+export function Lookbook({ data, headerAlign = 'center' }: LookbookProps) {
   const { locale } = useTranslation();
   if (!data.image || data.hide_on_home) return null;
 
@@ -34,7 +36,7 @@ export function Lookbook({ data }: LookbookProps) {
 
   return (
     <div className={`lookbook lookbook--image-${side}`}>
-      <SectionHeader title={textValue(data.title, locale)} subtitle={textValue(data.hint, locale)} />
+      <SectionHeader title={textValue(data.title, locale)} subtitle={textValue(data.hint, locale)} align={headerAlign} />
       <HotspotImage
         image={data.image}
         alt={textValue(data.alt, locale)}

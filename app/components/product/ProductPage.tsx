@@ -17,6 +17,8 @@ import { BlockHookSlot } from '../common';
 import { ProductsSlider } from '../home';
 import { recordRecentlyViewed } from '../../lib/recentlyViewed';
 import { ProductNotes } from './ProductNotes';
+import { ProductLook, ProductStories } from './ProductExtras';
+import { RecentlyViewed } from '../home/RecentlyViewed';
 
 /**
  * "Similar products" slider. A separate component (not inline in
@@ -38,7 +40,7 @@ function RelatedProducts({ productId, title }: { productId: number; title: strin
           then, don't reserve 400px for a block that may render nothing. */}
       {relatedCount !== 0 && (
         <RenderWhenVisible estimatedHeight="0px">
-          <div className="container">
+          <div className="container product-related">
             <ProductsSlider
               data={{
                 products: { source: 'related', source_value: productId },
@@ -157,6 +159,10 @@ export function ProductPage({ product: initialProduct, page }: ProductPageProps)
       {/* Twig's shipping and notice notes, under the product (R-19 part C). */}
       <ProductNotes />
 
+      {/* Twig's «نسّقيه مع» and stories row (R-19 part D), read from Home's sections. */}
+      <ProductLook productId={product.id} />
+      <ProductStories />
+
       {/* App-block hook `product.single.before_customer_reviews` — between the info and the reviews */}
       <BlockHookSlot
         name="product.single.before_customer_reviews"
@@ -181,6 +187,19 @@ export function ProductPage({ product: initialProduct, page }: ProductPageProps)
       />
 
       <RelatedProducts productId={product.id} title={t('pages.products.similar_products')} />
+
+      {/* «شاهدته مؤخراً» without the product on screen (R-18 / R-19 part D). */}
+      {theme?.settings?.recently_viewed_enabled !== false && (
+        <div className="product-recently-viewed">
+          <RecentlyViewed
+            data={{
+              title: t('theme.recently_viewed.title', 'Recently viewed'),
+              count: (theme?.settings as Record<string, unknown> | undefined)?.recently_viewed_count,
+            }}
+            exclude={product.id}
+          />
+        </div>
+      )}
 
       {/* App-block hook `product.single.after_product_recommendations` — end of the product page */}
       <BlockHookSlot

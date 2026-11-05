@@ -866,6 +866,106 @@
     {
       "type": "boolean",
       "icon": "sicon-toggle-off",
+      "label": "عرض «شاهدته مؤخراً» في صفحة المنتج",
+      "description": "شريط بالمنتجات التي فتحها الزائر مؤخرًا، أسفل «قد يعجبك أيضًا». تُحفظ في متصفح الزائر فقط. لعرضه في الرئيسية أضِف عنصر «شاهدته مؤخراً».",
+      "id": "recently_viewed_enabled",
+      "format": "switch",
+      "required": false,
+      "value": true,
+      "selected": true
+    },
+    {
+      "type": "number",
+      "icon": "sicon-list",
+      "format": "integer",
+      "id": "recently_viewed_count",
+      "label": "عدد منتجات «شاهدته مؤخراً» في صفحة المنتج",
+      "description": "الحد الأقصى للمنتجات المعروضة.",
+      "required": false,
+      "value": 8,
+      "minValue": 2,
+      "maxValue": 20
+    },
+    {
+      "type": "boolean",
+      "format": "switch",
+      "icon": "sicon-toggle-off",
+      "id": "pdp_stories_enabled",
+      "label": "عرض تجارب العملاء تحت المنتج",
+      "description": "يعرض آخر التجارب من قسم «تجارب عملائنا» في الصفحة الرئيسية، في صف يُمرَّر أفقيًا. لا يظهر شيء إذا لم يكن في الرئيسية قسم تجارب.",
+      "required": false,
+      "value": true,
+      "selected": true
+    },
+    {
+      "type": "number",
+      "format": "integer",
+      "icon": "sicon-list",
+      "id": "pdp_stories_count",
+      "label": "عدد التجارب في الشريط",
+      "description": "أحدث التجارب أولًا، كما رتّبتها في قسم الرئيسية.",
+      "required": false,
+      "value": 8,
+      "minValue": 3,
+      "maxValue": 20
+    },
+    {
+      "type": "items",
+      "icon": "sicon-link",
+      "format": "variable-list",
+      "id": "pdp_stories_url",
+      "label": "رابط زر تجارب العملاء تحت الشريط (اختياري)",
+      "description": "الشريط يعرض آخر التجارب من قسم «تجارب عملائنا» في الصفحة الرئيسية. إذا اخترت رابطًا هنا يظهر تحت الشريط زر يذهب إليه؛ اتركه فارغًا بلا زر.",
+      "required": false,
+      "searchable": true,
+      "source": "custom",
+      "sources": [
+        {
+          "label": "منتج",
+          "key": "products",
+          "value": "products"
+        },
+        {
+          "label": "منتجات مع وسم",
+          "key": "products_tags",
+          "value": "products_tags"
+        },
+        {
+          "label": "تصنيف",
+          "key": "categories",
+          "value": "categories"
+        },
+        {
+          "label": "ماركة تجارية",
+          "key": "brands",
+          "value": "brands"
+        },
+        {
+          "label": "صفحة تعريفية",
+          "key": "pages",
+          "value": "pages"
+        },
+        {
+          "label": "التخفيضات",
+          "key": "offers_link",
+          "value": "offers_link"
+        },
+        {
+          "label": "الماركات التجارية",
+          "key": "brands_link",
+          "value": "brands_link"
+        },
+        {
+          "label": "رابط خارجي",
+          "key": "custom",
+          "value": "custom"
+        }
+      ],
+      "value": null
+    },
+    {
+      "type": "boolean",
+      "icon": "sicon-toggle-off",
       "label": "عرض خيارات المنتج في لوحة قابلة للطي",
       "description": "تظهر الخيارات ملخّصة في صف واحد ويفتحها الزائر عند الحاجة، في صفحة المنتج والسلة. عند الإيقاف تظهر الخيارات كاملة مباشرة. ملاحظة: المنتجات التي لها خياران أو أقل تعرض خياراتها كاملة دائمًا، حتى عند تفعيل هذا الخيار.",
       "id": "product_options_collapsible",
