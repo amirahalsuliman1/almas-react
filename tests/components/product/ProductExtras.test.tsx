@@ -1,9 +1,11 @@
 import { describe, it, expect, vi } from 'vitest';
 
+vi.mock('../../../app/components/home', () => ({
+  Lookbook: () => null,
+  StoryModal: () => null,
+  StoryCard: () => null,
+}));
 vi.mock('../../../app/components/common', () => ({ SectionHeader: () => null }));
-vi.mock('../../../app/components/home/Lookbook', () => ({ Lookbook: () => null }));
-vi.mock('../../../app/components/home/Stories', () => ({ StoryCard: () => null }));
-vi.mock('../../../app/components/home/StoryModal', () => ({ StoryModal: () => null }));
 
 import { lookFor } from '../../../app/components/product/ProductExtras';
 

@@ -14,11 +14,10 @@ import { ProductGallery } from './ProductGallery';
 import { ProductDetails } from './ProductDetails';
 import { AddToCartForm } from './AddToCartForm';
 import { BlockHookSlot } from '../common';
-import { ProductsSlider } from '../home';
+import { ProductsSlider, RecentlyViewed } from '../home';
 import { recordRecentlyViewed } from '../../lib/recentlyViewed';
 import { ProductNotes } from './ProductNotes';
 import { ProductLook, ProductStories } from './ProductExtras';
-import { RecentlyViewed } from '../home/RecentlyViewed';
 
 /**
  * "Similar products" slider. A separate component (not inline in

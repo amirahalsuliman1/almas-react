@@ -10,14 +10,14 @@ vi.mock('@salla.sa/twilight-theme-engine/providers', () => ({ useTwilight: () =>
 vi.mock('@salla.sa/twilight-theme-engine/i18n', () => ({
   useTranslation: () => ({ t: (_k: string, fb?: string) => fb ?? _k, locale: 'ar' }),
 }));
+vi.mock('../../../app/components/home', () => ({
+  Lookbook: () => null,
+  StoryModal: () => null,
+  StoryCard: ({ story }: { story: { image: string } }) => <li className="story-card" data-image={story.image} />,
+}));
 vi.mock('../../../app/components/common', () => ({
   SectionHeader: ({ title }: { title?: string }) => <h2>{title}</h2>,
 }));
-vi.mock('../../../app/components/home/Lookbook', () => ({ Lookbook: () => null }));
-vi.mock('../../../app/components/home/Stories', () => ({
-  StoryCard: ({ story }: { story: { image: string } }) => <li className="story-card" data-image={story.image} />,
-}));
-vi.mock('../../../app/components/home/StoryModal', () => ({ StoryModal: () => null }));
 
 const items = Array.from({ length: 10 }, (_, i) => ({ image: `/s${i}.jpg` }));
 
