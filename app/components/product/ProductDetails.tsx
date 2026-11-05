@@ -4,7 +4,7 @@ import { HookName } from '@salla.sa/twilight-theme-engine/types/hooks';
 import { useTranslation } from '@salla.sa/twilight-theme-engine/i18n';
 import { getActiveCurrency } from '@salla.sa/twilight-theme-engine/api/client';
 import { useWishlist } from '@salla.sa/twilight-theme-engine/hooks/useWishlist';
-import { CurrencySymbol, Link, Image } from '@salla.sa/twilight-theme-engine/common';
+import { CurrencySymbol, Link } from '@salla.sa/twilight-theme-engine/common';
 import { formatSallaPlural } from '@salla.sa/twilight-theme-engine/utils';
 import type { Product } from '@salla.sa/twilight-theme-engine/types';
 import { SallaRatingStars } from '@salla.sa/twilight-components-react/rating-stars';
@@ -31,9 +31,10 @@ interface ProductDetailsProps {
  * Differs from the engine version: the data-column blocks (title, SKU row,
  * availability, sold / remaining quantity) render flat: no `bg-white`, no
  * `rounded`, no card padding. The `.product-form` `gap` / element `mb`
- * classes control the vertical rhythm. The brand logo passes `objectFit="contain"`
- * to `<Image>` rather than an `object-contain` class, which the component's own
- * `object-cover` default overrides. Upgrade notes: `FORKS.md`.
+ * classes control the vertical rhythm. Twig's top (R-19 part A): the brand as
+ * its name above the title, the title and the price in Twig's classes
+ * (`product-entry__title`, `total-price` / `before-price`, product.scss).
+ * Upgrade notes: `FORKS.md`.
  */
 export function ProductDetails({
   product,
@@ -52,24 +53,18 @@ export function ProductDetails({
     <>
       <HookSlot name={HookName.PRODUCT_DESCRIPTION_START} context={productHookContext} />
 
+      {/* Twig's brand line: the brand's name, a link, above the title. */}
       {product.brand?.name && (
-        <div className="product-brand mb-5 w-12">
-          <Link className="brand-logo" to={product.brand.url || '#'} title={product.brand.name}>
-            <Image
-              className="max-h-full"
-              objectFit="contain"
-              src={product.brand.logo}
-              title={product.brand.name}
-              alt={product.brand.name}
-              aspectRatio="1/1"
-            />
+        <p className="product-brand">
+          <Link to={product.brand.url || '#'}>
+            <bdi>{product.brand.name}</bdi>
           </Link>
-        </div>
+        </p>
       )}
 
       <div className="mb-2.5 flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-xl md:text-2xl leading-10 font-bold text-gray-800">{product.name}</h1>
+          <h1 className="product-entry__title">{product.name}</h1>
           {product.subtitle && (
             <h2 className="product-entry__sub-title text-sm text-gray-500 leading-6 font-normal">
               {product.subtitle}
@@ -211,20 +206,20 @@ function ProductPrice({ product }: { product: Product }) {
   const priceCurrency = getActiveCurrency(product.currency);
 
   return (
-    <div className="flex whitespace-nowrap gap-4 items-center mb-2.5">
+    <div className="product-entry__price flex whitespace-nowrap gap-4 items-center">
       <div
         className={`${product.is_on_sale ? '' : 'hidden'} space-x-2 rtl:space-x-reverse whitespace-nowrap`}
       >
-        <p className="text-red-800 font-bold text-xl inline-block">
+        <p className="total-price inline-block">
           {product.sale_price} <CurrencySymbol currency={priceCurrency} />
         </p>
-        <span className="text-gray-500 line-through">
+        <span className="before-price line-through">
           {product.regular_price} <CurrencySymbol currency={priceCurrency} />
         </span>
       </div>
       <div className={`gap-4 ${product.is_on_sale ? 'hidden' : 'flex'}`}>
         {product.starting_price && <span>{t('pages.products.starting_price')}</span>}
-        <p className="font-bold text-xl inline-block">
+        <p className="total-price inline-block">
           {product.starting_price ?? product.price} <CurrencySymbol currency={priceCurrency} />
         </p>
       </div>

@@ -316,23 +316,19 @@ describe('ProductDetails remaining quantity', () => {
   });
 });
 
-describe('ProductDetails brand logo', () => {
-  it('contains the logo instead of cropping it with the Image default cover', async () => {
+describe('ProductDetails brand (Twig)', () => {
+  it("names the brand above the title, as a link, the way Twig's product page did", () => {
     const { container } = render(
       <ProductDetails
         product={makeProduct({
-          brand: { id: 7, name: 'Brand', url: '/brand', logo: 'https://cdn.test/logo.png' },
+          brand: { id: 7, name: 'Charlotte Tilbury', url: '/brand', logo: 'https://cdn.test/logo.png' },
         } as Partial<Product>)}
       />
     );
-
-    const logo = await waitFor(() => {
-      const img = container.querySelector<HTMLImageElement>('.brand-logo img');
-      expect(img).toBeTruthy();
-      return img!;
-    });
-    expect(logo.classList.contains('object-contain')).toBe(true);
-    expect(logo.classList.contains('object-cover')).toBe(false);
+    const brand = container.querySelector('p.product-brand a');
+    expect(brand?.getAttribute('href')).toBe('/brand');
+    expect(brand?.querySelector('bdi')?.textContent).toBe('Charlotte Tilbury');
+    expect(container.querySelector('.product-entry__title')).toBeTruthy();
   });
 });
 

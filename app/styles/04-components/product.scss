@@ -1246,3 +1246,72 @@ salla-gifting {
   top: 0;
   z-index: 2;
 }
+
+/* =========================================================================
+   Product page, top — Twig's (owner, 2026-11-05), R-19 part A.
+   The gallery and the details sit on one warm rounded panel: full width on a
+   phone, the container's from 768px. The photographs are rounded on white;
+   the title is Twig's text-3xl / text-4xl; the price, Salla's note on weak
+   prices, is text-2xl bold in the ink.
+   ========================================================================= */
+.product-details-panel {
+  @apply rounded-3xl py-6 md:px-6 md:py-10 lg:px-8;
+  background-color: var(--surface-section);
+
+  @media (max-width: 767px) {
+    margin-inline: calc(-1 * var(--page-gutter));
+    padding-inline: var(--page-gutter);
+    border-radius: 0;
+  }
+}
+
+.product-brand {
+  @apply mb-1 text-sm;
+  color: var(--text-secondary);
+
+  a {
+    color: inherit;
+
+    &:hover {
+      @apply underline underline-offset-4;
+    }
+  }
+}
+
+.product-entry__title {
+  @apply mb-2 text-3xl font-bold leading-tight md:text-4xl;
+  color: var(--main-text-color);
+}
+
+.product-entry__price {
+  @apply mb-4 mt-2;
+
+  .total-price {
+    @apply text-2xl font-bold;
+    color: var(--main-text-color);
+  }
+
+  .before-price {
+    @apply text-base;
+    color: var(--text-secondary);
+  }
+}
+
+/* The photographs on white with their own rounded corners, the thumbnails
+   rounded with the current one ringed, as Twig's gallery. */
+.product-details-panel {
+  .image-slider .swiper-slide img,
+  .product-gallery__poster img {
+    @apply rounded-large;
+    background-color: var(--surface-card);
+  }
+
+  .slide--one-fourth img {
+    @apply rounded-lg;
+    border: 1px solid var(--surface-page);
+  }
+
+  .slide--one-fourth.swiper-slide-thumb-active img {
+    border-color: var(--border-interactive);
+  }
+}

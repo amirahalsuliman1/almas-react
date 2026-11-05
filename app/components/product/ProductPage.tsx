@@ -124,7 +124,8 @@ export function ProductPage({ product: initialProduct, page }: ProductPageProps)
 
         <HookSlot name="product:start" />
 
-        <div className="flex flex-col items-start md:flex-row" id={`product-${product.id}`}>
+        {/* Twig's panel: the gallery and the details on one warm rounded card. */}
+        <div className="product-details-panel flex flex-col items-start md:flex-row" id={`product-${product.id}`}>
           <ProductGallery product={product} />
 
           <div className="main-content md:sticky md:overflow-hidden md:top-24 w-full md:w-2/4 md:pb-16">
