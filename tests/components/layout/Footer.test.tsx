@@ -145,11 +145,9 @@ describe('Footer', () => {
     );
   });
 
-  it('paints footer_is_dark as a footer-scoped class, never inside the account sheet', () => {
+  it('never paints the footer dark: footer_is_dark only switches the trust badges, as in Twig', () => {
     state.theme = { settings: { footer_is_dark: true } };
-    expect(renderFooter().container.querySelector('.store-footer--dark')).toBeTruthy();
-    cleanup();
-    expect(renderFooter(true).container.querySelector('.store-footer--dark')).toBeNull();
+    expect(renderFooter().container.querySelector('.store-footer--dark')).toBeNull();
   });
 
   it('carries no hard-coded footer colours', () => {

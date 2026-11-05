@@ -1,0 +1,62 @@
+/* «تنسيقات جاهزة» (PhotosSlider.tsx) — Twig's photos carousel (owner,
+   2026-11-05): the section panel (section-panel.scss), its title, and a row of
+   rounded 300:361 photographs, a peek of the next on a phone, two on a tablet,
+   three from 1024px. */
+
+.photos-carousel {
+  @apply relative;
+  margin-inline: max(var(--page-gutter), calc((100% - 1280px) / 2 + var(--page-gutter)));
+}
+
+.photos-carousel__slide {
+  @apply block shrink-0 overflow-hidden rounded;
+  flex: 0 0 78%;
+  aspect-ratio: 300 / 361;
+  scroll-snap-align: start;
+  background-color: var(--surface-placeholder);
+
+  @media (min-width: 768px) {
+    flex-basis: calc((100% - 1rem) / 2);
+  }
+
+  @media (min-width: 1024px) {
+    flex-basis: calc((100% - 3rem) / 3);
+  }
+
+  img {
+    @apply block h-full w-full object-cover;
+    transition: transform var(--motion-base) var(--motion-ease);
+  }
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: calc(-1 * var(--focus-ring-width));
+  }
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .photos-carousel__slide:hover img {
+    transform: scale(1.04);
+  }
+}
+
+/* Twig's pause control, over the photographs' foot: above the phone dots, and
+   inside the panel's padding from 1024px. */
+.photos-carousel__autoplay-toggle {
+  @apply absolute z-10 inline-flex h-11 w-11 items-center justify-center rounded-full text-sm;
+  inset-block-end: 3.5rem;
+  inset-inline-end: 1.25rem;
+
+  @media (min-width: 1024px) {
+    inset-block-end: 3rem;
+    inset-inline-end: 3rem;
+  }
+
+  background-color: var(--overlay-scrim);
+  color: var(--on-media);
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--on-media);
+    outline-offset: var(--focus-ring-offset);
+  }
+}

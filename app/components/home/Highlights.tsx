@@ -255,7 +255,8 @@ export function Highlights({ data }: HighlightsProps): ReactNode {
 
   return (
     <div className="highlights">
-      {title && <SectionHeader title={title} />}
+      {/* Start-aligned, as Twig's highlights title was. */}
+      {title && <SectionHeader title={title} align="start" />}
       <ul className="highlights__row">
         {highlights.map((h, i) => (
           // Two highlights can share slides, so the id alone is not unique.

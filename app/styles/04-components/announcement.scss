@@ -5,10 +5,31 @@
    text too small to read.
    ========================================================================= */
 
+/* Twig's bar (owner, 2026-11-05): a rounded strip the container's width, a
+   little clear of the top, rather than a band edge to edge. */
 .announcement-bar {
-  @apply relative flex items-center overflow-hidden;
+  @apply relative flex items-center overflow-hidden rounded;
   block-size: 2.5rem;
+  margin-inline: max(var(--page-gutter), calc((100% - 1280px) / 2 + var(--page-gutter)));
   background-color: var(--announcement-bg);
+}
+
+.announcement-bar--top {
+  @apply mt-2;
+}
+
+.announcement-bar--bottom {
+  @apply mt-8;
+}
+
+/* Inner pages from 1024px: Twig's band, full width with a hairline above and
+   below, under the full-width solid header. Home keeps the strip the width of
+   the hero card. */
+@media (min-width: 1024px) {
+  .site-header:not(.site-header--home) .announcement-bar--top {
+    @apply m-0 rounded-none;
+    border-block: 1px solid var(--border-interactive);
+  }
 }
 
 .announcement-dismissed .announcement-bar {

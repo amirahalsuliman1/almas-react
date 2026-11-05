@@ -617,196 +617,6 @@
 }
 
 /*
-  Photos slider — one centred banner with its neighbours on both sides, endless
-  in both directions. Markup: app/components/home/PhotosSlider.tsx
-
-  --stage-w is the banner's width: the container's, less on a short screen so the
-  whole banner stays above the fold, and always leaving room for a peek on phones.
-  Every percentage in it resolves against the row, wherever the variable is used.
-*/
-.s-photos-stage__header {
-  margin-inline: max(var(--page-gutter), calc((100% - 1280px) / 2 + var(--page-gutter)));
-}
-
-.s-photos-stage {
-  --stage-ratio: 1.7; /* until the first banner has loaded */
-  --stage-gap: 0.625rem;
-  --stage-vh: 100vh;
-  --stage-w: min(1260px, 100% - 3rem, max(18rem, (var(--stage-vh) - 14rem) * var(--stage-ratio)));
-
-  @supports (height: 100svh) {
-    --stage-vh: 100svh;
-  }
-
-  @media (min-width: 768px) {
-    --stage-gap: 1.5rem;
-  }
-
-  &__viewport {
-    @apply relative mx-auto;
-    max-width: 1920px;
-
-    /* Past 1920px the row stops and fades, so neighbours never take over the screen. */
-    @media (min-width: 1921px) {
-      mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
-    }
-  }
-
-  &__track {
-    @apply relative flex overflow-x-auto cursor-grab;
-    gap: var(--stage-gap);
-    scroll-snap-type: x mandatory;
-    overscroll-behavior-x: contain;
-    /* No drawn scroll bar (owner, 2026-11-01): arrows, dots, swipe and the
-       cut-off card carry the row. */
-    scrollbar-width: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
-
-    &.is-dragging {
-      @apply cursor-grabbing select-none;
-      scroll-snap-type: none;
-      scroll-behavior: auto;
-    }
-  }
-
-  /* The server's HTML can't set a scroll position, so the one copy it renders is
-     pulled in by its own width: the first real banner is centred without one. */
-  &.is-static .s-photos-slider__slide:first-child {
-    margin-inline-start: calc((100% - var(--stage-w)) / 2 - var(--stage-gap) - var(--stage-w));
-  }
-
-  &.is-static .s-photos-slider__slide:last-child {
-    margin-inline-end: calc((100% - var(--stage-w)) / 2);
-  }
-
-  &.is-single &__track {
-    @apply justify-center overflow-hidden cursor-auto;
-  }
-
-  /* The enhanced slider's controls (`.s-block--enhanced-slider` below): chevrons
-     and dots in one row. As there, the row's centre line sits at bottom-6 / sm:bottom-8. */
-  &__nav {
-    @apply absolute inset-x-0 bottom-6 z-1 mx-auto flex w-fit translate-y-1/2 items-center justify-center sm:bottom-8;
-  }
-
-  &__arrow {
-    @apply inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-white transition-colors hover:bg-white/15;
-
-    /* The chevrons are drawn for RTL, where prev sits on the right and points
-       right; in LTR both point the other way. */
-    svg {
-      @apply h-6 w-6 ltr:-scale-x-100;
-    }
-
-    &:focus-visible {
-      @apply outline outline-2 outline-white;
-    }
-  }
-
-  /* A 24px target around each bar, like `.carousel-dots`. */
-  &__dot {
-    @apply flex h-6 min-w-6 items-center justify-center px-[3px] py-0;
-
-    &:focus-visible {
-      @apply outline outline-2 outline-white;
-    }
-  }
-
-  &__bar {
-    @apply block h-1.5 w-1.5 rounded-full bg-white/40;
-    transition:
-      width 0.25s ease,
-      background-color 0.25s ease;
-  }
-
-  &__dot.is-active &__bar {
-    @apply w-6 bg-white;
-  }
-
-  /* Draws nothing: PhotosSlider moves on when this animation ends. It never runs
-     on phones, so nothing there moves on its own. */
-  &__timer {
-    @apply hidden md:block;
-    animation: photos-stage-timer 5s linear forwards;
-  }
-
-  /* Hovering, keyboard focus or leaving the screen holds the timer where it is. */
-  @media (hover: hover) {
-    &:hover &__timer {
-      animation-play-state: paused;
-    }
-  }
-
-  &:has(:focus-visible) &__timer,
-  &.is-offscreen &__timer {
-    animation-play-state: paused;
-  }
-
-  /* Banners have no overlay like the enhanced slider's, so the white controls get
-     a dark edge to stay visible on a pale one. */
-  &:not(.is-single) .s-photos-slider__slide::after {
-    @apply pointer-events-none absolute inset-x-0 bottom-0 h-24;
-    content: '';
-    background: linear-gradient(to top, rgb(0 0 0 / 35%), transparent);
-  }
-}
-
-@keyframes photos-stage-timer {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
-.s-photos-slider__slide {
-  @apply relative block shrink-0 rounded-2xl overflow-hidden bg-gray-100;
-  flex: 0 0 var(--stage-w);
-  aspect-ratio: var(--stage-ratio);
-  scroll-snap-align: center;
-  scroll-snap-stop: always;
-  /* The neighbours step back. Every copy of the current banner carries
-     `is-current`, so the jump between copies changes nothing on screen. */
-  opacity: 0.45;
-  transform: scale(0.97);
-  transition:
-    opacity 0.35s ease,
-    transform 0.35s ease;
-
-  &.is-current {
-    opacity: 1;
-    transform: none;
-  }
-
-  /* A press on a neighbour brings it to the centre (useLoopCarousel). */
-  &:not(.is-current) {
-    @apply cursor-pointer;
-
-    @media (hover: hover) {
-      &:hover {
-        opacity: 0.7;
-      }
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-  }
-
-  img {
-    @apply block h-full w-full object-cover;
-  }
-
-  &:focus-visible {
-    @apply outline outline-2 -outline-offset-2 outline-primary;
-  }
-}
-
-/*
   Photos slider with text — the photos slider's cards (two in a row on
   desktop) with the enhanced slider's title, text, button and background video
   on each. Markup: app/components/home/PhotosSliderWithText.tsx
@@ -1278,12 +1088,14 @@ salla-reviews:not(:has(.s-reviews-swiper-slide)) {
   &__stars {
     @apply inline-flex shrink-0 gap-0.5 self-start;
 
+    /* Twig's star row, the product card's: filled in the secondary ink,
+       empty in the interactive border tone. */
     svg {
       @apply h-[18px] w-[18px] fill-current;
-      color: var(--border-subtle);
+      color: var(--border-interactive);
 
       &.is-on {
-        color: var(--color-accent);
+        color: var(--text-secondary);
       }
     }
   }

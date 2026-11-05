@@ -389,6 +389,8 @@ export function Footer({ inSheet = false }: FooterProps = {}) {
   const { t } = useTranslation();
   const year = new Date().getFullYear();
   const isCentered = theme.settings?.footer_layout === 'centered';
+  // As in Twig, `footer_is_dark` switches Salla's trust badges to their dark
+  // versions only; the footer's colours are the merchant's footer settings.
   const isDark = !!theme.settings?.footer_is_dark;
 
   const Root = inSheet ? 'div' : 'footer';
@@ -397,7 +399,7 @@ export function Footer({ inSheet = false }: FooterProps = {}) {
     <Root
       className={`store-footer store-footer--${isCentered ? 'centered' : 'columns'}${
         inSheet ? ' store-footer--sheet' : ''
-      }${isDark && !inSheet ? ' store-footer--dark' : ''} relative mt-8 sm:mt-16`}
+      } relative mt-8 sm:mt-16`}
       suppressHydrationWarning
     >
       {!inSheet && <HookSlot name="footer:start" />}

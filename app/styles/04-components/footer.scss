@@ -24,6 +24,15 @@
   background-color: var(--surface-footer);
   color: var(--text-footer);
 
+  /* Twig's footer (owner, 2026-11-05): a rounded panel the container's width
+     on the footer colour (the section tone unless the merchant sets one),
+     clear of the page's foot. The four groups and their sizes are Salla's
+     note on a weak footer. */
+  &:not(.store-footer--sheet) {
+    @apply mb-4 rounded lg:mb-6;
+    margin-inline: max(var(--page-gutter), calc((100% - 1280px) / 2 + var(--page-gutter)));
+  }
+
   &__inner {
     border-color: var(--border-subtle);
   }
@@ -50,7 +59,7 @@
     @apply font-semibold transition-colors;
 
     &:hover {
-      color: var(--color-accent-text);
+      @apply underline underline-offset-4;
     }
   }
 
@@ -60,16 +69,17 @@
     outline-offset: var(--focus-ring-offset);
   }
 
-  /* `<salla-social>`'s links: 40px targets. */
+  /* `<salla-social>`'s links: Twig's tiles, 44px rounded squares on the page
+     tone with a ring the WCAG 1.4.11 boundary needs. */
   .social-link,
   .s-social-link a {
-    @apply flex h-10 w-10 items-center justify-center rounded-full border text-base transition-colors;
-    border-color: var(--border-subtle);
-    color: var(--text-footer);
+    @apply flex h-11 w-11 items-center justify-center rounded-lg border text-lg transition-colors;
+    border-color: var(--border-interactive);
+    background-color: var(--surface-page);
+    color: var(--main-text-color);
 
     &:hover {
-      border-color: var(--color-accent);
-      color: var(--color-accent-text);
+      border-color: var(--main-text-color);
     }
   }
 
@@ -89,7 +99,7 @@
       color: var(--text-footer);
 
       &:hover {
-        color: var(--color-accent-text);
+        @apply underline underline-offset-4;
       }
     }
 
@@ -131,14 +141,8 @@
 }
 
 /* `footer_is_dark`: the footer alone takes the dark palette, whatever the page. */
-.store-footer--dark {
-  --surface-footer: var(--dark-page);
-  --text-footer: var(--dark-ink);
-  --text-secondary: var(--dark-secondary);
-  --border-subtle: var(--dark-border);
-  --color-accent-text: color-mix(in srgb, var(--color-accent) 55%, var(--on-media));
-  --focus-ring-color: var(--dark-ink);
-}
+/* No dark footer variant: as in Twig, `footer_is_dark` only switches the trust
+   badges (Footer.tsx). */
 
 /* The bar at the top of the footer: the container's width, rounded, inset from
    the footer's top edge; the footer's own padding spaces it from the columns. */

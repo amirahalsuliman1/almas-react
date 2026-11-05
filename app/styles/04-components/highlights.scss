@@ -35,7 +35,8 @@
 /* An unopened highlight wears the accent; an opened one a quiet hairline. */
 .highlights__ring {
   @apply flex h-[4.75rem] w-[4.75rem] items-center justify-center rounded-full p-[3px] lg:h-[5.5rem] lg:w-[5.5rem];
-  background: linear-gradient(135deg, var(--color-accent), var(--color-brand-secondary));
+  /* Twig's ring: the store's primary colour into its secondary. */
+  background: linear-gradient(135deg, var(--color-primary), var(--color-brand-secondary));
 }
 
 .highlights__bubble--seen .highlights__ring {

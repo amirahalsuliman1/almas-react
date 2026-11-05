@@ -1,252 +1,103 @@
-import { memo, useEffect, useRef, useState } from 'react';
-import type { CSSProperties, RefObject } from 'react';
+import { memo, useState } from 'react';
 import { Link, Image } from '@salla.sa/twilight-theme-engine/common';
 import { useTranslation } from '@salla.sa/twilight-theme-engine/i18n';
 import { useTwilight } from '@salla.sa/twilight-theme-engine/providers';
-import { SectionHeader } from '../common/SectionHeader';
+import { ScrollCarousel, SectionHeader } from '../common';
 import { textValue } from '../../lib/settings';
-import { ArrowLeftIcon, ArrowRightIcon } from '../icons';
-import { useLoopCarousel } from '../../hooks/useLoopCarousel';
 
 interface PhotoItem {
   id?: string | number;
   url?: string;
   link_type?: string;
-  image?: string;
+  /** A URL, or `{ url, alt }` as Twig's `items[].image` documents it. */
+  image?: string | { url?: string; alt?: unknown };
+  alt?: unknown;
 }
 
 export interface PhotosSliderProps {
   data: {
     items?: PhotoItem[];
+    title?: unknown;
     position?: number;
     is_repeated?: boolean;
-    /** The automatic move to the next banner. On unless switched off. */
+    /** Moving on by itself. On unless switched off; reduced motion stops it. */
     auto_play?: boolean;
     [key: string]: unknown;
   };
 }
 
-/** Banner shapes outside this range would be a sliver or a tower, so they are cropped to it. */
-const MIN_RATIO = 1.2;
-const MAX_RATIO = 3.5;
-
-const SRCSET_WIDTHS = [640, 960, 1280, 1920] as const;
-const SIZES = '(min-width: 1308px) 1260px, calc(100vw - 3rem)';
-
-/** A copy on either side of the real slides, for the loop: never read out or tabbed to. */
-const COPY_PROPS = { tabIndex: -1, 'aria-hidden': true } as const;
-
-function useBannerRatio(root: RefObject<HTMLElement | null>, firstImage: string | undefined) {
-  const [ratio, setRatio] = useState<number>();
-
-  // Banners carry no dimensions, so the first one's own shape sets the stage's.
-  useEffect(() => {
-    const img = root.current?.querySelector<HTMLImageElement>(
-      '.s-photos-slider__slide:not([aria-hidden="true"]) img'
-    );
-    if (!img) return;
-    const measure = () => {
-      if (!img.naturalWidth || !img.naturalHeight) return;
-      const shape = img.naturalWidth / img.naturalHeight;
-      setRatio(Math.max(MIN_RATIO, Math.min(MAX_RATIO, shape)));
-    };
-    if (img.complete) measure();
-    img.addEventListener('load', measure);
-    return () => img.removeEventListener('load', measure);
-  }, [root, firstImage]);
-
-  return ratio;
-}
-
-function useOffscreen(root: RefObject<HTMLElement | null>) {
-  const [offscreen, setOffscreen] = useState(false);
-
-  useEffect(() => {
-    const el = root.current;
-    if (!el || typeof IntersectionObserver === 'undefined') return;
-    const observer = new IntersectionObserver(([entry]) => setOffscreen(!entry.isIntersecting));
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [root]);
-
-  return offscreen;
-}
-
-function StageSlide({
-  item,
-  index,
-  current,
-  copy = false,
-}: {
-  item: PhotoItem;
-  index: number;
-  current: boolean;
-  copy?: boolean;
-}) {
-  return (
-    <Link
-      to={item.url || '#'}
-      className={`s-photos-slider__slide${current ? ' is-current' : ''}`}
-      {...(copy && COPY_PROPS)}
-    >
-      <Image
-        src={item.image}
-        alt={copy ? '' : `photos-slider-${index}`}
-        width={1280}
-        height={753}
-        sizes={SIZES}
-        srcSetWidths={SRCSET_WIDTHS}
-        priority={!copy && index === 0}
-        draggable={false}
-      />
-    </Link>
-  );
-}
-
-/** The enhanced slider's controls: chevrons either side of the dots, on the banner's bottom edge. */
-function StageNav({
-  items,
-  active,
-  autoPlay,
-  onStep,
-  onPick,
-}: {
-  items: PhotoItem[];
-  active: number;
-  autoPlay: boolean;
-  onStep: (dir: 1 | -1) => void;
-  onPick: (index: number) => void;
-}) {
-  const { t } = useTranslation();
-
-  return (
-    <div className="s-photos-stage__nav">
-      <button
-        type="button"
-        className="s-photos-stage__arrow"
-        aria-label={t('blocks.home.reviews_prev', 'Previous')}
-        onClick={() => onStep(-1)}
-      >
-        <ArrowRightIcon aria-hidden="true" />
-      </button>
-      {items.map((item, index) => (
-        <button
-          // Positions in a static settings list, whose items may repeat or have no id.
-          // react-doctor-disable-next-line react-doctor/no-array-index-as-key
-          key={index}
-          type="button"
-          className={`s-photos-stage__dot${index === active ? ' is-active' : ''}`}
-          aria-label={`${t('blocks.home.slider_page', 'Slide')} ${index + 1}`}
-          aria-current={index === active ? 'true' : undefined}
-          onClick={() => onPick(index)}
-        >
-          <span className="s-photos-stage__bar">
-            {autoPlay && index === active && (
-              <span className="s-photos-stage__timer" onAnimationEnd={() => onStep(1)} />
-            )}
-          </span>
-        </button>
-      ))}
-      <button
-        type="button"
-        className="s-photos-stage__arrow"
-        aria-label={t('blocks.home.reviews_next', 'Next')}
-        onClick={() => onStep(1)}
-      >
-        <ArrowLeftIcon aria-hidden="true" />
-      </button>
-    </div>
-  );
-}
+const imageUrl = (item: PhotoItem) => (typeof item.image === 'string' ? item.image : item.image?.url) ?? '';
 
 /**
- * `photos-slider` home block: one centred banner with its neighbours on both
- * sides, endless in both directions. The banner is the container's width, and
- * less on a short screen so it stays above the fold. Pressing a neighbour brings
- * it to the centre; only the centred banner follows its link. An invisible 5-second CSS
- * animation on the current dot is the timer: hovering, focusing or leaving the
- * screen pauses it, and the block moves on when it ends. It doesn't run on phones,
- * so nothing moves on its own there. Styling: `04-components/home-blocks.scss`.
+ * `photos-slider` — «تنسيقات جاهزة», Twig's photos carousel (owner,
+ * 2026-11-05): the section panel, its title, and a row of rounded 300:361
+ * photographs, three to a row from 1024px with Twig's frosted arrows, each one
+ * linking where the merchant points it. The row moves on by itself unless the
+ * block turns that off; a pause button stops it (WCAG 2.2.2), and so do hover,
+ * focus and reduced motion (ScrollCarousel). A photo with no alt text is named
+ * by the section and its place, so no link is left without a name.
  */
-// Its branches are one flat list of class names and one- or many-banner switches.
-// react-doctor-disable-next-line react-doctor/no-high-complexity-react-function
 export const PhotosSlider = memo(function PhotosSlider({ data }: PhotosSliderProps) {
-  const items = data.items || [];
-  const count = items.length;
-  const { trackProps, dragging, looped, active, motionAllowed, step, goTo } =
-    useLoopCarousel(count);
-
-  const root = useRef<HTMLDivElement>(null);
-  const ratio = useBannerRatio(root, items[0]?.image);
-  const offscreen = useOffscreen(root);
+  const { t, locale } = useTranslation();
   const { theme } = useTwilight();
-  const { locale } = useTranslation();
-
-  if (!count) return null;
+  const [paused, setPaused] = useState(false);
+  const items = (data.items ?? []).filter((item) => imageUrl(item));
+  if (!items.length) return null;
 
   // The platform owns this block's fields: its own title wins, else the theme's
   // `photos_slider_title` setting; neither, no heading.
   const settings = (theme?.settings ?? {}) as { photos_slider_title?: unknown };
   const title = textValue(data.title, locale) || textValue(settings.photos_slider_title, locale);
-
-  const multiple = count > 1;
-  const autoPlay = multiple && data.auto_play !== false && motionAllowed;
-
-  const copies = (set: string, list: PhotoItem[], offset = 0) =>
-    list.map((item, position) => (
-      <StageSlide
-        // Positions in a static settings list, whose items may repeat or have no id.
-        // react-doctor-disable-next-line react-doctor/no-array-index-as-key
-        key={`${set}:${position + offset}`}
-        item={item}
-        index={position + offset}
-        current={position + offset === active}
-        copy
-      />
-    ));
+  const autoPlay = items.length > 1 && data.auto_play !== false;
 
   return (
-    <>
-    {title && <SectionHeader title={title} className="s-photos-stage__header" />}
-    <div
-      ref={root}
-      className={[
-        's-photos-stage',
-        !multiple && 'is-single',
-        multiple && !looped && 'is-static',
-        offscreen && 'is-offscreen',
-      ]
-        .filter(Boolean)
-        .join(' ')}
-      style={ratio ? ({ '--stage-ratio': ratio } as CSSProperties) : undefined}
-    >
-      <div className="s-photos-stage__viewport">
-        <div
-          className={`s-photos-stage__track hide-scroll${dragging ? ' is-dragging' : ''}`}
-          {...trackProps}
-        >
-          {/* The server has no scroll position to give, so it pulls the last banner in
-              beside the first: the same picture the looped row shows once it can scroll. */}
-          {looped && copies('before', items)}
-          {multiple && !looped && copies('before', items.slice(-1), count - 1)}
-          {items.map((item, index) => (
-            <StageSlide
+    <div className="photos-carousel">
+      <ScrollCarousel
+        navPlacement="sides"
+        className="photos-carousel__track"
+        heading={title ? <SectionHeader title={title} /> : undefined}
+        prevLabel={t('blocks.home.reviews_prev', 'Previous')}
+        nextLabel={t('blocks.home.reviews_next', 'Next')}
+        autoPlay={autoPlay && !paused}
+      >
+        {items.map((item, index) => {
+          const alt = textValue(item.alt ?? (typeof item.image === 'object' ? item.image?.alt : undefined), locale);
+          return (
+            <Link
               // Positions in a static settings list, whose items may repeat or have no id.
               // react-doctor-disable-next-line react-doctor/no-array-index-as-key
-              key={`real:${index}`}
-              item={item}
-              index={index}
-              current={index === active}
-            />
-          ))}
-          {looped && copies('after', items)}
-        </div>
-
-        {multiple && (
-          <StageNav items={items} active={active} autoPlay={autoPlay} onStep={step} onPick={goTo} />
-        )}
-      </div>
+              key={`${index}-${imageUrl(item)}`}
+              to={item.url || '#'}
+              className="photos-carousel__slide"
+              aria-label={alt ? undefined : `${title || t('blocks.home.photos', 'Photos')} ${index + 1}`}
+            >
+              <Image
+                src={imageUrl(item)}
+                alt={alt}
+                width={600}
+                height={722}
+                priority={index === 0}
+                draggable={false}
+              />
+            </Link>
+          );
+        })}
+      </ScrollCarousel>
+      {autoPlay && (
+        <button
+          type="button"
+          className="photos-carousel__autoplay-toggle"
+          aria-pressed={paused}
+          aria-label={
+            paused
+              ? t('theme.common.play_autoplay', 'Play the slideshow')
+              : t('theme.common.pause_autoplay', 'Pause the slideshow')
+          }
+          onClick={() => setPaused((p) => !p)}
+        >
+          <span aria-hidden="true">{paused ? '▶' : '❚❚'}</span>
+        </button>
+      )}
     </div>
-    </>
   );
 });

@@ -165,10 +165,10 @@ registerHomeComponentConfig({
     height: '144px', // .slide--cat-entry h-36 cards (square-links keeps the card look)
     placeholder: <SliderSkeleton />,
   },
-  // The centred banner (--stage-w in home-blocks.scss, at the usual 1.7 shape)
-  // plus its pager, so the real content doesn't shift the page on load.
+  // Twig's panel: its title and a row of 300:361 photographs (78% wide on a
+  // phone, three to a row from 1024px), so the real row doesn't shift the page.
   'photos-slider': {
-    height: 'calc(min(1260px, 100vw - 3rem, max(18rem, (100vh - 14rem) * 1.7)) / 1.7 + 3.25rem)',
+    height: 'min(calc(80vw + 5rem), 33rem)', // measured 396px at 393, 524px at 1440
     placeholder: <SliderSkeleton />,
     className: (data) =>
       `s-block s-block--photos-slider${data.is_repeated ? ' repeated-block' : ''}`,

@@ -91,7 +91,7 @@ export function TestimonialsCarousel({ items, title, description }: Testimonials
     <div className="s-testimonials container">
       <ScrollCarousel
         navPlacement="sides"
-        heading={(title || description) && <SectionHeader className="s-testimonials__head" title={title} subtitle={description} />}
+        heading={(title || description) && <SectionHeader className="s-testimonials__head" align="start" title={title} subtitle={description} />}
         prevLabel={t('blocks.home.reviews_prev', 'Previous')}
         nextLabel={t('blocks.home.reviews_next', 'Next')}
       >

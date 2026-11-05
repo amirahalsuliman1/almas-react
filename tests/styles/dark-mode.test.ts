@@ -33,12 +33,10 @@ describe('footer_is_dark (.store-footer--dark)', () => {
   // The footer paints from tokens (footer.scss); the setting re-points the
   // footer's own tokens to the dark palette, so its menu, headings and links
   // follow without a rule per element.
-  it('re-points the footer tokens, and the menu items read them', async () => {
+  it("keeps no dark footer variant (Twig), and the menu items read the footer tokens", async () => {
     const root = await compile('footer.scss');
 
-    const dark = declarations(root, '.store-footer--dark');
-    expect(dark['--surface-footer']).toBeDefined();
-    expect(dark['--text-footer']).toBeDefined();
+    expect(declarations(root, '.store-footer--dark')).toEqual({});
 
     const item = declarations(root, '.store-footer__menu .s-menu-footer-item');
     expect(item.color).toBe('var(--text-footer)');
