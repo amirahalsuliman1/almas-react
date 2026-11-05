@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo, useCallback, type ReactNode } from 'react';
+import { Fragment, useState, useRef, useEffect, useMemo, useCallback, type ReactNode } from 'react';
 import { HookSlot } from '@salla.sa/twilight-theme-engine/hooks';
 import { useStore } from '@salla.sa/twilight-theme-engine/hooks/useStore';
 import { useTranslation } from '@salla.sa/twilight-theme-engine/i18n';
@@ -25,6 +25,9 @@ import { ProductCard } from './ProductCard';
 import { useAppliedFilters } from '@salla.sa/twilight-theme-engine/routes/product-listing';
 import type { ProductListFilters } from '@salla.sa/twilight-theme-engine/api/product';
 import { BlockHookSlot, BottomSheet } from '../common';
+import { CategoryLook, ProductStories } from './ProductExtras';
+import { ListingBanner, ListingCover } from './ListingExtras';
+import { safeImageUrl, selectedValue } from '../../lib/settings';
 import { useAppSafeAreaTop } from '../../hooks/useAppSafeAreaTop';
 import { useProductCardLayout } from '../../hooks/useProductCardLayout';
 import { useScrollDirection } from '../../hooks/useScrollDirection';
@@ -37,6 +40,26 @@ import {
 } from '../icons';
 
 type View = 'grid' | 'list';
+type Density = 'small' | 'large';
+
+/** Twig's display-size icons: one large square, or four small ones. */
+const LargeIcon = () => (
+  <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
+    <rect x="3" y="3" width="14" height="14" rx="2" fill="none" stroke="currentColor" strokeWidth="1.6" />
+  </svg>
+);
+const SmallIcon = () => (
+  <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
+    {[
+      [3, 3],
+      [11.5, 3],
+      [3, 11.5],
+      [11.5, 11.5],
+    ].map(([x, y]) => (
+      <rect key={`${x}-${y}`} x={x} y={y} width="5.5" height="5.5" rx="1" fill="none" stroke="currentColor" strokeWidth="1.6" />
+    ))}
+  </svg>
+);
 
 /** localStorage-backed toolbar preference, read after mount to avoid SSR mismatch. */
 function usePref<T extends string>(
@@ -197,8 +220,8 @@ function CatalogToolbar({
   filtersHidden,
   onToggleFiltersHidden,
   onOpenMobileFilters,
-  view,
-  onViewChange,
+  density,
+  onDensityChange,
   selectedSort,
   sortOptionsWithTrans,
   currentSortLabel,
@@ -208,8 +231,9 @@ function CatalogToolbar({
   filtersHidden: '0' | '1';
   onToggleFiltersHidden: () => void;
   onOpenMobileFilters: () => void;
-  view: View;
-  onViewChange: (view: View) => void;
+  /** Twig's display size; null when the merchant turned the toggle off. */
+  density: Density | null;
+  onDensityChange: (density: Density) => void;
   selectedSort: string;
   sortOptionsWithTrans: ReturnType<typeof sortOptions>;
   currentSortLabel: string | undefined;
@@ -245,28 +269,30 @@ function CatalogToolbar({
       )}
 
       <div className="s-catalog-toolbar__group s-catalog-toolbar__options">
-        <div
-          className="s-catalog-toolbar__views"
-          role="group"
-          aria-label={t('blocks.catalog.view', 'View')}
-        >
-          <button
-            type="button"
-            aria-pressed={view === 'grid'}
-            aria-label={t('blocks.catalog.view_grid', 'Grid view')}
-            onClick={() => onViewChange('grid')}
+        {density && (
+          <div
+            className="s-catalog-toolbar__views grid-density"
+            role="group"
+            aria-label={t('theme.listing.grid_label', 'Product size')}
           >
-            <DashboardSquare01Icon aria-hidden="true" />
-          </button>
-          <button
-            type="button"
-            aria-pressed={view === 'list'}
-            aria-label={t('blocks.catalog.view_list', 'List view')}
-            onClick={() => onViewChange('list')}
-          >
-            <RightToLeftListBulletIcon aria-hidden="true" />
-          </button>
-        </div>
+            <button
+              type="button"
+              aria-pressed={density === 'large'}
+              aria-label={t('theme.listing.grid_large', 'Larger products')}
+              onClick={() => onDensityChange('large')}
+            >
+              <LargeIcon />
+            </button>
+            <button
+              type="button"
+              aria-pressed={density === 'small'}
+              aria-label={t('theme.listing.grid_small', 'More products')}
+              onClick={() => onDensityChange('small')}
+            >
+              <SmallIcon />
+            </button>
+          </div>
+        )}
 
         {sortOptionsWithTrans.length > 0 && (
           <label className="s-catalog-toolbar__sort">
@@ -429,7 +455,7 @@ export function ProductListPage({
   pagination,
   filters,
 }: ProductListLoaderData) {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const store = useStore();
   const { theme } = useTwilight();
   const navigate = useNavigate();
@@ -441,11 +467,13 @@ export function ProductListPage({
   // The visitor's choice is kept per layout, so changing the setting applies
   // again, also live in the theme editor.
   const cardLayout = useProductCardLayout();
-  const [view, setView] = usePref<View>(
-    `catalog-view-${cardLayout}`,
-    ['grid', 'list'],
-    cardLayout === 'horizontal' ? 'list' : 'grid'
-  );
+  // Twig's listing: the merchant's card layout decides grid or list; visitors
+  // pick a display size instead (`listing_grid_toggle`, `listing_grid_default`).
+  const view: View = cardLayout === 'horizontal' ? 'list' : 'grid';
+  const listingSettings = (theme?.settings ?? {}) as Record<string, unknown>;
+  const defaultDensity = selectedValue(listingSettings.listing_grid_default, ['small', 'large'] as const, 'small');
+  const [density, setDensity] = usePref<Density>('catalog-density', ['small', 'large'], defaultDensity);
+  const densityToggle = listingSettings.listing_grid_toggle !== false && view === 'grid';
   const [filtersHidden, setFiltersHidden] = usePref<'0' | '1'>(
     'catalog-filters-hidden',
     ['0', '1'],
@@ -525,15 +553,43 @@ export function ProductListPage({
   const listLayoutClass =
     view === 'list' ? 's-products-list-horizontal-cards' : 's-products-list-vertical-cards';
   // Offers (and other filter-less lists) get the full row: 5 columns on desktop.
-  const wideGridClass = !query.filters && view === 'grid' ? ' s-products-list-cols-5' : '';
+  const wideGridClass =
+    (!query.filters && view === 'grid' ? ' s-products-list-cols-5' : '') +
+    (view === 'grid' ? ` s-products-list--${densityToggle ? density : defaultDensity}` : '');
+  const isOffers = source.type === 'offers';
+  const isSearch = source.type === 'search';
+  const isCategory = source.type === 'categories';
+  const showBreadcrumb = theme?.settings?.product_index_show_breadcrumbs !== false;
+  const cover = isOffers ? safeImageUrl(listingSettings.offer_banner) : null;
+  const title = isBrand ? t('common.titles.products') : page.title;
 
   return (
+    <Fragment key={listKey}>
+      {/* Twig's top: the offers cover edge to edge (title and breadcrumb over
+          it), or the breadcrumb; the merchant's banner; a category's
+          interactive cover and its customer stories (R-20). */}
+      {cover && (
+        <ListingCover image={cover} title={title} breadcrumb={showBreadcrumb ? <Breadcrumb page={page} /> : null} />
+      )}
     <div
-      key={listKey}
       className="container px-2.5 mb-10"
       data-source={isReorder ? 'reorder' : undefined}
     >
-      {theme?.settings?.product_index_show_breadcrumbs !== false && <Breadcrumb page={page} />}
+      {!cover && showBreadcrumb && <Breadcrumb page={page} />}
+
+      {!isOffers && !isSearch && (
+        <ListingBanner settings={listingSettings} locale={locale} fallbackLabel={String(title ?? '')} />
+      )}
+
+      {isCategory && source.value != null && <CategoryLook categoryId={source.value} />}
+      {isCategory && (
+        <ProductStories
+          enabledSetting="category_stories_enabled"
+          tag={String(page.title ?? '')}
+          withLink={false}
+          className="category-stories"
+        />
+      )}
 
       <BrandHeader source={source} />
 
@@ -547,9 +603,11 @@ export function ProductListPage({
         scope={blockScope}
       />
 
-      <h1 className="font-bold text-xl mb-4" id="page-main-title">
-        {isBrand ? t('common.titles.products') : page.title}
-      </h1>
+      {!cover && (
+        <h1 className="listing-title" id="page-main-title">
+          {title}
+        </h1>
+      )}
 
       {/* Toolbar — one bar: filter show/hide at the start, options at the end */}
       <MobileStickyToolbar>
@@ -558,8 +616,8 @@ export function ProductListPage({
           filtersHidden={filtersHidden}
           onToggleFiltersHidden={() => setFiltersHidden(filtersHidden === '1' ? '0' : '1')}
           onOpenMobileFilters={() => setFiltersOpen(true)}
-          view={view}
-          onViewChange={setView}
+          density={densityToggle ? density : null}
+          onDensityChange={setDensity}
           selectedSort={selectedSort}
           sortOptionsWithTrans={sortOptionsWithTrans}
           currentSortLabel={currentSortLabel}
@@ -612,5 +670,6 @@ export function ProductListPage({
 
       <HookSlot name="product:list.end" />
     </div>
+    </Fragment>
   );
 }

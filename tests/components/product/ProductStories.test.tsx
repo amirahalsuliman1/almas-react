@@ -51,3 +51,36 @@ describe('ProductStories', () => {
     expect(link?.getAttribute('href')).toBe('https://example.com/stories');
   });
 });
+
+describe('ProductStories on a category page', () => {
+  it("keeps only the stories tagged with the category's name, under the category's own switch, with no link", () => {
+    state.blocks = [
+      {
+        path: 'stories',
+        items: [
+          { image: '/a.jpg', tags: 'عطور، هدايا' },
+          { image: '/b.jpg', tags: 'ميكاب' },
+          { image: '/c.jpg', tags: 'عطور' },
+        ],
+      },
+    ];
+    state.settings = { pdp_stories_url: 'https://example.com/stories', pdp_stories_enabled: false };
+    const { container } = render(
+      <ProductStories enabledSetting="category_stories_enabled" tag="عطور" withLink={false} className="category-stories" />
+    );
+    const cards = [...container.querySelectorAll('.story-card')].map((c) => c.getAttribute('data-image'));
+    expect(cards).toEqual(['/a.jpg', '/c.jpg']);
+    expect(container.querySelector('.product-stories.category-stories')).not.toBeNull();
+    expect(container.querySelector('.product-stories__cta')).toBeNull();
+
+    state.settings = { category_stories_enabled: false };
+    expect(
+      render(<ProductStories enabledSetting="category_stories_enabled" tag="عطور" />).container.innerHTML
+    ).toBe('');
+  });
+
+  it('draws nothing when no story carries the tag', () => {
+    state.blocks = [{ path: 'stories', items: [{ image: '/a.jpg', tags: 'ميكاب' }] }];
+    expect(render(<ProductStories enabledSetting="category_stories_enabled" tag="عطور" />).container.innerHTML).toBe('');
+  });
+});

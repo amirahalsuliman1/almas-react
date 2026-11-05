@@ -1,0 +1,142 @@
+/*
+  The listing page's top and grid size (R-20), Twig's listing.scss and
+  promo-banner.scss: the offers cover, the merchant's banner, the page title,
+  the display-size toggle and the larger grid it picks.
+  Markup: app/components/product/{ProductListPage,ListingExtras}.tsx
+*/
+
+/* The offers cover: the merchant's image edge to edge, fading into the page at
+   its foot, with the breadcrumb and the title over it. A 95% page-tone scrim
+   keeps both over 4.5:1 whatever the image (Twig's arithmetic). */
+.listing-cover {
+  @apply relative isolate mb-6;
+}
+
+.listing-cover__image {
+  @apply block h-full w-full object-cover object-center;
+  aspect-ratio: 393 / 420;
+  background-color: var(--surface-placeholder, var(--surface-section));
+
+  @media (min-width: 768px) {
+    aspect-ratio: 16 / 6;
+  }
+
+  @media (min-width: 1024px) {
+    aspect-ratio: 36 / 17;
+  }
+}
+
+.listing-cover__overlay {
+  @apply absolute inset-0 flex flex-col justify-end pb-6;
+  background: linear-gradient(
+    to bottom,
+    rgb(255 255 255 / 0%) 30%,
+    rgb(255 255 255 / 90%) 75%,
+    rgb(255 255 255 / 90%) 100%
+  );
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--surface-page) 0%, transparent) 30%,
+    color-mix(in srgb, var(--surface-page) 95%, transparent) 75%,
+    color-mix(in srgb, var(--surface-page) 95%, transparent) 100%
+  );
+}
+
+.listing-cover__breadcrumbs {
+  @apply mb-1 w-full;
+
+  .breadcrumbs {
+    @apply py-0;
+  }
+
+  /* Over the cover the trail stops at the parent: the page's own name is the
+     large title right under it (Twig's). The item stays in the DOM, so the
+     trail's structured data is whole. */
+  .s-breadcrumb-item:last-child,
+  .s-breadcrumb-item:nth-last-child(2) .s-breadcrumb-arrow {
+    display: none;
+  }
+}
+
+.listing-cover__title {
+  @apply m-0 text-4xl font-bold;
+  color: var(--main-text-color);
+}
+
+/* The page title, Twig's size: a step up from the old text-xl. */
+.listing-title {
+  @apply mb-4 text-2xl font-bold lg:mb-6 lg:text-3xl;
+  color: var(--main-text-color);
+}
+
+/* The merchant's banner: one image, a 3:1 strip with the panels' radius. */
+.promo-banner {
+  @apply my-4 overflow-hidden rounded;
+  background-color: var(--surface-section);
+}
+
+.promo-banner__link {
+  @apply block;
+
+  &:focus-visible {
+    outline: 2px solid var(--main-text-color);
+    outline-offset: -4px;
+  }
+}
+
+.promo-banner__image {
+  @apply block h-auto w-full object-cover;
+  aspect-ratio: 3 / 1;
+}
+
+/* A category's interactive cover and its stories sit inside the page
+   container already, so they drop the content-edge margin they carry on the
+   product page. */
+.category-look,
+.category-stories {
+  @apply mb-6 mt-2;
+}
+
+.category-stories.product-stories {
+  margin-inline: 0;
+}
+
+/* The display-size toggle: 44px targets, the pressed one outlined in ink. */
+.s-catalog-toolbar__views.grid-density button {
+  @apply h-11 w-11 border border-transparent;
+
+  svg {
+    @apply h-5 w-5;
+  }
+
+  &[aria-pressed='true'] {
+    @apply bg-transparent;
+    color: var(--main-text-color);
+    border-color: var(--main-text-color);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--main-text-color);
+    outline-offset: 2px;
+  }
+}
+
+/* «منتجات أكبر» takes a column away at every width: one on a phone, two on a
+   tablet, three from 1024px (four from 1536px on a list without filters). */
+.s-products-list-wrapper.s-products-list-vertical-cards.s-products-list--large {
+  grid-template-columns: minmax(0, 1fr);
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  &.s-products-list-cols-5 {
+    @media (min-width: 1536px) {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+}
