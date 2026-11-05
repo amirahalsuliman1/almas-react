@@ -17,3 +17,4 @@ export { EnhancedSquareBanners } from './EnhancedSquareBanners';
 export { Stories } from './Stories';
 export { PartnerBanner } from './PartnerBanner';
 export { StoreFeatures } from './StoreFeatures';
+export { Faq } from './Faq';

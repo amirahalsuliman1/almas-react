@@ -29,6 +29,7 @@ import {
   Stories,
   PartnerBanner,
   StoreFeatures,
+  Faq,
 } from './components/home';
 import { Blog } from './components/home/Blog';
 import {
@@ -60,6 +61,7 @@ registerHomeComponents({
   'partner-banner': PartnerBanner,
   // Salla's own section, drawn as Twig drew it (R-16).
   'store-features': StoreFeatures,
+  faq: Faq,
   brands: Brands,
   'enhanced-slider': EnhancedSlider,
   'custom-testimonials': CustomTestimonials,
@@ -120,6 +122,8 @@ registerHomeComponentConfig({
   // Three features: a list of three rows on a phone, one row of columns from
   // 768px. Measured 298px at 393, 273px at 820, 263px at 1440.
   'store-features': { className: 's-block s-block--store-features', height: 'max(16.5rem, calc(18.75rem - 2.5vw))' },
+  // The title, the intro and three closed questions: 365px at 393, 371px at 1440.
+  faq: { className: 's-block s-block--faq', height: '23rem' },
   'featured-products': featuredProductsConfig,
   'featured-products-special-offer': featuredProductsConfig,
   'featured-products-special-product': featuredProductsConfig,

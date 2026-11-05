@@ -1,0 +1,119 @@
+/* «الأسئلة الشائعة» (Faq.tsx, R-17) — Twig's accordion (owner, 2026-11-05).
+   A warm panel with no outline on Home; on a custom page, the FAQ page, it
+   takes Twig's outline. Salla's notes set the sizes and the ink only: the
+   title is the section header's, questions and answers text-base, questions
+   in the main text colour (Twig: text-sm answers, secondary questions). */
+
+.faq {
+  @apply rounded p-6 lg:p-8;
+  margin-inline: max(var(--page-gutter), calc((100% - 1280px) / 2 + var(--page-gutter)));
+  background-color: var(--surface-section);
+}
+
+.s-information-page .faq {
+  border: 1px solid var(--border-interactive);
+}
+
+.faq__list {
+  @apply mt-2;
+}
+
+.faq__item {
+  @apply pb-4;
+  border-block-end: 1px solid var(--border-interactive);
+}
+
+.faq__item + .faq__item {
+  @apply pt-4;
+}
+
+.faq__question {
+  @apply m-0;
+}
+
+/* The whole row is the target, 44px at least. */
+.faq__trigger {
+  @apply flex min-h-11 w-full items-center gap-2 text-start;
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+}
+
+.faq__number {
+  @apply flex-none text-base font-bold;
+  color: var(--text-secondary);
+}
+
+.faq__text {
+  @apply flex-1 text-base font-bold leading-snug;
+  color: var(--main-text-color);
+}
+
+/* Twig's +/− mark: two bars, the upright one gone while the answer is open. */
+.disclosure-mark {
+  @apply relative block flex-none;
+  inline-size: 0.875rem;
+  block-size: 0.875rem;
+  color: var(--text-secondary);
+
+  &::before,
+  &::after {
+    @apply absolute bg-current;
+    content: '';
+    inset-inline: 0;
+    inset-block-start: 50%;
+    block-size: 1.5px;
+    translate: 0 -50%;
+  }
+
+  &::after {
+    rotate: 90deg;
+    transition: opacity var(--motion-fast) var(--motion-ease);
+  }
+}
+
+[aria-expanded='true'] > .disclosure-mark::after {
+  opacity: 0;
+}
+
+/* The answer opens to its own height (grid rows 0fr → 1fr); a closed answer is
+   inert, so neither the keyboard nor a screen reader reaches it. */
+.faq__answer {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--motion-base) var(--motion-ease);
+}
+
+.faq__item.is-open .faq__answer {
+  grid-template-rows: 1fr;
+}
+
+.faq__answer-inner {
+  @apply min-h-0 overflow-hidden text-base leading-relaxed;
+  color: var(--text-secondary);
+
+  > :first-child {
+    @apply mt-3;
+  }
+
+  p {
+    @apply m-0;
+  }
+
+  ul {
+    @apply m-0 list-disc ps-5;
+  }
+
+  li + li {
+    @apply mt-1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .faq__answer,
+  .disclosure-mark::after {
+    transition: none;
+  }
+}

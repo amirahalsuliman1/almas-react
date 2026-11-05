@@ -1934,6 +1934,88 @@
       ]
     },
     {
+      "name": "faq",
+      "key": "3c7a1e58-90b4-4f2d-b6e1-24d70a9c5fb3",
+      "title": {
+        "en": "FAQ",
+        "ar": "الأسئلة الشائعة"
+      },
+      "icon": "sicon-question-circle",
+      "path": "home.faq",
+      "is_default": false,
+      "fields": [
+        {
+          "type": "string",
+          "icon": "sicon-typography",
+          "format": "text",
+          "id": "title",
+          "label": "عنوان القسم",
+          "multilanguage": true,
+          "required": false,
+          "value": "الأسئلة الشائعة",
+          "description": "اتركه فارغًا لإخفاء العنوان.",
+          "minLength": 0,
+          "maxLength": 60
+        },
+        {
+          "type": "string",
+          "icon": "sicon-format-text-alt",
+          "format": "textarea",
+          "id": "intro",
+          "label": "المقدّمة",
+          "multilanguage": true,
+          "required": false,
+          "value": "ستجد هنا إجاباتنا على أكثر الأسئلة شيوعًا حول خدماتنا ومنتجاتنا.",
+          "description": "سطر تعريفي تحت العنوان. اتركه فارغًا لإخفائه.",
+          "minLength": 0,
+          "maxLength": 300
+        },
+        {
+          "id": "items",
+          "type": "collection",
+          "format": "collection",
+          "required": true,
+          "minLength": 1,
+          "maxLength": 30,
+          "label": null,
+          "item_label": "سؤال",
+          "value": [
+            {
+              "items.question": "هل منتجاتكم أصلية؟",
+              "items.answer": "نعم، من الوكيل مباشرة."
+            }
+          ],
+          "fields": [
+            {
+              "type": "string",
+              "icon": "sicon-question-circle",
+              "format": "text",
+              "id": "items.question",
+              "label": "السؤال",
+              "multilanguage": true,
+              "required": true,
+              "value": null,
+              "minLength": 1,
+              "maxLength": 160
+            },
+            {
+              "type": "string",
+              "icon": "sicon-format-text-alt",
+              "format": "textarea",
+              "id": "items.answer",
+              "label": "الإجابة",
+              "multilanguage": true,
+              "required": true,
+              "value": null,
+              "description": "اكتب كل نقطة في سطر مستقل لتظهر كقائمة نقطية. سطر واحد يظهر كفقرة.",
+              "minLength": 1,
+              "maxLength": 800
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "partner-banner",
       "key": "b73d0f19-6c24-4a58-9e70-15af8c3d2be6",
       "title": {
