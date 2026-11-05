@@ -26,7 +26,15 @@ import { useAppliedFilters } from '@salla.sa/twilight-theme-engine/routes/produc
 import type { ProductListFilters } from '@salla.sa/twilight-theme-engine/api/product';
 import { BlockHookSlot, BottomSheet } from '../common';
 import { CategoryLook, ProductStories } from './ProductExtras';
-import { ListingBanner, ListingCover } from './ListingExtras';
+import {
+  FiltersHeading,
+  ListingBanner,
+  ListingCover,
+  ListingEmpty,
+  appliedFilterCount,
+  itemListJsonLd,
+  resetFilters,
+} from './ListingExtras';
 import { safeImageUrl, selectedValue } from '../../lib/settings';
 import { useAppSafeAreaTop } from '../../hooks/useAppSafeAreaTop';
 import { useProductCardLayout } from '../../hooks/useProductCardLayout';
@@ -34,9 +42,7 @@ import { useScrollDirection } from '../../hooks/useScrollDirection';
 import { dispatchProductsFetched } from '../../lib/productsFetched';
 import {
   ChevronDownIcon,
-  DashboardSquare01Icon,
   FilterHorizontalIcon,
-  RightToLeftListBulletIcon,
 } from '../icons';
 
 type View = 'grid' | 'list';
@@ -217,8 +223,7 @@ function MobileStickyToolbar({ children }: { children: ReactNode }) {
  * switch + sort select at the end. */
 function CatalogToolbar({
   showFilters,
-  filtersHidden,
-  onToggleFiltersHidden,
+  filterCount,
   onOpenMobileFilters,
   density,
   onDensityChange,
@@ -228,8 +233,7 @@ function CatalogToolbar({
   onSortChange,
 }: {
   showFilters: boolean;
-  filtersHidden: '0' | '1';
-  onToggleFiltersHidden: () => void;
+  filterCount: number;
   onOpenMobileFilters: () => void;
   /** Twig's display size; null when the merchant turned the toggle off. */
   density: Density | null;
@@ -244,26 +248,26 @@ function CatalogToolbar({
   return (
     <div className="s-catalog-toolbar">
       {showFilters && (
-        <div className="s-catalog-toolbar__group s-catalog-toolbar__filters">
-          <button
-            type="button"
-            className="s-catalog-toolbar__filters-toggle hidden md:inline-flex"
-            aria-pressed={filtersHidden === '1'}
-            onClick={onToggleFiltersHidden}
-          >
-            <FilterHorizontalIcon aria-hidden="true" />
-            {filtersHidden === '1'
-              ? t('blocks.catalog.show_filters', 'Show filters')
-              : t('blocks.catalog.hide_filters', 'Hide filters')}
-          </button>
-
+        <div className="s-catalog-toolbar__group s-catalog-toolbar__filters lg:hidden">
+          {/* Twig's: below 1024px a 44px square opens the filters sheet; from
+              1024px the filters are a column beside the grid. */}
           <button
             type="button"
             onClick={onOpenMobileFilters}
-            className="s-catalog-toolbar__filters-trigger md:hidden"
-            aria-label={t('pages.categories.filters', 'Filters')}
+            className="s-catalog-toolbar__filters-trigger filters-trigger"
+            aria-haspopup="dialog"
+            aria-label={
+              filterCount > 0
+                ? `${t('theme.filters.title', 'Filter results')} ${t('theme.filters.count', '(:count)').replace(':count', String(filterCount))}`
+                : t('theme.filters.title', 'Filter results')
+            }
           >
             <FilterHorizontalIcon aria-hidden="true" />
+            {filterCount > 0 && (
+              <span className="filters-trigger__badge" aria-hidden="true">
+                {filterCount}
+              </span>
+            )}
           </button>
         </div>
       )}
@@ -328,7 +332,9 @@ function CatalogGrid({
   wideGridClass,
   filterStatus,
   onRetry,
+  filterCount,
 }: {
+  filterCount: number;
   filterStatus: 'idle' | 'loading' | 'ready' | 'error';
   onRetry: () => void;
   filtersVisible: boolean;
@@ -346,13 +352,19 @@ function CatalogGrid({
   const location = useLocation();
 
   return (
-    <div className={filtersVisible ? 'md:grid md:grid-cols-[288px_1fr] gap-8' : ''}>
+    <div className={filtersVisible ? 'lg:grid lg:grid-cols-[20rem_minmax(0,1fr)] lg:gap-8' : ''}>
       {filtersVisible && (
-        <SallaFilters
-          id="filters-menu"
-          className="hidden md:block lg:sticky lg:top-20"
-          filters={filters as never}
-        />
+        <aside className="filters-column hidden lg:block" aria-labelledby="filters-column-title">
+          <FiltersHeading
+            headingId="filters-column-title"
+            title={t('theme.filters.title', 'Filter results')}
+            countLabel={t('theme.filters.count', '(:count)').replace(':count', String(filterCount))}
+            resetLabel={t('theme.filters.reset', 'Reset')}
+            count={filterCount}
+            onReset={() => resetFilters('filters-menu')}
+          />
+          <SallaFilters id="filters-menu" filters={filters as never} />
+        </aside>
       )}
 
       <div className="min-w-0">
@@ -393,9 +405,9 @@ function CatalogGrid({
               skeletonType="item"
               skeletonCount={12}
               empty={
-                <NoContent
-                  icon="sicon-shopping-bag"
+                <ListingEmpty
                   message={t('pages.categories.no_products', 'No products found in this category')}
+                  actionLabel={t('theme.empty.back_home', 'Back to home')}
                 />
               }
               t={(key, fallback) => t(key, fallback || key)}
@@ -474,14 +486,9 @@ export function ProductListPage({
   const defaultDensity = selectedValue(listingSettings.listing_grid_default, ['small', 'large'] as const, 'small');
   const [density, setDensity] = usePref<Density>('catalog-density', ['small', 'large'], defaultDensity);
   const densityToggle = listingSettings.listing_grid_toggle !== false && view === 'grid';
-  const [filtersHidden, setFiltersHidden] = usePref<'0' | '1'>(
-    'catalog-filters-hidden',
-    ['0', '1'],
-    '0'
-  );
 
   const showFilters = !!(query.filters && store?.settings?.product?.filters);
-  const filtersVisible = showFilters && filtersHidden === '0';
+  const filtersVisible = showFilters;
 
   // The selection made in `<salla-filters>` — re-queries the list (the route's
   // loader output was fetched without it).
@@ -556,6 +563,9 @@ export function ProductListPage({
   const wideGridClass =
     (!query.filters && view === 'grid' ? ' s-products-list-cols-5' : '') +
     (view === 'grid' ? ` s-products-list--${densityToggle ? density : defaultDensity}` : '');
+  const filterCount = showFilters ? appliedFilterCount(appliedFilters) : 0;
+  const itemList = itemListJsonLd(shownProducts);
+  const logo = (listingSettings.logo_main as string | undefined) || store?.logo;
   const isOffers = source.type === 'offers';
   const isSearch = source.type === 'search';
   const isCategory = source.type === 'categories';
@@ -613,8 +623,7 @@ export function ProductListPage({
       <MobileStickyToolbar>
         <CatalogToolbar
           showFilters={showFilters}
-          filtersHidden={filtersHidden}
-          onToggleFiltersHidden={() => setFiltersHidden(filtersHidden === '1' ? '0' : '1')}
+          filterCount={filterCount}
           onOpenMobileFilters={() => setFiltersOpen(true)}
           density={densityToggle ? density : null}
           onDensityChange={setDensity}
@@ -630,6 +639,7 @@ export function ProductListPage({
         filters={filters}
         listKey={`${listKey}${filteredKey}`}
         filterStatus={filterStatus}
+        filterCount={filterCount}
         onRetry={retryFilters}
         selectedSort={selectedSort}
         view={view}
@@ -651,7 +661,24 @@ export function ProductListPage({
         <BottomSheet
           open={filtersOpen}
           onClose={() => setFiltersOpen(false)}
-          title={t('pages.categories.filters', 'Filters')}
+          title={t('theme.filters.title', 'Filter results')}
+          className="filters-sheet"
+          header={
+            <div className="filters-sheet__head">
+              {logo && (
+                <span className="filters-sheet__logo">
+                  <img src={logo} alt="" width={175} height={40} loading="lazy" decoding="async" />
+                </span>
+              )}
+              <FiltersHeading
+                title={t('theme.filters.title', 'Filter results')}
+                countLabel={t('theme.filters.count', '(:count)').replace(':count', String(filterCount))}
+                resetLabel={t('theme.filters.reset', 'Reset')}
+                count={filterCount}
+                onReset={() => resetFilters('filters-menu-mobile')}
+              />
+            </div>
+          }
         >
           <SallaFilters id="filters-menu-mobile" filters={filters as never} />
         </BottomSheet>
@@ -669,6 +696,11 @@ export function ProductListPage({
       />
 
       <HookSlot name="product:list.end" />
+
+      {itemList && (
+        // eslint-disable-next-line react/no-danger -- JSON-LD, `<` escaped in itemListJsonLd
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: itemList }} />
+      )}
     </div>
     </Fragment>
   );

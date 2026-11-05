@@ -95,7 +95,7 @@ describe('breadcrumbs on phones', () => {
 });
 
 describe('filter bar on phones', () => {
-  it('is slimmer than the desktop bar', async () => {
+  it("has no frame of its own (Twig's), 44px controls, and a 44px row pinned on phones", async () => {
     const { css } = sass.compile(`${themeRoot}app/styles/04-components/product-list.scss`);
     const root = (
       await postcss([tailwindcss({ ...tailwindConfig, content: [{ raw: '' }] })]).process(css, {
@@ -104,7 +104,13 @@ describe('filter bar on phones', () => {
     ).root;
 
     const [desktop] = rulesFor(root, '.s-catalog-toolbar');
-    expect(decl(desktop, 'min-height')).toBe('3.25rem');
+    expect(decl(desktop, 'min-height')).toBeUndefined();
+    expect(decl(desktop, 'border-width')).toBeUndefined();
+    const [sort] = rulesFor(root, '.s-catalog-toolbar__sort');
+    expect(decl(sort, 'height')).toBe('2.75rem');
+    const [trigger] = rulesFor(root, '.s-catalog-toolbar__filters-trigger');
+    expect(decl(trigger, 'height')).toBe('2.75rem');
+    expect(decl(trigger, 'width')).toBe('2.75rem');
 
     const [phone] = rulesFor(root, '.s-catalog-toolbar-sticky .s-catalog-toolbar');
     expect((phone.parent as AtRule).params).toBe('(max-width: 767px)');

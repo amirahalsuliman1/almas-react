@@ -152,6 +152,7 @@
   "theme.filters.count": "(:count)",
   "theme.filters.reset": "Reset",
   "theme.filters.title": "Filter results",
+  "theme.empty.back_home": "Back to home",
   "theme.footer.cod": "Cash on delivery",
   "theme.footer.payments_label": "Accepted payment methods",
   "theme.footer.sbc_verified": "Verified on the Saudi Business Center",

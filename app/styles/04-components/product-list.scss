@@ -1,10 +1,11 @@
 /*
-  Product listing (category) toolbar — a single rounded bar: filter show/hide at
-  the start, product count · grid/list switch · styled sort at the end.
+  Product listing toolbar, Twig's (R-20): no frame of its own — the filters
+  square (below 1024px), the display-size toggle and the sort box, each a 44px
+  control with the subtle border.
   Markup: app/components/product/ProductListPage.tsx
 */
 .s-catalog-toolbar {
-  @apply mb-6 flex min-h-[3.25rem] flex-wrap items-center justify-between gap-x-3 gap-y-1 rounded-full border border-gray-200 bg-white px-3;
+  @apply mb-6 flex flex-wrap items-center justify-between gap-x-3 gap-y-2;
 
   &__group {
     @apply flex items-center;
@@ -12,7 +13,7 @@
 
   /* pushes the options group to the far end when there is no filter group */
   &__options {
-    @apply ms-auto divide-x rtl:divide-x-reverse divide-gray-200;
+    @apply ms-auto gap-3;
   }
 
   &__filters {
@@ -39,11 +40,20 @@
     /* raw `cursor: pointer` — the `.cursor-pointer` utility also sets
        `pointer-events: none` on every child (common.scss), which would stop the
        overlaid <select> from opening. */
-    @apply relative flex items-center gap-1.5 whitespace-nowrap px-4 text-sm text-gray-700;
+    @apply relative flex h-11 items-center gap-1.5 whitespace-nowrap rounded px-4 text-sm;
     cursor: pointer;
+    background-color: var(--surface-page);
+    border: 1px solid var(--border-subtle);
+    color: var(--main-text-color);
 
     svg {
-      @apply h-4 w-4 shrink-0 text-gray-400;
+      @apply h-4 w-4 shrink-0;
+      color: var(--text-secondary);
+    }
+
+    &:focus-within {
+      outline: 2px solid var(--main-text-color);
+      outline-offset: 2px;
     }
 
     select {
@@ -53,19 +63,23 @@
     }
   }
 
-  &__filters-toggle {
-    @apply h-9 items-center gap-2 rounded-full px-3 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100;
-
-    svg {
-      @apply h-[18px] w-[18px] text-gray-400;
-    }
-  }
-
   &__filters-trigger {
-    @apply inline-flex h-9 w-9 items-center justify-center rounded-full text-gray-500 transition-colors hover:bg-gray-100;
+    @apply relative inline-flex h-11 w-11 items-center justify-center rounded transition-colors;
+    background-color: var(--surface-page);
+    border: 1px solid var(--border-subtle);
+    color: var(--main-text-color);
 
     svg {
       @apply h-5 w-5;
+    }
+
+    &:hover {
+      border-color: var(--main-text-color);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--main-text-color);
+      outline-offset: 2px;
     }
   }
 }
@@ -165,7 +179,7 @@
     }
 
     .s-catalog-toolbar__sort {
-      @apply order-3 px-0;
+      @apply order-3 px-3;
     }
 
     &.is-stuck {

@@ -152,6 +152,7 @@
   "theme.filters.count": "(:count)",
   "theme.filters.reset": "إعادة تعيين",
   "theme.filters.title": "تصفية النتائج",
+  "theme.empty.back_home": "العودة للرئيسية",
   "theme.footer.cod": "الدفع عند الاستلام",
   "theme.footer.payments_label": "وسائل الدفع المتاحة",
   "theme.footer.sbc_verified": "موثق في منصة الأعمال",

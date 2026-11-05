@@ -140,3 +140,117 @@
     }
   }
 }
+
+/* =========================================================================
+   Filters, Twig's (R-20 part B): a 20rem column beside the grid from 1024px,
+   a sheet below it, both opening on «تصفية النتائج (3)» with a reset beside
+   it while anything is applied. The component's own «لقد اخترت» chips are
+   hidden: the count and the reset carry their job.
+   ========================================================================= */
+.filters-heading {
+  @apply mb-4 flex items-center justify-between gap-3;
+}
+
+.filters-heading__title {
+  @apply m-0 text-lg font-bold;
+  color: var(--main-text-color);
+}
+
+.filters-heading__count {
+  @apply font-normal;
+  color: var(--text-secondary);
+}
+
+/* A text button, 44px tall like every control here, in the secondary ink. */
+.filters-reset {
+  @apply inline-flex min-h-11 flex-none items-center text-sm underline;
+  color: var(--text-secondary);
+
+  &:hover {
+    color: var(--main-text-color);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--main-text-color);
+    outline-offset: 2px;
+  }
+}
+
+.filters-column {
+  @apply self-start;
+
+  @media (min-width: 1024px) {
+    position: sticky;
+    top: 5rem;
+  }
+}
+
+.filters-column .s-filters-applied,
+.filters-sheet .s-filters-applied {
+  display: none;
+}
+
+/* The trigger's count, so a phone shows what is applied without opening it. */
+.filters-trigger__badge {
+  @apply absolute flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-xs font-bold;
+  inset-block-start: -0.375rem;
+  inset-inline-end: -0.375rem;
+  background-color: var(--main-text-color);
+  color: var(--surface-page);
+}
+
+/* The sheet's head: the store's logo centred above the heading (Twig's). */
+.filters-sheet__head {
+  @apply flex min-w-0 flex-1 flex-col gap-3;
+
+  .filters-heading {
+    @apply mb-0;
+  }
+}
+
+.filters-sheet__logo {
+  @apply flex justify-center;
+
+  img {
+    @apply h-8 w-auto object-contain;
+  }
+}
+
+/* =========================================================================
+   The empty result, Twig's empty state: the platform placeholder on a card,
+   in the theme's tones, with the way back home.
+   ========================================================================= */
+.empty-state {
+  @apply w-full rounded text-center;
+  background-color: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+
+  .no-content-placeholder {
+    @apply px-4 pb-12 pt-10;
+  }
+
+  .no-content-placeholder .icon {
+    background-color: var(--surface-section);
+    color: var(--text-secondary);
+  }
+
+  .no-content-placeholder p {
+    color: var(--text-secondary);
+  }
+}
+
+.empty-state__action {
+  @apply inline-flex min-h-12 items-center justify-center px-8 text-base font-bold no-underline transition-opacity;
+  border-radius: var(--button-radius);
+  background-color: var(--main-text-color);
+  color: var(--surface-page);
+
+  &:hover {
+    opacity: 0.85;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--main-text-color);
+    outline-offset: 3px;
+  }
+}
