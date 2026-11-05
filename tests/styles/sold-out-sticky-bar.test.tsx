@@ -8,6 +8,9 @@ import tailwindcss from 'tailwindcss';
 import type { Product } from '@salla.sa/twilight-theme-engine/types';
 import { AddToCartForm } from '../../app/components/product/AddToCartForm';
 
+// The size guide reaches the shared-components index; it has its own tests.
+vi.mock('../../app/components/product/SizeGuide', () => ({ SizeGuide: () => null }));
+
 vi.mock('@salla.sa/twilight-theme-engine/i18n', () => ({
   useTranslation: () => ({
     locale: 'en',

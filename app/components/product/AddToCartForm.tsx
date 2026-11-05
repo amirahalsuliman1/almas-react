@@ -20,6 +20,63 @@ import type { ReactNode } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { usePriceBump } from '../../hooks/usePriceBump';
 import { ProductOptionsPanel, type PanelOption } from '../common/ProductOptionsPanel';
+import { useWishlist } from '@salla.sa/twilight-theme-engine/hooks/useWishlist';
+import { SizeGuide } from './SizeGuide';
+import { WishlistHeartButton } from './WishlistHeartButton';
+
+/**
+ * Twig's docked action row on desktop (R-19 B2): from 1024px, once the row has
+ * scrolled up out of view, it becomes a floating card at the foot of the
+ * screen. The row itself moves (the same add button, so options validation and
+ * the form submit are unchanged); the slot holds its height meanwhile. Phones
+ * keep Salla's own sticky bar.
+ */
+function useDockedActions() {
+  const [docked, setDocked] = useState(false);
+  const [height, setHeight] = useState<number | null>(null);
+  const [slot, setSlot] = useState<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!slot || typeof IntersectionObserver === 'undefined' || typeof window.matchMedia !== 'function') return;
+    const wide = window.matchMedia('(min-width: 1024px)');
+    const observer = new IntersectionObserver(([entry]) => {
+      const past = !entry.isIntersecting && entry.boundingClientRect.top < 0;
+      if (past) setHeight(entry.boundingClientRect.height);
+      setDocked(past && wide.matches);
+    });
+    observer.observe(slot);
+    const onChange = () => !wide.matches && setDocked(false);
+    wide.addEventListener?.('change', onChange);
+    return () => {
+      observer.disconnect();
+      wide.removeEventListener?.('change', onChange);
+    };
+  }, [slot]);
+
+  return {
+    slotRef: setSlot,
+    docked,
+    slotStyle: docked && height ? { minHeight: `${height}px` } : undefined,
+  };
+}
+
+/** The heart in the action row, as Twig's product page had it (R-19). */
+function ActionWishlistButton({ productId }: { productId: number }) {
+  const { t } = useTranslation();
+  const wishlist = useWishlist();
+  const added = wishlist.has(productId);
+  return (
+    <div className="product-actions__wishlist">
+      <WishlistHeartButton
+        productId={productId}
+        ariaLabel={t('pages.wishlist.toggle', 'Add or remove to wishlist')}
+        pressed={added}
+        className={`s-product-card-wishlist-btn ${added ? 's-product-card-wishlist-added' : 'not-added'}`}
+        onClick={() => wishlist.toggle(productId)}
+      />
+    </div>
+  );
+}
 
 /** The web component's `type="submit"` path skips its own loader, so drive the
     inner `<salla-button>` spinner by hand. */
@@ -249,7 +306,7 @@ function StickyPriceDisplay({ product, priceBump }: { product: Product; priceBum
           key={`sale-${priceBump}`}
           className={`price_is_on_sale${priceBumpClass} space-x-2 rtl:space-x-reverse whitespace-nowrap ${product.is_on_sale ? '' : 'hidden'}`}
         >
-          <span className="price-bump__now total-price text-red-800 font-bold text-xl inline-block">
+          <span className="price-bump__now total-price font-bold text-xl inline-block">
             {product.sale_price} <CurrencySymbol currency={priceCurrency} />
           </span>
           <span className="before-price text-gray-500 line-through">
@@ -339,6 +396,7 @@ function StickyProductBar({
   // Sold out with nothing to sign up for: on phones the sticky bar shows only the
   // out-of-stock label (`product.scss`). "Notify me" (`out-and-notify`) keeps its button.
   const soldOut = product.is_out_of_stock && product.status !== 'out-and-notify';
+  const docking = useDockedActions();
   return (
     <section
       className={`sticky-product-bar bg-white${soldOut ? ' sticky-product-bar--sold-out' : ''}`}
@@ -350,6 +408,21 @@ function StickyProductBar({
         <StickyQuantityField product={product} />
       </div>
 
+      {/* Twig's action row: the add button (with Salla's buy-now beside it) and
+          the heart in its own frame. From 1024px, once the row has scrolled
+          away, it docks as Twig's floating card (useDockedActions); its slot
+          keeps the row's height so nothing below moves. */}
+      <div ref={docking.slotRef} className="product-actions-slot" style={docking.slotStyle}>
+      <div className={`product-actions${docking.docked ? ' is-docked' : ''}`}>
+        <div className="product-actions__summary" aria-hidden="true">
+          {product.image?.url && (
+            <img className="product-actions__thumb" src={product.image.url} alt="" width={56} height={56} loading="lazy" />
+          )}
+          <span className="product-actions__summary-text">
+            {product.brand?.name && <span className="product-actions__brand">{product.brand.name}</span>}
+            <span className="product-actions__name">{product.name}</span>
+          </span>
+        </div>
       <SallaAddProductButton
         ref={addButtonRef}
         {...(quickBuy ? { quickBuy: true } : {})}
@@ -384,6 +457,9 @@ function StickyProductBar({
       >
         {product.add_to_cart_label}
       </SallaAddProductButton>
+      <ActionWishlistButton productId={Number(product.id)} />
+      </div>
+      </div>
     </section>
   );
 }
@@ -494,6 +570,8 @@ export function AddToCartForm({
       )}
 
       <WeightAndSizeGuideSection product={product} />
+
+      <SizeGuide product={product} />
 
       <AttachmentsSection
         product={product}

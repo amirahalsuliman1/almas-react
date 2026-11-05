@@ -1315,3 +1315,200 @@ salla-gifting {
     border-color: var(--border-interactive);
   }
 }
+
+/* =========================================================================
+   Product page, actions — Twig's action row (R-19 part B1). The add button
+   (Salla's buy-now beside it inside the component) fills the row and takes
+   the accent (Salla's note; Twig's was the dark control), 48px, the theme's
+   button radius; the heart has its own 48px frame at the end. The price is
+   in the ink at every place on the page. The size guide is Twig's link.
+   ========================================================================= */
+.product-actions {
+  @apply flex w-full items-stretch gap-3;
+
+  > div:has(> salla-add-product-button),
+  > salla-add-product-button {
+    @apply min-w-0 flex-1;
+  }
+}
+
+.sticky-product-bar__btn {
+  .s-button-btn,
+  .s-button-element {
+    @apply min-h-12 text-base font-bold;
+    border-radius: var(--button-radius);
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-accent-ink);
+
+    &:hover {
+      background-color: var(--color-accent-hover);
+      border-color: var(--color-accent-hover);
+    }
+  }
+}
+
+.s-add-product-button-main .s-add-product-button-mini-checkout {
+  --salla-fast-checkout-button-border-radius: var(--button-radius);
+}
+
+.product-actions__wishlist {
+  @apply flex-none;
+
+  button.s-product-card-wishlist-btn {
+    @apply inline-flex h-12 w-12 items-center justify-center p-0;
+    border-radius: var(--button-radius) !important;
+    background-color: var(--surface-page) !important;
+    border: 1px solid var(--border-interactive) !important;
+    color: var(--main-text-color) !important;
+
+    i {
+      @apply text-xl leading-none;
+    }
+
+    &.s-product-card-wishlist-added {
+      border-color: var(--color-error) !important;
+      color: var(--color-error) !important;
+    }
+
+    &:focus-visible {
+      outline: var(--focus-ring-width) solid var(--focus-ring-color);
+      outline-offset: var(--focus-ring-offset);
+    }
+  }
+}
+
+/* The heart lives in the action row now; the copy beside the title goes. */
+.product-details__title-actions .btn--wishlist {
+  display: none !important;
+}
+
+/* Docked at the foot of a phone, the bar keeps the add button and drops the
+   heart, as Twig's docked row did. */
+@media (max-width: 640px) {
+  .is-sticky-product-bar .sticky-product-bar .product-actions__wishlist {
+    display: none;
+  }
+}
+
+.sticky-product-bar .total-price {
+  color: var(--main-text-color);
+}
+
+.size-guide__trigger {
+  @apply inline-flex min-h-11 items-center gap-2 self-start text-base underline underline-offset-4;
+  color: var(--main-text-color);
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+}
+
+.size-guide__image {
+  @apply block h-auto w-full rounded;
+}
+
+.size-guide__text {
+  @apply mt-4 text-base leading-7;
+  color: var(--main-text-color);
+}
+
+.size-guide__table-wrap {
+  @apply mt-2 overflow-x-auto rounded-large;
+  border: 1px solid var(--border-subtle);
+}
+
+.size-guide__table {
+  @apply w-full text-sm;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+
+  th,
+  td {
+    @apply whitespace-nowrap px-3 py-2 text-start;
+    border-block-end: 1px solid var(--border-subtle);
+  }
+
+  thead th {
+    @apply font-bold;
+    background-color: var(--surface-section);
+  }
+
+  tbody th {
+    @apply font-bold;
+  }
+
+  tbody tr:nth-child(even) {
+    background-color: var(--surface-section);
+  }
+}
+
+/* Twig's floating card (R-19 B2): from 1024px, the action row docks at the
+   screen's foot once it has scrolled away — the product's photo, brand and
+   name at the inline start, the add button at the end, no heart — on the
+   card surface the container's width. */
+.product-actions__summary {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .product-actions.is-docked {
+    @apply fixed z-30 items-center justify-between gap-6 rounded-large p-3;
+    inset-block-end: 1.5rem;
+    inset-inline-start: 50%;
+    inline-size: min(1248px, calc(100vw - 2 * var(--page-gutter)));
+    translate: -50% 0;
+    background-color: var(--surface-card);
+    border: 1px solid var(--border-subtle);
+    box-shadow: 0 12px 32px rgb(0 0 0 / 0.12);
+
+    [dir='rtl'] & {
+      translate: 50% 0;
+    }
+
+    .product-actions__summary {
+      @apply flex min-w-0 flex-1 items-center gap-3;
+    }
+
+    > div:has(> salla-add-product-button),
+    > salla-add-product-button {
+      @apply w-80 flex-none;
+    }
+
+    .product-actions__wishlist {
+      display: none;
+    }
+  }
+
+  .product-actions__thumb {
+    @apply h-14 w-14 shrink-0 rounded-lg object-cover;
+  }
+
+  .product-actions__summary-text {
+    @apply flex min-w-0 flex-col text-start;
+  }
+
+  .product-actions__brand {
+    @apply text-xs underline;
+    color: var(--text-secondary);
+  }
+
+  .product-actions__name {
+    @apply truncate text-lg font-bold;
+    color: var(--main-text-color);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) and (min-width: 1024px) {
+  .product-actions.is-docked {
+    animation: product-actions-dock var(--motion-base) var(--motion-ease);
+  }
+}
+
+@keyframes product-actions-dock {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+}

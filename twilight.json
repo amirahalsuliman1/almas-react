@@ -784,6 +784,46 @@
       "selected": true
     },
     {
+      "type": "string",
+      "icon": "sicon-image",
+      "format": "image",
+      "id": "size_guide_image",
+      "label": "صورة دليل المقاسات",
+      "description": "جدول المقاسات كصورة. يظهر في صفحة المنتج رابط «دليل المقاسات» يفتحها في نافذة. اتركها والنص فارغين لإخفاء الرابط.",
+      "required": false,
+      "value": null
+    },
+    {
+      "type": "string",
+      "format": "textarea",
+      "icon": "sicon-format-text-alt",
+      "id": "size_guide_text",
+      "label": "نص دليل المقاسات",
+      "description": "كل سطر في سطر مستقل. السطور التي فيها «|» تظهر جدولًا، وأول سطر منها رأس الجدول، مثل: «المقاس | الصدر | الطول». بقية السطور ملاحظات تحت الجدول.",
+      "required": false,
+      "value": null
+    },
+    {
+      "type": "string",
+      "format": "text",
+      "icon": "sicon-format-text-alt",
+      "id": "size_guide_title",
+      "label": "عنوان دليل المقاسات",
+      "description": "اتركه فارغًا ليظهر «دليل المقاسات».",
+      "required": false,
+      "value": null
+    },
+    {
+      "type": "string",
+      "format": "text",
+      "icon": "sicon-tag",
+      "id": "size_guide_tag",
+      "label": "وسم المنتجات التي يظهر لها دليل المقاسات",
+      "description": "اكتب اسم وسم، ثم أضفه للمنتجات من لوحة التحكم، فيظهر الدليل لها فقط. اتركه فارغًا ليظهر لكل المنتجات.",
+      "required": false,
+      "value": null
+    },
+    {
       "type": "boolean",
       "icon": "sicon-toggle-off",
       "label": "عرض خيارات المنتج في لوحة قابلة للطي",
