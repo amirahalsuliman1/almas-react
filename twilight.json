@@ -2016,6 +2016,48 @@
       ]
     },
     {
+      "name": "recently-viewed",
+      "key": "3f6b2c9e-8a41-4d7e-b5c0-91e7a2d4f8b3",
+      "title": {
+        "en": "Recently viewed",
+        "ar": "شاهدته مؤخراً"
+      },
+      "icon": "sicon-list-play",
+      "path": "home.recently-viewed",
+      "image": "https://cdn.salla.network/images/themes/raed/preview-images/slider-products-with-bg.png?v=1.1",
+      "fields": [
+        {
+          "type": "static",
+          "format": "description",
+          "id": "static-desc",
+          "value": "يعرض لكل زائر المنتجات التي فتحها مؤخرًا، من متصفحه هو. لا يظهر لزائر لم يفتح أي منتج بعد."
+        },
+        {
+          "type": "string",
+          "icon": "sicon-format-text-alt",
+          "format": "text",
+          "id": "title",
+          "label": "العنوان",
+          "multilanguage": true,
+          "required": false,
+          "value": "شاهدته مؤخراً",
+          "minLength": 0,
+          "maxLength": 60
+        },
+        {
+          "type": "number",
+          "icon": "sicon-list",
+          "format": "integer",
+          "id": "count",
+          "label": "عدد المنتجات",
+          "required": false,
+          "value": 8,
+          "minValue": 2,
+          "maxValue": 20
+        }
+      ]
+    },
+    {
       "name": "partner-banner",
       "key": "b73d0f19-6c24-4a58-9e70-15af8c3d2be6",
       "title": {

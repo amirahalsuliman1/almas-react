@@ -7,6 +7,7 @@
    ========================================================================= */
 
 .s-block--products-slider > .s-products-carousel,
+.recently-viewed > .s-products-carousel,
 .s-block--video-carousel > .video-carousel,
 .s-block--stories > .stories,
 .s-block--store-features > .features,
@@ -20,8 +21,20 @@
 /* A panelled row clips its own track, so a card cut at the edge ends at the
    panel's rounded side instead of hanging past it. */
 .s-block--products-slider > .s-products-carousel,
+.recently-viewed > .s-products-carousel,
 .s-block--video-carousel > .video-carousel,
 .s-block--photos-slider > .photos-carousel,
 .s-block--custom-testimonials .s-testimonials > .scroll-carousel {
   @apply overflow-hidden;
+}
+
+/* «شاهدته مؤخراً» sits in the container like the other rows. */
+.recently-viewed {
+  margin-inline: max(var(--page-gutter), calc((100% - 1280px) / 2 + var(--page-gutter)));
+}
+
+/* No history: the block is empty, and its margin goes with it (Twig did the
+   same), so a first-time visitor sees no gap. */
+.s-block--recently-viewed:empty {
+  display: none;
 }

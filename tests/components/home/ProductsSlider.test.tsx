@@ -78,6 +78,14 @@ beforeEach(() => {
 });
 
 describe('ProductsSlider', () => {
+  it('keeps a selected list in the order it was given (recently viewed, newest first)', async () => {
+    const { findAllByTestId } = renderWithClient(
+      <ProductsSlider data={{ products: { source: 'selected', source_value: [3, 1, 2] } }} />
+    );
+    const cards = await findAllByTestId('product-card');
+    expect(cards.map((c) => c.textContent)).toEqual(['P3', 'P1', 'P2']);
+  });
+
   it('always uses vertical cards, even when the store layout is horizontal', async () => {
     cardLayout.value = 'horizontal';
     const { container, getAllByTestId } = renderWithClient(

@@ -66,8 +66,16 @@ export function ProductsSlider({ data, onResolve }: ProductsSliderProps) {
     ...product.queries.list({ source: source as ProductsListSource, sourceValue, perPage: limit }),
     enabled: !!source,
   });
-  // Some sources return a full page whatever `perPage` asks for.
-  const items = result?.items?.slice(0, limit);
+  // Some sources return a full page whatever `perPage` asks for. A `selected`
+  // list keeps the order it was given in (the recently-viewed row is newest
+  // first); the API returns its own.
+  const items = (
+    source === 'selected' && Array.isArray(sourceValue)
+      ? [...(result?.items ?? [])].sort(
+          (a, b) => sourceValue.map(String).indexOf(String(a.id)) - sourceValue.map(String).indexOf(String(b.id))
+        )
+      : result?.items
+  )?.slice(0, limit);
 
   // Keep `onResolve` out of this effect's deps — an inline callback would
   // otherwise re-fire on every parent render.

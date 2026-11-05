@@ -15,6 +15,7 @@ import { ProductDetails } from './ProductDetails';
 import { AddToCartForm } from './AddToCartForm';
 import { BlockHookSlot } from '../common';
 import { ProductsSlider } from '../home';
+import { recordRecentlyViewed } from '../../lib/recentlyViewed';
 
 /**
  * "Similar products" slider. A separate component (not inline in
@@ -71,6 +72,12 @@ export function ProductPage({ product: initialProduct, page }: ProductPageProps)
   const { product } = useProduct(initialProduct);
   const { commentsKey } = useComments();
   const blockScope = useMemo(() => ({ product_id: product.id }), [product.id]);
+
+  // «شاهدته مؤخراً»: this product goes to the front of the visitor's own list
+  // (lib/recentlyViewed.ts), so Home's section fills.
+  useEffect(() => {
+    recordRecentlyViewed(product.id);
+  }, [product.id]);
 
   // The Twig storefront bootstraps `salla.config` with `user.can_comment`; the
   // React SDK init doesn't, so it's `null` and `<salla-comment-form>` (and the

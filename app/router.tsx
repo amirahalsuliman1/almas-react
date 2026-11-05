@@ -30,6 +30,7 @@ import {
   PartnerBanner,
   StoreFeatures,
   Faq,
+  RecentlyViewed,
 } from './components/home';
 import { Blog } from './components/home/Blog';
 import {
@@ -62,6 +63,7 @@ registerHomeComponents({
   // Salla's own section, drawn as Twig drew it (R-16).
   'store-features': StoreFeatures,
   faq: Faq,
+  'recently-viewed': RecentlyViewed,
   brands: Brands,
   'enhanced-slider': EnhancedSlider,
   'custom-testimonials': CustomTestimonials,
@@ -124,6 +126,9 @@ registerHomeComponentConfig({
   'store-features': { className: 's-block s-block--store-features', height: 'max(16.5rem, calc(18.75rem - 2.5vw))' },
   // The title, the intro and three closed questions: 365px at 393, 371px at 1440.
   faq: { className: 's-block s-block--faq', height: '23rem' },
+  // Most visitors have no history, so nothing is reserved: the row only
+  // appears for a returning visitor, below the fold.
+  'recently-viewed': { className: 's-block s-block--recently-viewed', height: '0px' },
   'featured-products': featuredProductsConfig,
   'featured-products-special-offer': featuredProductsConfig,
   'featured-products-special-product': featuredProductsConfig,
