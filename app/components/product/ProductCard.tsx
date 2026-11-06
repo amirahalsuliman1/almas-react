@@ -4,6 +4,7 @@ import { ProductCard as EngineProductCard } from '@salla.sa/twilight-theme-engin
 import { useWishlist } from '@salla.sa/twilight-theme-engine/hooks/useWishlist';
 import { useTranslation } from '@salla.sa/twilight-theme-engine/i18n';
 import { registerNativeBookingHook } from '../../lib/nativeBooking';
+import { stepCartLine, useCartQuantity } from '../../lib/cartLines';
 import { withImageFallback } from '../../lib/productImage';
 import { WishlistHeartButton } from './WishlistHeartButton';
 
@@ -29,6 +30,9 @@ type ProductCardProps = ComponentProps<typeof EngineProductCard>;
  *    at its real DOM location instead.
  *  - sets `loader-position="center"` on the add-to-cart button (grid + list).
  * Portals a «وفّر ٪» badge onto the image of a product on sale.
+ * A product already in the cart shows Twig's «+ 1 −» stepper where its add
+ * button was (R-05b), portalled into the card's footer; the engine's button
+ * is hidden by product.scss while the stepper is there.
  * A product with no photo shows the theme's placeholder, as the Twig card does
  * (the engine `Image` renders nothing without a `src`).
  * Inside the Salla app, a booking product's "Book now" fires `mobile::booking.open`
@@ -38,7 +42,10 @@ type ProductCardProps = ComponentProps<typeof EngineProductCard>;
 export function ProductCard(props: ProductCardProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [imageEl, setImageEl] = useState<HTMLElement | null>(null);
+  const [footerEl, setFooterEl] = useState<HTMLElement | null>(null);
   const saving = savingPercent(props.product);
+  const steppable = canStep(props.product, props.withoutAddButton);
+  const inCart = useCartQuantity(props.product.id, steppable);
   const { product, isPlaceholder } = useMemo(
     () => withImageFallback(props.product),
     [props.product]
@@ -55,6 +62,8 @@ export function ProductCard(props: ProductCardProps) {
         el.setAttribute('fill', 'solid');
         el.setAttribute('loader-position', 'center');
       });
+
+      setFooterEl(root.querySelector<HTMLElement>('.s-product-card-content-footer'));
 
       const vertical = root.querySelector<HTMLElement>('.s-product-card-vertical');
       if (!vertical) return;
@@ -86,6 +95,12 @@ export function ProductCard(props: ProductCardProps) {
           // List responses send the id as a numeric string; the wishlist holds numbers.
           <CornerWishlistButton productId={Number(props.product.id)} />,
           imageEl
+        )}
+      {footerEl &&
+        inCart > 0 &&
+        createPortal(
+          <CardStepper productId={props.product.id} name={props.product.name} quantity={inCart} footer={footerEl} />,
+          footerEl
         )}
     </div>
   );
@@ -142,6 +157,94 @@ function CornerWishlistButton({ productId }: { productId: number }) {
       className={`s-product-card-wishlist-btn animated ${inWishlist ? 's-product-card-wishlist-added pulse-anime' : 'not-added un-favorited'}`}
         onClick={() => wishlist.toggle(productId)}
       />
+    </div>
+  );
+}
+
+/**
+ * Whether the card can show the in-cart stepper. Donations, bookings and
+ * anything not for sale keep their own button: a stepper would step a line
+ * that needs an amount or a date, or cannot be bought (Twig's `canStep`).
+ */
+export function canStep(
+  product: { status?: unknown; type?: unknown; donation?: unknown },
+  withoutAddButton?: boolean
+): boolean {
+  return (
+    !withoutAddButton &&
+    product?.status === 'sale' &&
+    !product?.donation &&
+    !['booking', 'donating', 'financial_support'].includes(String(product?.type))
+  );
+}
+
+/**
+ * «+ 1 −», Twig's in-cart state (owner, 2026-10-15): a product already in the
+ * cart is stepped, not added again. Each step goes through Salla's own cart
+ * actions; at one, «−» removes the line and the add button returns. The count
+ * is a live region, so a step is announced. While a step is in flight the
+ * buttons are `aria-disabled` rather than disabled, so focus stays on them.
+ */
+export function CardStepper({
+  productId,
+  name,
+  quantity,
+  footer,
+}: {
+  productId: unknown;
+  name?: string;
+  quantity: number;
+  footer?: HTMLElement | null;
+}) {
+  const { t } = useTranslation();
+  const [busy, setBusy] = useState(false);
+
+  const step = (delta: number) => {
+    if (busy) return;
+    setBusy(true);
+    const removing = quantity + delta < 1;
+    stepCartLine(productId, delta).finally(() => {
+      setBusy(false);
+      // The stepper is gone once the line is: hand focus to the add button.
+      if (removing)
+        requestAnimationFrame(() =>
+          footer?.querySelector<HTMLElement>('salla-add-product-button button, salla-add-product-button .s-button-element')?.focus()
+        );
+    });
+  };
+
+  return (
+    <div
+      className="product-card__stepper"
+      role="group"
+      aria-label={t('theme.product.cart_quantity_of', 'Quantity of :name in the cart').replace(':name', name ?? '')}
+      aria-busy={busy || undefined}
+    >
+      <button
+        type="button"
+        className="product-card__step"
+        aria-label={t('theme.product.cart_increase', 'Increase quantity')}
+        aria-disabled={busy || undefined}
+        onClick={() => step(1)}
+      >
+        <i className="sicon-add" aria-hidden="true" />
+      </button>
+      <span className="product-card__step-count" aria-live="polite">
+        {quantity}
+      </span>
+      <button
+        type="button"
+        className="product-card__step"
+        aria-label={
+          quantity > 1
+            ? t('theme.product.cart_decrease', 'Decrease quantity')
+            : t('theme.cart.remove_item', 'Remove the product from the cart')
+        }
+        aria-disabled={busy || undefined}
+        onClick={() => step(-1)}
+      >
+        <i className="sicon-minus" aria-hidden="true" />
+      </button>
     </div>
   );
 }

@@ -1623,3 +1623,48 @@ salla-gifting {
 .product-related .s-product-card-entry.s-product-card-vertical {
   background-color: var(--surface-card);
 }
+
+/* =========================================================================
+   In-cart stepper (R-05b), Twig's: where the add button was, «+ 1 −» in an
+   outline pill the add button's height, + at the inline start. The engine's
+   button stays in the DOM (it returns when the line is removed), hidden while
+   the stepper stands in for it.
+   ========================================================================= */
+.s-product-card-content-footer:has(> .product-card__stepper) {
+  > div:not(.product-card__stepper),
+  > salla-add-product-button {
+    display: none;
+  }
+}
+
+.product-card__stepper {
+  @apply flex h-11 w-full min-w-0 flex-1 items-center justify-between rounded-full border p-1;
+  border-color: var(--main-text-color);
+  background-color: var(--surface-card);
+  color: var(--main-text-color);
+
+  &[aria-busy='true'] {
+    opacity: 0.7;
+  }
+}
+
+.product-card__step {
+  @apply inline-flex h-9 w-9 flex-none items-center justify-center rounded-full text-base transition-colors;
+
+  &:hover:not([aria-disabled='true']) {
+    background-color: var(--surface-section);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--main-text-color);
+    outline-offset: 1px;
+  }
+
+  &[aria-disabled='true'] {
+    cursor: progress;
+  }
+}
+
+.product-card__step-count {
+  @apply min-w-6 text-center text-base font-bold tabular-nums;
+}
