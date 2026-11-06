@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, waitFor, cleanup } from '@testing-library/react';
+import { render, waitFor, cleanup, fireEvent } from '@testing-library/react';
 import { ProductCard, savingPercent } from '../../../app/components/product/ProductCard';
 import { PRODUCT_IMAGE_PLACEHOLDER } from '../../../app/lib/productImage';
 
@@ -18,7 +18,7 @@ vi.mock('@salla.sa/twilight-theme-engine/product', () => ({
     layout?: string;
   }) => (
     <div
-      className="s-product-card-vertical"
+      className="s-product-card-entry s-product-card-vertical"
       data-testid="engine-card"
       data-image={product.image?.url}
     >
@@ -40,6 +40,11 @@ vi.mock('@salla.sa/twilight-theme-engine/product', () => ({
   ),
 }));
 
+const detail = vi.hoisted(() => ({ fetch: vi.fn(() => Promise.resolve({})) }));
+vi.mock('@tanstack/react-query', () => ({ useQueryClient: () => ({ fetchQuery: detail.fetch }) }));
+vi.mock('@salla.sa/twilight-theme-engine/api/product', () => ({
+  product: { queries: { detail: (id: string) => ({ queryKey: ['products', 'detail', id] }) } },
+}));
 vi.mock('@salla.sa/twilight-theme-engine/hooks/useWishlist', () => ({
   useWishlist: () => ({
     has: (id: number) => wishlistState.ids.includes(id),
@@ -196,3 +201,33 @@ describe('savingPercent', () => {
   });
 });
 
+
+describe('ProductCard hover look', () => {
+  it('fetches the details on the first hover only, then shows the second photo and the colour swatches', async () => {
+    detail.fetch.mockResolvedValue({
+      images: [{ url: 'https://cdn.test/a.jpg' }, { url: 'https://cdn.test/b.jpg' }],
+      options: [{ type: 'color', details: [{ name: 'أحمر', color: '#c00', image: 'https://cdn.test/red.jpg' }] }],
+    } as never);
+    const photo = { id: 3, name: 'P', image: { url: 'https://cdn.test/a.jpg' } } as never;
+    const { getByTestId } = render(<ProductCard product={photo} />);
+    const image = getByTestId('image');
+    await waitFor(() => expect(image).toBeTruthy());
+    expect(detail.fetch).not.toHaveBeenCalled();
+
+    fireEvent.pointerEnter(getByTestId('engine-card'));
+    fireEvent.pointerEnter(getByTestId('engine-card'));
+    await waitFor(() => expect(image.querySelector('img.product-card__image-alt')).not.toBeNull());
+    expect(detail.fetch).toHaveBeenCalledTimes(1);
+    const alt = image.querySelector('img.product-card__image-alt')!;
+    expect(alt.getAttribute('src')).toBe('https://cdn.test/b.jpg');
+    expect(alt.getAttribute('aria-hidden')).toBe('true');
+
+    const swatch = image.querySelector<HTMLElement>('.product-card__swatch')!;
+    expect(swatch.style.getPropertyValue('--swatch')).toBe('#c00');
+    fireEvent.pointerEnter(swatch);
+    expect(image.querySelector('img.product-card__image-alt')?.getAttribute('src')).toBe('https://cdn.test/red.jpg');
+    expect(image.querySelector('img.product-card__image-alt')?.classList.contains('is-previewing')).toBe(true);
+    fireEvent.pointerLeave(swatch);
+    expect(image.querySelector('img.product-card__image-alt')?.getAttribute('src')).toBe('https://cdn.test/b.jpg');
+  });
+});

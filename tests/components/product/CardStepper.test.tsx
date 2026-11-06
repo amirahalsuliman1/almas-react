@@ -17,6 +17,11 @@ vi.mock('@salla.sa/twilight-theme-engine/product', () => ({
     </div>
   ),
 }));
+const detail = vi.hoisted(() => ({ fetch: vi.fn(() => Promise.resolve({})) }));
+vi.mock('@tanstack/react-query', () => ({ useQueryClient: () => ({ fetchQuery: detail.fetch }) }));
+vi.mock('@salla.sa/twilight-theme-engine/api/product', () => ({
+  product: { queries: { detail: (id: string) => ({ queryKey: ['products', 'detail', id] }) } },
+}));
 vi.mock('@salla.sa/twilight-theme-engine/hooks/useWishlist', () => ({ useWishlist: () => ({ has: () => false }) }));
 vi.mock('@salla.sa/twilight-theme-engine/i18n', () => ({
   useTranslation: () => ({ t: (_k: string, fallback?: string) => fallback ?? _k }),

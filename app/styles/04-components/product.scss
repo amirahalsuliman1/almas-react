@@ -1668,3 +1668,58 @@ salla-gifting {
 .product-card__step-count {
   @apply min-w-6 text-center text-base font-bold tabular-nums;
 }
+
+/* =========================================================================
+   Hover look (R-05b part B), Twig's: the second photo sits over the first in
+   the same reserved box and fades in while the card is hovered; a colour
+   swatch previews its own photo the same way. The swatches sit over the
+   photo's foot, so nothing moves when they appear. Pointer-only.
+   ========================================================================= */
+.s-product-card-image:has(> .product-card__image-alt) {
+  position: relative;
+}
+
+.product-card__image-alt {
+  @apply pointer-events-none absolute inset-0 h-full w-full object-cover opacity-0;
+  border-radius: inherit;
+  transition: opacity 0.3s ease;
+}
+
+@media (hover: hover) {
+  .s-product-card-entry:hover .product-card__image-alt,
+  .product-card__image-alt.is-previewing {
+    opacity: 1;
+  }
+}
+
+.product-card__swatches {
+  @apply absolute m-0 flex list-none flex-wrap items-center justify-center gap-1.5 rounded-full p-1.5 opacity-0;
+  inset-block-end: 0.75rem;
+  inset-inline: 0;
+  margin-inline: auto;
+  inline-size: fit-content;
+  max-inline-size: calc(100% - 1.5rem);
+  background-color: color-mix(in srgb, var(--surface-card) 88%, transparent);
+  transition: opacity 0.3s ease;
+  z-index: 2;
+}
+
+@media (hover: hover) {
+  .s-product-card-entry:hover .product-card__swatches {
+    opacity: 1;
+  }
+}
+
+.product-card__swatch {
+  @apply block h-5 w-5 flex-none cursor-pointer rounded-full border;
+  border-color: var(--border-subtle);
+  background-color: var(--swatch);
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 6%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-card__image-alt,
+  .product-card__swatches {
+    transition: none;
+  }
+}

@@ -5,6 +5,9 @@ import { useWishlist } from '@salla.sa/twilight-theme-engine/hooks/useWishlist';
 import { useTranslation } from '@salla.sa/twilight-theme-engine/i18n';
 import { registerNativeBookingHook } from '../../lib/nativeBooking';
 import { stepCartLine, useCartQuantity } from '../../lib/cartLines';
+import { canHover, hoverLookFrom, type HoverLook as HoverLookData } from '../../lib/hoverLook';
+import { useQueryClient } from '@tanstack/react-query';
+import { product as productApi } from '@salla.sa/twilight-theme-engine/api/product';
 import { withImageFallback } from '../../lib/productImage';
 import { WishlistHeartButton } from './WishlistHeartButton';
 
@@ -46,6 +49,9 @@ export function ProductCard(props: ProductCardProps) {
   const saving = savingPercent(props.product);
   const steppable = canStep(props.product, props.withoutAddButton);
   const inCart = useCartQuantity(props.product.id, steppable);
+  // Read after mount: the server renders no hover look, and a phone never loads it.
+  const [hoverable, setHoverable] = useState(false);
+  useEffect(() => setHoverable(canHover()), []);
   const { product, isPlaceholder } = useMemo(
     () => withImageFallback(props.product),
     [props.product]
@@ -90,6 +96,13 @@ export function ProductCard(props: ProductCardProps) {
     >
       <EngineProductCard {...props} product={product} />
       {imageEl && saving !== null && createPortal(<SavingBadge percent={saving} />, imageEl)}
+      {hoverable && imageEl && !props.product.donation && (
+        <HoverLook
+          productId={props.product.id}
+          mainUrl={product.image?.url ?? null}
+          imageEl={imageEl}
+        />
+      )}
       {imageEl &&
         createPortal(
           // List responses send the id as a numeric string; the wishlist holds numbers.
@@ -246,5 +259,81 @@ export function CardStepper({
         <i className="sicon-minus" aria-hidden="true" />
       </button>
     </div>
+  );
+}
+
+/**
+ * The hover look (R-05b part B), Twig's: from 1024px, on a pointer that
+ * hovers, the product's second photo fades in over the first while the card is
+ * hovered, and each colour with its own photo gets a swatch that previews it.
+ * The details are fetched on the first hover through the engine's own product
+ * query (cached, so opening the product is quicker too), once per product.
+ *
+ * Pointer-only polish: nothing here is focusable or in the accessibility tree,
+ * and a phone or a keyboard sees the card exactly as before. The swatches sit
+ * over the photo's foot rather than under the title (Twig's place), so the
+ * row's height never changes on hover (zero layout shift).
+ */
+function HoverLook({
+  productId,
+  mainUrl,
+  imageEl,
+}: {
+  productId: unknown;
+  mainUrl: string | null;
+  imageEl: HTMLElement;
+}) {
+  const queryClient = useQueryClient();
+  const [look, setLook] = useState<HoverLookData | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+
+  useEffect(() => {
+    const card = imageEl.closest<HTMLElement>('.s-product-card-entry') ?? imageEl;
+    let cancelled = false;
+    const load = () => {
+      queryClient
+        .fetchQuery(productApi.queries.detail(String(productId)))
+        .then((details) => {
+          if (!cancelled) setLook(hoverLookFrom(details as never, mainUrl));
+        })
+        .catch(() => {});
+    };
+    card.addEventListener('pointerenter', load, { once: true });
+    return () => {
+      cancelled = true;
+      card.removeEventListener('pointerenter', load);
+    };
+  }, [imageEl, productId, mainUrl, queryClient]);
+
+  if (!look || (!look.second && look.swatches.length === 0)) return null;
+  const shown = preview ?? look.second;
+
+  return createPortal(
+    <>
+      {shown && (
+        <img
+          className={`product-card__image-alt${preview ? ' is-previewing' : ''}`}
+          src={shown}
+          alt=""
+          aria-hidden="true"
+          decoding="async"
+        />
+      )}
+      {look.swatches.length > 0 && (
+        <ul className="product-card__swatches" aria-hidden="true">
+          {look.swatches.map((swatch) => (
+            <li
+              key={`${swatch.color}-${swatch.image}`}
+              className="product-card__swatch"
+              style={{ ['--swatch' as string]: swatch.color }}
+              title={swatch.name}
+              onPointerEnter={() => setPreview(swatch.image)}
+              onPointerLeave={() => setPreview(null)}
+            />
+          ))}
+        </ul>
+      )}
+    </>,
+    imageEl
   );
 }
